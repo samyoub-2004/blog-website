@@ -30,7 +30,17 @@ const Play = () => (
 
 export function HeroSection() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 py-20 relative">
+    <section className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
+      {/* Background blurred light bubbles (performance-friendly, no heavy animations) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        {/* soft radial glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] max-w-[520px] max-h-[520px] rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-white/10 blur-3xl" />
+        <div className="absolute top-[20%] right-[20%] w-[28vw] h-[28vw] max-w-[380px] max-h-[380px] rounded-full bg-white/8 blur-3xl" />
+        <div className="absolute bottom-[25%] left-[15%] w-[24vw] h-[24vw] max-w-[320px] max-h-[320px] rounded-full bg-white/6 blur-2xl" />
+        {/* subtle gradient veil to blend on black bg */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.03] to-transparent" />
+      </div>
       <div className="max-w-4xl mx-auto text-center relative z-10 animate-fade-in-hero">
         {/* Badge */}
         <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-8 mt-12 animate-fade-in-badge">
