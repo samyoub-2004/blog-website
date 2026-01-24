@@ -1,408 +1,320 @@
 "use client"
-
 import { useEffect, useRef, useState } from "react"
 
-const AnimatedChatDemo = ({ isActive }: { isActive: boolean }) => {
-  const [messages, setMessages] = useState([
-    { text: "Hi! How can I help you today?", isBot: true, visible: false },
-    { text: "I'd like to book an appointment", isBot: false, visible: false },
-    { text: "Perfect! I can help with that. What service are you interested in?", isBot: true, visible: false },
-  ])
-  const [typingDots, setTypingDots] = useState(0)
-  const [currentTime, setCurrentTime] = useState(new Date())
-  const [cycleCount, setCycleCount] = useState(0)
+// --- 1. TES NOUVEAUX COMPOSANTS (CEUX QU'ON A CRÉÉ ENSEMBLE) ---
+
+const TypoBox = () => {
+  const [text, setText] = useState("")
+  const [styleIndex, setStyleIndex] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  // Phrases plus longues et percutantes
+  const styles = [
+    { name: "Design System Specialist", class: "font-sans font-black tracking-tighter uppercase text-3xl sm:text-4xl" },
+    { name: "Crafting Digital Experiences", class: "font-[family-name:var(--font-script)] text-4xl sm:text-5xl" },
+    { name: "Building Scalable Systems", class: "font-mono tracking-tight text-2xl sm:text-3xl" },
+    { name: "Pixels with Purpose", class: "font-[family-name:var(--font-handwriting)] text-5xl sm:text-6xl" }
+  ]
 
   useEffect(() => {
-    const timeInterval = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 1000)
-    return () => clearInterval(timeInterval)
+    const currentFullText = styles[styleIndex].name
+    
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        setText(currentFullText.substring(0, text.length + 1))
+        if (text === currentFullText) {
+          setTimeout(() => setIsDeleting(true), 2000) // Pause plus longue à la fin de la phrase
+        }
+      } else {
+        setText(currentFullText.substring(0, text.length - 1))
+        if (text === "") {
+          setIsDeleting(false)
+          setStyleIndex((prev) => (prev + 1) % styles.length)
+        }
+      }
+    }, isDeleting ? 30 : 80) // Vitesse de frappe optimisée pour les phrases longues
+
+    return () => clearTimeout(timeout)
+  }, [text, isDeleting, styleIndex])
+
+  return (
+    <div className="flex items-center justify-center h-full min-h-[160px] bg-slate-50/50 rounded-2xl border border-slate-100 px-6 overflow-hidden">
+      <div className="text-center">
+        <span className={`${styles[styleIndex].class} text-slate-900 leading-tight block`}>
+          {text}
+          <span className="animate-pulse border-r-4 border-blue-500 ml-1 h-full">&nbsp;</span>
+        </span>
+      </div>
+    </div>
+  )
+}
+const ColorBox = () => {
+  const [index, setIndex] = useState(0)
+  const palette = [
+    { hex: "#6366f1", name: "Indigo" },
+    { hex: "#10b981", name: "Emerald" },
+    { hex: "#f43f5e", name: "Rose" },
+    { hex: "#3b82f6", name: "Blue" },
+    { hex: "#f59e0b", name: "Amber" }
+  ]
+
+  useEffect(() => {
+    const itv = setInterval(() => {
+      setIndex((prev) => (prev + 1) % palette.length)
+    }, 3000) // Change d'ambiance toutes les 3 secondes
+    return () => clearInterval(itv)
   }, [])
 
-  useEffect(() => {
-    if (!isActive) return
-
-    const scenarios = [
-      [
-        { text: "Hi! How can I help you today?", isBot: true },
-        { text: "I'd like to book an appointment", isBot: false },
-        { text: "Perfect! I can help with that. What service are you interested in?", isBot: true },
-      ],
-      [
-        { text: "Hello! I'm available 24/7 to assist you.", isBot: true },
-        { text: "Do you have weekend availability?", isBot: false },
-        { text: "I can check our weekend slots for you.", isBot: true },
-      ],
-      [
-        { text: "Good evening! How may I assist you?", isBot: true },
-        { text: "I need help with pricing", isBot: false },
-        { text: "I'd be happy to provide pricing information right away!", isBot: true },
-      ],
-    ]
-
-    const currentScenario = scenarios[cycleCount % scenarios.length]
-    setMessages(currentScenario.map((msg) => ({ ...msg, visible: false })))
-
-    const timer = setTimeout(() => {
-      setMessages((prev) => prev.map((msg, i) => ({ ...msg, visible: i === 0 })))
-
-      setTimeout(() => {
-        setMessages((prev) => prev.map((msg, i) => ({ ...msg, visible: i <= 1 })))
-
-        setTimeout(() => {
-          const typingInterval = setInterval(() => {
-            setTypingDots((prev) => (prev + 1) % 4)
-          }, 500)
-
-          setTimeout(() => {
-            clearInterval(typingInterval)
-            setMessages((prev) => prev.map((msg) => ({ ...msg, visible: true })))
-
-            setTimeout(() => {
-              setCycleCount((prev) => prev + 1)
-            }, 3000)
-          }, 2000)
-        }, 1000)
-      }, 1500)
-    }, 500)
-
-    return () => clearTimeout(timer)
-  }, [isActive, cycleCount])
+  const currentColor = palette[index].hex
 
   return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32 overflow-hidden relative">
-      <div className="absolute top-2 right-2 flex items-center gap-1">
-        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-        <span className="text-xs text-slate-500 font-medium">24/7</span>
-      </div>
-      <div className="space-y-2">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex ${msg.isBot ? "justify-start" : "justify-end"} transition-all duration-500 ${
-              msg.visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
-            }`}
-          >
-            <div
-              className={`max-w-[80%] px-3 py-1.5 rounded-full text-xs ${
-                msg.isBot ? "bg-slate-200 text-slate-700" : "bg-blue-500 text-white"
-              }`}
-            >
-              {msg.text}
-            </div>
-          </div>
-        ))}
-        {typingDots > 0 && (
-          <div className="flex justify-start">
-            <div className="bg-slate-200 px-3 py-1.5 rounded-full">
-              <div className="flex space-x-1">
-                {[1, 2, 3].map((dot) => (
-                  <div
-                    key={dot}
-                    className={`w-1 h-1 bg-slate-500 rounded-full transition-opacity duration-300 ${
-                      typingDots >= dot ? "opacity-100" : "opacity-30"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
+    <div 
+      className="flex flex-col h-full min-h-[200px] justify-center items-center rounded-3xl transition-all duration-1000 p-8 border border-slate-100 relative overflow-hidden"
+      style={{ backgroundColor: `${currentColor}10` }} // Fond très léger de la couleur actuelle
+    >
+      {/* Cercles décoratifs en fond qui flottent */}
+      <div 
+        className="absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl transition-colors duration-1000"
+        style={{ backgroundColor: currentColor, opacity: 0.2 }}
+      />
 
-const AnimatedPhoneDemo = ({ isActive }: { isActive: boolean }) => {
-  const [callState, setCallState] = useState<"idle" | "ringing" | "answered">("idle")
-  const [callCount, setCallCount] = useState(0)
-
-  useEffect(() => {
-    if (!isActive) return
-
-    const cycleCall = () => {
-      setCallState("ringing")
-      setTimeout(() => {
-        setCallState("answered")
-        setTimeout(() => {
-          setCallState("idle")
-          setCallCount((prev) => prev + 1)
-          setTimeout(cycleCall, 2000)
-        }, 2000)
-      }, 2000)
-    }
-
-    const timer = setTimeout(cycleCall, 800)
-    return () => clearTimeout(timer)
-  }, [isActive])
-
-  return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32 flex items-center justify-center relative">
-      <div className="absolute top-2 right-2 text-xs text-slate-500 font-medium">Calls: {callCount + 1}</div>
-      <div className="relative">
-        <div
-          className={`w-16 h-16 rounded-full bg-green-500 flex items-center justify-center transition-all duration-500 ${
-            callState === "ringing" ? "animate-pulse scale-110" : ""
-          } ${callState === "answered" ? "bg-blue-500" : ""}`}
+      <div className="z-10 text-center space-y-6 w-full">
+        {/* Affichage du code HEX géant */}
+        <h4 
+          className="text-4xl sm:text-5xl font-black font-mono tracking-tighter transition-all duration-500"
+          style={{ color: currentColor }}
         >
-          <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-          </svg>
+          {currentColor.toUpperCase()}
+        </h4>
+
+        {/* Visualiseur de palette */}
+        <div className="flex justify-center gap-3">
+          {palette.map((color, i) => (
+            <div
+              key={color.hex}
+              className={`h-3 rounded-full transition-all duration-500 ${
+                i === index ? "w-12" : "w-3"
+              }`}
+              style={{ backgroundColor: color.hex }}
+            />
+          ))}
         </div>
-        {callState === "ringing" && (
-          <>
-            <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping"></div>
-            <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping animation-delay-75"></div>
-          </>
+
+        {/* Indicateur de thème */}
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">
+          Dynamic Theming Engine
+        </p>
+      </div>
+    </div>
+  )
+}
+const ButtonBox = () => {
+  const [status, setStatus] = useState("idle") // idle, hover, loading, success
+
+  useEffect(() => {
+    const sequence = async () => {
+      // 1. Hover
+      await new Promise(r => setTimeout(r, 1000))
+      setStatus("hover")
+      // 2. Click / Loading
+      await new Promise(r => setTimeout(r, 1000))
+      setStatus("loading")
+      // 3. Success
+      await new Promise(r => setTimeout(r, 1500))
+      setStatus("success")
+      // 4. Reset
+      await new Promise(r => setTimeout(r, 2000))
+      setStatus("idle")
+    }
+    
+    const itv = setInterval(sequence, 6000)
+    sequence() // Lancer direct au montage
+    return () => clearInterval(itv)
+  }, [])
+
+  return (
+    <div className="flex flex-col items-center justify-center h-full min-h-[200px] bg-slate-50/50 rounded-3xl border border-slate-100 p-8">
+      <button 
+        className={`
+          relative w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all duration-500
+          ${status === "idle" ? "bg-slate-900 text-white translate-y-0" : ""}
+          ${status === "hover" ? "bg-slate-700 text-white -translate-y-2 shadow-xl" : ""}
+          ${status === "loading" ? "bg-blue-600 text-white scale-95 opacity-80" : ""}
+          ${status === "success" ? "bg-emerald-500 text-white scale-100" : ""}
+        `}
+      >
+        {status === "idle" && "Confirm Order"}
+        {status === "hover" && "Click Me"}
+        {status === "loading" && (
+          <span className="flex items-center justify-center gap-2">
+            <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            Processing...
+          </span>
         )}
-        {callState === "answered" && (
-          <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-            <div className="bg-blue-100 px-2 py-1 rounded text-xs text-blue-700 whitespace-nowrap">Call answered</div>
-          </div>
-        )}
+        {status === "success" && "✓ Done"}
+      </button>
+
+      <div className="mt-8 flex gap-4 overflow-hidden">
+         <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "idle" ? "bg-slate-900 scale-150" : "bg-slate-200"}`} />
+         <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "hover" ? "bg-slate-700 scale-150" : "bg-slate-200"}`} />
+         <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "loading" ? "bg-blue-600 scale-150" : "bg-slate-200"}`} />
+         <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "success" ? "bg-emerald-500 scale-150" : "bg-slate-200"}`} />
       </div>
     </div>
   )
 }
 
-const AnimatedCalendarDemo = ({ isActive }: { isActive: boolean }) => {
-  const [selectedDate, setSelectedDate] = useState<number | null>(null)
-  const [booked, setBooked] = useState(false)
-
+const ResponsiveBox = () => {
+  const [device, setDevice] = useState("mobile") // mobile, tablet, desktop
+  
   useEffect(() => {
-    if (!isActive) return
-
-    const timer = setTimeout(() => {
-      setSelectedDate(15)
-      setTimeout(() => setBooked(true), 1500)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [isActive])
+    const itv = setInterval(() => {
+      const devices = ["mobile", "tablet", "desktop"]
+      setDevice(prev => devices[(devices.indexOf(prev) + 1) % devices.length])
+    }, 3000)
+    return () => clearInterval(itv)
+  }, [])
 
   return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32">
-      <div className="grid grid-cols-7 gap-1 text-xs">
-        {Array.from({ length: 21 }, (_, i) => i + 1).map((day) => (
-          <div
-            key={day}
-            className={`w-4 h-4 flex items-center justify-center rounded transition-all duration-300 ${
-              day === selectedDate
-                ? booked
-                  ? "bg-green-500 text-white scale-110"
-                  : "bg-blue-500 text-white scale-110"
-                : day % 7 === 0 || day % 6 === 0
-                  ? "bg-slate-200 text-slate-400"
-                  : "bg-white text-slate-600 hover:bg-slate-100"
-            }`}
-          >
-            {day}
+    <div className="flex flex-col items-center justify-center h-full min-h-[220px] bg-slate-900 rounded-[2rem] p-6 overflow-hidden relative group">
+      {/* Grille de fond pour le look "Blueprint/Design" */}
+      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+
+      <div className="relative z-10 w-full flex flex-col items-center">
+        {/* Le Viewport Dynamique */}
+        <div 
+          className="bg-white rounded-xl shadow-2xl border-[4px] border-slate-800 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden"
+          style={{ 
+            width: device === "mobile" ? "80px" : device === "tablet" ? "160px" : "240px",
+            height: "120px" 
+          }}
+        >
+          {/* Header du site simulé */}
+          <div className="h-3 bg-slate-100 w-full mb-2 flex items-center px-1 gap-1">
+            <div className="w-1 h-1 rounded-full bg-red-400" />
+            <div className="w-1 h-1 rounded-full bg-amber-400" />
+            <div className="w-1 h-1 rounded-full bg-emerald-400" />
           </div>
-        ))}
+
+          {/* Contenu qui "Reflow" réellement */}
+          <div className="p-2 space-y-2">
+            <div className="h-2 bg-slate-200 rounded-full w-full" />
+            <div className="h-2 bg-slate-200 rounded-full w-2/3" />
+            
+            {/* Grille adaptative interne */}
+            <div className={`grid gap-1 transition-all duration-500 ${device === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
+              <div className="h-8 bg-blue-500/20 rounded-md border border-blue-500/30" />
+              <div className={`h-8 bg-blue-500/20 rounded-md border border-blue-500/30 ${device === "mobile" ? "hidden" : "block"}`} />
+              <div className={`h-8 bg-blue-500/20 rounded-md border border-blue-500/30 ${device === "mobile" ? "hidden" : "block"}`} />
+            </div>
+          </div>
+        </div>
+
+        {/* Status Bar style "Console" */}
+        <div className="mt-6 font-mono text-[9px] flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-emerald-400">●</span>
+            <span className="text-slate-400 uppercase tracking-widest">Viewport:</span>
+            <span className="text-white w-12">{device === 'mobile' ? '375px' : device === 'tablet' ? '768px' : '1440px'}</span>
+          </div>
+        </div>
       </div>
-      {booked && (
-        <div className="mt-2 text-xs text-green-600 font-medium animate-fade-in">✓ Appointment booked for the 15th</div>
-      )}
     </div>
   )
 }
-
-const AnimatedEmailDemo = ({ isActive }: { isActive: boolean }) => {
-  const [emails, setEmails] = useState([
-    { subject: "Service inquiry", status: "unread" },
-    { subject: "Appointment request", status: "unread" },
-    { subject: "Quote needed", status: "unread" },
-  ])
+const ThemeBox = () => {
+  const [isDark, setIsDark] = useState(true)
 
   useEffect(() => {
-    if (!isActive) return
-
-    emails.forEach((_, index) => {
-      setTimeout(
-        () => {
-          setEmails((prev) => prev.map((email, i) => (i === index ? { ...email, status: "replied" } : email)))
-        },
-        1000 + index * 800,
-      )
-    })
-  }, [isActive])
+    const itv = setInterval(() => {
+      setIsDark((prev) => !prev)
+    }, 3000)
+    return () => clearInterval(itv)
+  }, [])
 
   return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32 overflow-hidden">
-      <div className="space-y-2">
-        {emails.map((email, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-2 p-2 rounded transition-all duration-500 ${
-              email.status === "replied" ? "bg-green-100" : "bg-white"
-            }`}
-          >
-            <div className={`w-2 h-2 rounded-full ${email.status === "replied" ? "bg-green-500" : "bg-blue-500"}`} />
-            <span className="text-xs text-slate-700 flex-1">{email.subject}</span>
-            {email.status === "replied" && (
-              <svg className="w-3 h-3 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
+    <div className={`flex flex-col items-center justify-center h-full min-h-[220px] transition-all duration-700 rounded-[2rem] p-8 overflow-hidden relative ${
+      isDark ? "bg-slate-950" : "bg-slate-100"
+    }`}>
+      
+      {/* Petit indicateur d'état en haut */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2">
+        <span className={`text-[9px] font-mono font-bold tracking-[0.2em] transition-colors duration-700 ${
+          isDark ? "text-slate-500" : "text-slate-400"
+        }`}>
+          THEME: {isDark ? "DARK_MODE" : "LIGHT_MODE"}
+        </span>
+      </div>
+
+      <div className="relative z-10 w-full space-y-4">
+        {/* L'icône animée */}
+        <div className="flex justify-center">
+          <div className={`p-4 rounded-2xl transition-all duration-700 ${
+            isDark ? "bg-slate-900 text-yellow-400 rotate-0" : "bg-white text-blue-600 rotate-180 shadow-xl shadow-slate-200"
+          }`}>
+            {isDark ? (
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+            ) : (
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z" />
               </svg>
             )}
           </div>
-        ))}
+        </div>
+
+        {/* Skeleton UI qui change de couleur */}
+        <div className="space-y-2 max-w-[140px] mx-auto">
+          <div className={`h-2 rounded-full transition-colors duration-700 ${isDark ? "bg-slate-800" : "bg-slate-200"}`} />
+          <div className={`h-2 rounded-full w-2/3 mx-auto transition-colors duration-700 ${isDark ? "bg-slate-800" : "bg-slate-200"}`} />
+        </div>
       </div>
+
+      {/* Effet de lueur (Glow) uniquement en mode sombre */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 bg-blue-500/10 blur-3xl rounded-full ${
+        isDark ? "opacity-40" : "opacity-0"
+      }`} />
     </div>
   )
 }
 
-const AnimatedLeadsDemo = ({ isActive }: { isActive: boolean }) => {
-  const [leads, setLeads] = useState([
-    { name: "Sarah M.", score: 0, qualified: false },
-    { name: "John D.", score: 0, qualified: false },
-    { name: "Mike R.", score: 0, qualified: false },
-  ])
-
-  useEffect(() => {
-    if (!isActive) return
-
-    leads.forEach((_, index) => {
-      setTimeout(() => {
-        const targetScore = [85, 92, 78][index]
-        const interval = setInterval(() => {
-          setLeads((prev) =>
-            prev.map((lead, i) => {
-              if (i === index && lead.score < targetScore) {
-                const newScore = Math.min(lead.score + 5, targetScore)
-                return {
-                  ...lead,
-                  score: newScore,
-                  qualified: newScore >= 80,
-                }
-              }
-              return lead
-            }),
-          )
-        }, 50)
-
-        setTimeout(() => clearInterval(interval), 1000)
-      }, index * 600)
-    })
-  }, [isActive])
-
-  return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32 overflow-hidden">
-      <div className="space-y-2">
-        {leads.map((lead, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <span className="text-xs text-slate-700 w-12">{lead.name}</span>
-            <div className="flex-1 bg-slate-200 rounded-full h-2">
-              <div
-                className={`h-2 rounded-full transition-all duration-500 ${
-                  lead.qualified ? "bg-green-500" : "bg-blue-500"
-                }`}
-                style={{ width: `${lead.score}%` }}
-              />
-            </div>
-            <span className="text-xs font-medium w-8">{lead.score}%</span>
-            {lead.qualified && <span className="text-xs text-green-600">✓</span>}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-const AnimatedIntegrationsDemo = ({ isActive }: { isActive: boolean }) => {
-  const [connections, setConnections] = useState([
-    { name: "CRM", connected: false },
-    { name: "WhatsApp", connected: false },
-    { name: "Calendar", connected: false },
-    { name: "Email", connected: false },
-  ])
-
-  useEffect(() => {
-    if (!isActive) return
-
-    connections.forEach((_, index) => {
-      setTimeout(
-        () => {
-          setConnections((prev) => prev.map((conn, i) => (i === index ? { ...conn, connected: true } : conn)))
-        },
-        500 + index * 400,
-      )
-    })
-  }, [isActive])
-
-  return (
-    <div className="bg-slate-50 rounded-lg p-4 h-32">
-      <div className="grid grid-cols-2 gap-2">
-        {connections.map((conn, i) => (
-          <div
-            key={i}
-            className={`flex items-center gap-2 p-2 rounded transition-all duration-500 ${
-              conn.connected ? "bg-green-100" : "bg-white"
-            }`}
-          >
-            <div
-              className={`w-2 h-2 rounded-full transition-colors duration-500 ${
-                conn.connected ? "bg-green-500" : "bg-slate-300"
-              }`}
-            />
-            <span className="text-xs text-slate-700">{conn.name}</span>
-          </div>
-        ))}
-      </div>
-      <div className="mt-2 text-center">
-        <div className="text-xs text-slate-500">{connections.filter((c) => c.connected).length}/4 connected</div>
-      </div>
-    </div>
-  )
-}
+// --- 2. TA NOUVELLE LISTE DE FEATURES ---
 
 const features = [
   {
-    title: "eCommerce Websites",
-    description:
-      "Powerful online stores with product catalogs, shopping carts, secure payments, and inventory management. Ready to sell globally.",
-    demo: AnimatedChatDemo,
+    title: "Typography",
+    description: "Maîtrise des polices Google Fonts et des échelles visuelles pour une lecture parfaite.",
+    demo: TypoBox,
     size: "large",
   },
   {
-    title: "Boutique Websites",
-    description:
-      "Beautiful storefronts designed specifically for boutiques with seamless customer experience, easy browsing, and mobile optimization.",
-    demo: AnimatedPhoneDemo,
+    title: "Theming System",
+    description: "Des palettes de couleurs cohérentes qui s'adaptent à votre identité de marque.",
+    demo: ColorBox,
+    size: "medium",
+  },
+  { 
+    title: "Theme Switching", 
+    description: "Bascule intelligente entre mode clair et sombre avec transitions fluides.", 
+    demo: ThemeBox, 
+    size: "medium" 
+  },
+  {
+    title: "UI Components",
+    description: "Boutons, inputs et éléments d'interface fluides codés sur-mesure.",
+    demo: ButtonBox,
     size: "medium",
   },
   {
-    title: "Portfolio Websites",
-    description:
-      "Stunning portfolio sites for creatives, designers, photographers, and freelancers to showcase your best work and attract clients.",
-    demo: AnimatedCalendarDemo,
-    size: "medium",
-  },
-  {
-    title: "Business Websites",
-    description:
-      "Professional websites for service providers and companies with clear information, contact forms, and call-to-action sections.",
-    demo: AnimatedEmailDemo,
-    size: "large",
-  },
-  {
-    title: "Blog & Content Sites",
-    description:
-      "Dynamic blogging platforms with easy-to-manage content, SEO optimization, and built-in social sharing capabilities.",
-    demo: AnimatedLeadsDemo,
-    size: "medium",
-  },
-  {
-    title: "Custom Integrations",
-    description:
-      "We connect your website with CRM, email marketing, analytics, payment gateways, and all the tools you need to succeed.",
-    demo: AnimatedIntegrationsDemo,
+    title: "Adaptive Design",
+    description: "Interfaces fluides optimisées pour chaque taille d'écran.",
+    demo: ResponsiveBox, // On ajoute le nouveau bloc ici
     size: "medium",
   },
 ]
+
+// --- 3. TA SECTION (STYLE CONSERVÉ) ---
 
 export function FeaturesSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -413,103 +325,47 @@ export function FeaturesSection() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          console.log("[v0] Features Section is now visible") // Added debug log
           setIsVisible(true)
         }
       },
-      {
-        threshold: 0.1,
-        rootMargin: "0px 0px -100px 0px",
-      },
+      { threshold: 0.1, rootMargin: "0px 0px -100px 0px" }
     )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current)
-      }
-    }
+    if (sectionRef.current) observer.observe(sectionRef.current)
+    return () => { if (sectionRef.current) observer.unobserve(sectionRef.current) }
   }, [])
 
   return (
     <section id="features" ref={sectionRef} className="relative z-10">
-      <div className="bg-white rounded-t-[3rem] pt-16 sm:pt-24 pb-16 sm:pb-24 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.02]">
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,0,0) 1px, transparent 0)`,
-              backgroundSize: "24px 24px",
-            }}
-          ></div>
-        </div>
-
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-slate-200 rounded-full animate-float"
-              style={{
-                left: `${20 + i * 15}%`,
-                top: `${30 + (i % 3) * 20}%`,
-                animationDelay: `${i * 0.5}s`,
-                animationDuration: `${4 + i * 0.5}s`,
-              }}
-            ></div>
-          ))}
+      <div className="bg-white rounded-t-[3rem] pt-16 pb-16 px-4 relative overflow-hidden">
+        {/* Ton fond avec les points (conservé) */}
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
+          <div className="absolute inset-0" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,0,0) 1px, transparent 0)`, backgroundSize: "24px 24px" }}></div>
         </div>
 
         <div className="max-w-7xl mx-auto relative">
-          <div
-            className={`text-center mb-12 sm:mb-20 transition-all duration-1000 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-            }`}
-          >
-            <div className="inline-flex items-center px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-sm font-medium mb-6">
-              <svg className="w-4 h-4 mr-2 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1H5C3.89 1 3 1.89 3 3V7H1V9H3V15H1V17H3V21C3 22.11 3.89 23 5 23H19C20.11 23 21 22.11 21 21V17H23V15H21V9H23ZM19 9V15H5V9H19ZM7.5 11.5C7.5 10.67 8.17 10 9 10S10.5 10.67 10.5 11.5 9.83 13 9 13 7.5 12.33 7.5 11.5ZM13.5 11.5C13.5 10.67 14.17 10 15 10S16.5 10.67 16.5 11.5 15.83 13 15 13 13.5 12.33 13.5 11.5ZM12 16C13.11 16 14.08 16.59 14.71 17.5H9.29C9.92 16.59 10.89 16 12 16Z" />
-              </svg>
-              Multiple Website Types - One Partner
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 text-balance mb-4 sm:mb-6">
-              We Build{" "}
-              <span className="bg-gradient-to-r from-slate-600 to-slate-400 bg-clip-text text-transparent">
-                Amazing Websites
-              </span>
+          <div className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+            <h2 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">
+              Maîtrise <span className="bg-gradient-to-r from-slate-600 to-slate-400 bg-clip-text text-transparent">Technique</span>
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto font-light leading-relaxed">
-              From ecommerce stores to boutiques, portfolios to blogs - we create beautiful, high-converting websites that help your business thrive online.
+            <p className="text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
+              Plus qu'un design, je construis des systèmes robustes, performants et entièrement personnalisés.
             </p>
           </div>
 
-          <div
-            className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 transition-all duration-1000 delay-300 ${
-              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-            }`}
-          >
+          <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
             {features.map((feature, index) => (
               <div
                 key={index}
                 className={`group transition-all duration-1000 ${feature.size === "large" ? "md:col-span-2" : ""}`}
-                style={{
-                  transitionDelay: isVisible ? `${300 + index * 100}ms` : "0ms",
-                }}
                 onMouseEnter={() => setActiveDemo(index)}
                 onMouseLeave={() => setActiveDemo(null)}
               >
-                <div className="bg-white rounded-2xl p-6 sm:p-8 h-full shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-slate-200 hover:border-slate-300">
+                <div className="bg-white rounded-3xl p-6 h-full shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-slate-100">
                   <div className="mb-6">
-                    <feature.demo isActive={activeDemo === index || isVisible} />
+                    <feature.demo/>
                   </div>
-
-                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 group-hover:text-slate-700 transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-
-                  <p className="text-slate-600 text-sm sm:text-base leading-relaxed">{feature.description}</p>
+                  <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed">{feature.description}</p>
                 </div>
               </div>
             ))}
