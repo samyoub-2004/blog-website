@@ -27,18 +27,79 @@ export function TechStackSection() {
     return () => observer.disconnect()
   }, [])
 
-  const techItems = [
-    { name: "React & Next.js", role: "Frontend", text: "Architecture d'applications modernes avec Server Components." },
-    { name: "Tailwind CSS", role: "Design", text: "Stylisation rapide et responsive avec contrôle total." },
-    { name: "TypeScript", role: "Language", text: "Code typé pour une maintenance et une fiabilité accrues." },
-    { name: "Node.js", role: "Backend", text: "APIs robustes et scalables pour vos applications." },
-    { name: "Framer Motion", role: "Motion", text: "Animations fluides et transitions haut de gamme." },
-    { name: "PostgreSQL", role: "Database", text: "Gestion de données complexes et optimisées." },
-    { name: "Figma", role: "Design Tool", text: "Maquettage et prototypage pour une UX soignée." },
-    { name: "Git & GitHub", role: "Workflow", text: "Collaboration efficace et gestion de version rigoureuse." },
-    { name: "Prisma", role: "ORM", text: "Modélisation de données simplifiée et requêtes sécurisées avec TypeScript." },
-    { name: "Supabase", role: "Backend / Auth", text: "Gestion de l'authentification et base de données temps réel." },
-    { name: "Resend", role: "Email Service", text: "Envoi d'emails transactionnels avec une intégration React fluide." },
+const techItems = [
+    { 
+      name: "React", 
+      role: "Frontend", 
+      logo: "https://cdn.simpleicons.org/react/61DAFB", 
+      text: "Interfaces réactives et composants réutilisables." 
+    },
+    { 
+      name: "Next.js", 
+      role: "Framework", 
+      logo: "https://cdn.simpleicons.org/nextdotjs/white", 
+      text: "Optimisation SEO et rendu côté serveur (SSR)." 
+    },
+    { 
+      name: "Tailwind CSS", 
+      role: "Design", 
+      logo: "https://cdn.simpleicons.org/tailwindcss/06B6D4", 
+      text: "Design moderne et responsive ultra-rapide." 
+    },
+    { 
+      name: "TypeScript", 
+      role: "Language", 
+      logo: "https://cdn.simpleicons.org/typescript/3178C6", 
+      text: "Code sécurisé et typage statique rigoureux." 
+    },
+    { 
+      name: "Node.js", 
+      role: "Backend", 
+      logo: "https://cdn.simpleicons.org/nodedotjs/339933", 
+      text: "Développement serveur performant et scalable." 
+    },
+    { 
+      name: "PostgreSQL", 
+      role: "Database", 
+      logo: "https://cdn.simpleicons.org/postgresql/4169E1", 
+      text: "Base de données relationnelle puissante et fiable." 
+    },
+    { 
+      name: "Prisma", 
+      role: "ORM", 
+      logo: "https://cdn.simpleicons.org/prisma/2D3748", 
+      text: "Gestion simplifiée de la base de données." 
+    },
+    { 
+      name: "Supabase", 
+      role: "BaaS", 
+      logo: "https://cdn.simpleicons.org/supabase/3ECF8E", 
+      text: "Auth et DB temps réel en toute simplicité." 
+    },
+    { 
+      name: "Framer Motion", 
+      role: "Motion", 
+      logo: "https://cdn.simpleicons.org/framer/0055FF", 
+      text: "Animations web fluides et interactives." 
+    },
+    { 
+      name: "Resend", 
+      role: "Email", 
+      logo: "https://cdn.simpleicons.org/resend/white", 
+      text: "Envoi d'emails transactionnels moderne." 
+    },
+    { 
+      name: "Figma", 
+      role: "Design Tool", 
+      logo: "https://cdn.simpleicons.org/figma/F24E1E", 
+      text: "Conception d'interfaces et prototypage." 
+    },
+    { 
+      name: "GitHub", 
+      role: "Workflow", 
+      logo: "https://cdn.simpleicons.org/github/white", 
+      text: "Gestion de version et travail collaboratif." 
+    }
   ]
 
   return (
@@ -63,7 +124,7 @@ export function TechStackSection() {
           <div className="flex gap-8 max-w-6xl" style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)" }}>
             <TechStackColumn items={techItems.slice(0, 4)} duration={25} className="flex-1" />
             <TechStackColumn items={techItems.slice(4, 8)} duration={18} className="flex-1 hidden md:block" />
-            <TechStackColumn items={techItems.slice(8, 11)} duration={30} className="flex-1 hidden lg:block" />
+            <TechStackColumn items={techItems.slice(8, 12)} duration={30} className="flex-1 hidden lg:block" />
           </div>
         </div>
       </div>
