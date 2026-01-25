@@ -419,7 +419,7 @@ export default function GetStartedPage() {
                 Suivant
               </Button>
             ) : (
-              <Button className="bg-white text-black hover:bg-gray-100" onClick={() => router.push("/#contact")}>Demander un devis</Button>
+              <Button className="bg-white text-black hover:bg-gray-100" onClick={() => router.push("/contact")}>Demander un devis</Button>
             )}
           </div>
           {state.siteType === "surmesure" && (
@@ -452,7 +452,7 @@ export default function GetStartedPage() {
               : "Si vous n'êtes pas sûr des options à choisir, contactez‑nous et nous préparerons un devis personnalisé."}
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Link href="/#contact">
+            <Link href="/contact">
               <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
             </Link>
             <Link href="mailto:hello@example.com" className="text-white/80 underline underline-offset-4">hello@example.com</Link>
@@ -480,7 +480,7 @@ export default function GetStartedPage() {
               <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setShowCustomModal(false)}>
                 Fermer
               </Button>
-              <Link href="/#contact">
+              <Link href="/contact">
                 <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
               </Link>
             </div>
