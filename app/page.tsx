@@ -4,10 +4,10 @@ import { ProblemSolutionSection } from "@/components/problem-solution-section"
 import { FeaturesSection } from "@/components/features-section"
 import { AITeamSection } from "@/components/ai-team-section"
 import { TechStackSection } from "@/components/tech-stack-section"
-import { ROICalculatorSection } from "@/components/roi-calculator-section"
+// import { ROICalculatorSection } from "@/components/roi-calculator-section"
 import { BusinessTypesSection } from "@/components/business-types-section"
 import { CTASection } from "@/components/cta-section"
-import { ContactFormSection } from "@/components/contact-form-section"
+import { ContactCTASection } from "@/components/contact-cta-section"
 import { Footer } from "@/components/footer"
 import { PricingSection } from "@/components/pricing-section"
 
@@ -22,11 +22,11 @@ export default function HomePage() {
           <FeaturesSection />
           <AITeamSection />
           <TechStackSection />
-          <ROICalculatorSection />
+          {/* <ROICalculatorSection /> */}
           <BusinessTypesSection />
           <CTASection />
           <PricingSection />
-          <ContactFormSection />
+          <ContactCTASection />
           <Footer />
         </div>
       </main>

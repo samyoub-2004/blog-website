@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { ArrowRight } from "lucide-react"
 
 type Billing = "monthly" | "yearly"
 
@@ -196,12 +197,10 @@ export function PricingSection() {
                     {plan.cta}
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => setModalPlan(plan)}
-                    className="w-full bg-white text-black rounded-lg px-6 py-4 text-base font-medium transition-all duration-300 hover:bg-gray-50 hover:scale-[1.02]"
-                  >
-                    {plan.cta}
-                  </Button>
+                  <Link href="/contact" className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-base font-semibold text-black transition-all duration-300 hover:bg-white/90 hover:scale-[1.02]">
+                    Get Started
+                    <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+                  </Link>
                 )}
               </div>
             )
@@ -265,7 +264,7 @@ export function PricingSection() {
                   <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setModalPlan(null)}>
                     Fermer
                   </Button>
-                  <Link href="/#contact">
+                  <Link href="/contact">
                     <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
                   </Link>
                 </div>
@@ -303,7 +302,7 @@ export function PricingSection() {
                   <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setModalPlan(null)}>
                     Annuler
                   </Button>
-                  <Link href="/#contact">
+                  <Link href="/contact">
                     <Button className="bg-white text-black hover:bg-gray-100">Valider la demande</Button>
                   </Link>
                 </div>
