@@ -3,7 +3,7 @@ import { HeroSection } from "@/components/hero-section"
 import { ProblemSolutionSection } from "@/components/problem-solution-section"
 import { FeaturesSection } from "@/components/features-section"
 import { AITeamSection } from "@/components/ai-team-section"
-import { TestimonialsSection } from "@/components/testimonials-section"
+import { TechStackSection } from "@/components/tech-stack-section"
 import { ROICalculatorSection } from "@/components/roi-calculator-section"
 import { BusinessTypesSection } from "@/components/business-types-section"
 import { CTASection } from "@/components/cta-section"
@@ -21,7 +21,7 @@ export default function HomePage() {
           <ProblemSolutionSection />
           <FeaturesSection />
           <AITeamSection />
-          <TestimonialsSection />
+          <TechStackSection />
           <ROICalculatorSection />
           <BusinessTypesSection />
           <CTASection />
