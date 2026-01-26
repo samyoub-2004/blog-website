@@ -27,10 +27,10 @@ async function loadSiteContext(projectRoot: string) {
   const files = [
     path.join(projectRoot, "app/page.tsx"),
     path.join(projectRoot, "app/solutions-web/page.tsx"),
-    path.join(projectRoot, "app/portfolio/page.tsx"),
-    path.join(projectRoot, "components/hero-section.tsx"),
-    path.join(projectRoot, "components/features-section.tsx"),
-    path.join(projectRoot, "components/portfolio.tsx"),
+    // path.join(projectRoot, "app/portfolio/page.tsx"),
+    path.join(projectRoot, "components/pricing-section.tsx"),
+    // path.join(projectRoot, "components/features-section.tsx"),
+    // path.join(projectRoot, "components/portfolio.tsx"),
   ]
   const contents = await Promise.all(files.map(readTextSafe))
   const parts = contents
