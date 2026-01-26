@@ -7,6 +7,7 @@ import DotGridShader from "@/components/DotGridShader"
 import ProjectCard from "@/components/project-card"
 import AnimatedHeading from "@/components/animated-heading"
 import RevealOnView from "@/components/reveal-on-view"
+import { GlassmorphismNav } from "@/components/glassmorphism-nav"
 
 export default function Page() {
   const projects = [
@@ -73,13 +74,14 @@ export default function Page() {
   ]
 
   return (
-    <main className="bg-neutral-950 text-white">
+    <main className="bg-black text-white">
+      <GlassmorphismNav />
       <section className="px-4 pt-4 pb-16 lg:pb-4">
-        <aside className="md:fixed md:top-0 md:left-0 md:h-screen md:w-[420px] self-start">
+        <aside className="md:fixed md:top-24 md:left-0 md:h-screen md:w-[420px] self-start">
             <RevealOnView
               as="div"
               intensity="hero"
-              className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/60 p-6 sm:p-8"
+              className="relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-white/20 bg-white/10 backdrop-blur-md shadow-2xl p-6 sm:p-8"
               staggerChildren
             >
               <div className="pointer-events-none absolute inset-0 opacity-5 mix-blend-soft-light">
@@ -125,7 +127,7 @@ export default function Page() {
             </RevealOnView>
           </aside>
 
-          <div className="relative space-y-4 md:pl-[420px]">
+          <div className="relative space-y-4 md:pl-[420px] md:pt-24">
             {projects.map((p, idx) => (
               <ProjectCard
                 key={p.title}
