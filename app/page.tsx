@@ -10,6 +10,8 @@ import { CTASection } from "@/components/cta-section"
 import { ContactCTASection } from "@/components/contact-cta-section"
 import { Footer } from "@/components/footer"
 import { PricingSection } from "@/components/pricing-section"
+import { InteractiveExpertise } from "@/components/intrctive-screen"
+import { BusinessTypesSectionCreation } from "@/components/business-types-section-creation"
 
 export default function HomePage() {
   return (
@@ -19,11 +21,12 @@ export default function HomePage() {
           <GlassmorphismNav />
           <HeroSection />
           <ProblemSolutionSection />
-          <FeaturesSection />
+          {/* <FeaturesSection /> */}
           <AITeamSection />
           <TechStackSection />
+          {/* <InteractiveExpertise /> */}
           {/* <ROICalculatorSection /> */}
-          <BusinessTypesSection />
+          <BusinessTypesSectionCreation />
           <CTASection />
           <PricingSection />
           <ContactCTASection />
