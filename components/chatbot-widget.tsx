@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X, Send } from "lucide-react"
+import { MessageCircle, X, Send, Sparkles, ShieldCheck, Lightbulb, Zap } from "lucide-react"
 
 type ChatMessage = {
   id: string
@@ -10,39 +10,44 @@ type ChatMessage = {
 }
 
 export default function ChatbotWidget() {
-  const [open, setOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
   const [input, setInput] = useState("")
   const [showNudge, setShowNudge] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
-      content:
-        "Bonjour ! Je suis l’assistant de l’équipe Cliste. Je peux vous guider sur nos solutions web, notre portfolio et la meilleure façon de démarrer. Posez votre question.",
+      content: "Bonjour ! Je suis l’assistant Cliste. Comment puis-je vous aider aujourd'hui ?",
     },
   ])
+  
   const listRef = useRef<HTMLDivElement | null>(null)
   const [isTyping, setIsTyping] = useState(false) 
   const [streaming, setStreaming] = useState(false)
 
-  // Scroll automatique avec lissage
+  const handleOpen = () => {
+    setIsOpen(true)
+    setTimeout(() => setIsAnimating(true), 10)
+    setShowNudge(false)
+  }
+
+  const handleClose = () => {
+    setIsAnimating(false)
+    setTimeout(() => setIsOpen(false), 300)
+  }
+
   useEffect(() => {
     if (listRef.current) {
-      listRef.current.scrollTo({
-        top: listRef.current.scrollHeight,
-        behavior: "smooth",
-      })
+      listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" })
     }
-  }, [messages, open, isTyping])
+  }, [messages, isOpen, isTyping])
 
   useEffect(() => {
     const seen = typeof window !== "undefined" && localStorage.getItem("chatbot_seen_nudge") === "1"
     if (!seen) {
       setShowNudge(true)
-      const t = setTimeout(() => {
-        setShowNudge(false)
-        try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {}
-      }, 12000)
+      const t = setTimeout(() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }, 10000)
       return () => clearTimeout(t)
     }
   }, [])
@@ -50,29 +55,22 @@ export default function ChatbotWidget() {
   const sendMessage = async () => {
     const text = input.trim()
     if (!text) return
-
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text }
     setMessages((prev) => [...prev, userMsg])
     setInput("")
-    
-    // On déclenche l'animation de réflexion immédiatement
     setIsTyping(true)
 
     try {
       const history = [...messages.filter(m => m.id !== "welcome"), userMsg].map(m => ({ role: m.role, content: m.content }))
-      
       const respStream = await fetch("/api/chat/stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history }),
       })
-
       if (!respStream.ok || !respStream.body) throw new Error("stream failed")
-      
       const assistantId = crypto.randomUUID()
       const reader = respStream.body.getReader()
       const decoder = new TextDecoder()
-      
       let firstChunkReceived = false
 
       while (true) {
@@ -81,9 +79,8 @@ export default function ChatbotWidget() {
         const chunk = decoder.decode(value)
         if (chunk) {
           if (!firstChunkReceived) {
-            // Dès l'arrivée du premier caractère :
-            setIsTyping(false) // On retire les petits points
-            setStreaming(true) // On active le mode écriture progressive
+            setIsTyping(false)
+            setStreaming(true)
             setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: chunk }])
             firstChunkReceived = true
           } else {
@@ -91,141 +88,141 @@ export default function ChatbotWidget() {
           }
         }
       }
-      setStreaming(false)
     } catch (e) {
-      // Gestion d'erreur (Fallback)
       console.error(e)
-      setIsTyping(false)
-      setMessages((prev) => [...prev, {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "Désolé, un incident technique empêche l'envoi de la réponse. Merci de réessayer ou de nous contacter via /contact.",
-      }])
+      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: "Désolé, un souci technique est survenu." }])
     } finally {
       setIsTyping(false)
       setStreaming(false)
     }
   }
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }
-
   return (
-    <div className="fixed bottom-4 right-4 z-[90] font-sans">
-      {/* Bouton Bulle flottante */}
-      {!open && (
-        <div className="relative">
+    <div className="fixed bottom-5 right-5 z-[90] font-sans antialiased text-slate-900">
+      
+      {/* Bouton Flottant (Compact & Blanc) */}
+      {!isOpen && (
+        <div className="relative animate-in fade-in scale-in duration-300">
           {showNudge && (
-            <div className="absolute -top-[120px] right-0 w-[86vw] max-w-[320px] select-none animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="relative rounded-2xl px-4 py-3 bg-white text-black shadow-2xl border border-black/10">
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center text-white">
-                    <MessageCircle className="w-4 h-4" />
-                  </div>
-                  <div className="text-sm leading-snug">
-                    <div className="font-semibold text-gray-900">Besoin d'aide ?</div>
-                    <div className="text-gray-600">Hani ou Samy peuvent répondre à vos questions ici.</div>
-                  </div>
-                  <button
-                    onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
-                    className="ml-1 p-1 rounded hover:bg-black/5 transition-colors"
-                  >
-                    <X className="w-4 h-4 text-black/40" />
-                  </button>
-                </div>
-                <div className="absolute -bottom-2 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-black/10" />
+            <div className="absolute -top-[110px] right-0 w-[86vw] max-w-[300px] select-none">
+              <div className="relative rounded-2xl px-4 py-3 bg-white border border-slate-200 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+                <div className="text-[12px] font-semibold text-slate-900 mb-1">Besoin d'aide ?</div>
+                <div className="text-[12px] text-slate-600 leading-snug">Utilisez notre assistance intelligente pour obtenir une réponse rapide.</div>
+                <button
+                  aria-label="Fermer"
+                  onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
+                  className="absolute top-2 right-2 p-1 rounded-md hover:bg-slate-100"
+                >
+                  <X className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+                <div className="absolute -bottom-2 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-slate-200" />
               </div>
             </div>
           )}
           <button
-            onClick={() => { setOpen(true); setShowNudge(false); }}
-            className="flex items-center gap-2 rounded-full px-5 py-3 bg-white text-black shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200"
+            onClick={handleOpen}
+            className="flex items-center gap-2.5 rounded-2xl p-3 bg-white border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 group"
           >
-            <MessageCircle className="w-5 h-5" />
-            <span className="hidden sm:inline font-semibold">Chat</span>
+            <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center transition-transform group-hover:rotate-12">
+              <MessageCircle className="w-5 h-5 text-white" />
+            </div>
+            <div className="pr-2 text-left">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">En ligne</div>
+              <div className="text-sm font-bold text-slate-800">Chatter avec Cliste</div>
+            </div>
           </button>
         </div>
       )}
 
-      {/* Fenêtre de Chat */}
-      {open && (
-        <div className="w-[92vw] sm:w-[400px] h-[60vh] sm:h-[550px] rounded-3xl overflow-hidden border border-white/15 bg-black/80 backdrop-blur-2xl text-white shadow-2xl flex flex-col animate-in fade-in zoom-in-95 duration-300">
+      {/* Fenêtre de Chat (Plus petite : 380px x 600px) */}
+      {isOpen && (
+        <div 
+          className={`
+            w-[92vw] sm:w-[380px] h-[65vh] sm:h-[580px] rounded-[2rem] overflow-hidden 
+            border border-slate-200 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] 
+            flex flex-col origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
+            ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-5"}
+          `}
+        >
           
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
-            <div className="flex items-center gap-2.5">
-              <div className="relative">
-                <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-                <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-40" />
+          {/* Header (Plus compact) */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center shadow-inner">
+                 <Zap className="w-4 h-4 text-blue-400 fill-blue-400" />
               </div>
-              <span className="text-sm font-bold tracking-tight">Hani & Samy</span>
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-bold text-slate-900">Samy & Hani</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                </div>
+                <span className="text-[10px] text-slate-400 font-medium">Support Cliste IA</span>
+              </div>
             </div>
-            <button 
-              onClick={() => setOpen(false)} 
-              className="p-2 rounded-full hover:bg-white/10 transition-colors"
-            >
-              <X className="w-4 h-4 text-white/70" />
+            <button onClick={handleClose} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+              <X className="w-4 h-4 text-slate-400" />
             </button>
           </div>
 
-          {/* Messages */}
-          <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-thin scrollbar-thumb-white/10">
+          {/* Chat Content */}
+          <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-5 scrollbar-none bg-slate-50/30">
+            
+            {/* Guide Info */}
+            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="flex items-center gap-2 mb-1.5 text-blue-600">
+                <Lightbulb className="w-3.5 h-3.5 font-bold" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Conseil Cliste</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-slate-500">
+                Dites-moi quel type de site web vous imaginez, et je vous donnerai une estimation rapide !
+              </p>
+            </div>
+
             {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in duration-300`}>
+                <div className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
                   m.role === "user" 
-                    ? "bg-white text-black font-medium" 
-                    : "bg-white/10 border border-white/10 text-white/90"
+                    ? "bg-slate-900 text-white font-medium rounded-2xl rounded-tr-none" 
+                    : "bg-white text-slate-700 border border-slate-200 rounded-2xl rounded-tl-none"
                 }`}>
                   {m.content}
                 </div>
               </div>
             ))}
 
-            {/* Animation "Typing" unique et élégante */}
             {isTyping && (
-              <div className="flex justify-start animate-in fade-in duration-300">
-                <div className="bg-white/10 border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-1.5 shadow-inner">
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce" />
+              <div className="flex justify-start">
+                <div className="bg-white border border-slate-100 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce" />
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.4s]" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Box */}
-          <div className="p-4 bg-white/5 border-t border-white/10 backdrop-blur-md">
-            <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-3.5 py-1.5 focus-within:border-white/40 transition-all duration-200">
+          {/* Input Area (Plus fine) */}
+          <div className="px-5 py-4 bg-white border-t border-slate-100">
+            <div className="flex items-center gap-2 bg-slate-100/50 border border-slate-200 rounded-xl p-1 focus-within:bg-white focus-within:ring-2 ring-slate-100 transition-all duration-300">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder="Posez votre question..."
-                className="flex-1 bg-transparent text-sm py-2 outline-none placeholder:text-white/30 disabled:opacity-50"
+                onKeyDown={(e) => { if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
+                placeholder="Écrivez ici..."
+                className="flex-1 bg-transparent text-sm py-2 px-3 outline-none placeholder:text-slate-400"
                 disabled={isTyping || streaming}
               />
               <button
                 onClick={sendMessage}
-                className="p-2 rounded-xl bg-white text-black hover:bg-gray-200 disabled:opacity-20 disabled:grayscale transition-all active:scale-90"
+                className="p-2.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-20 transition-all active:scale-95"
                 disabled={!input.trim() || isTyping || streaming}
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-3.5 h-3.5 fill-current" />
               </button>
             </div>
             
-            {/* Footer */}
-            <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.1em] text-white/30 font-bold">
-              <span>Assistant Officiel</span>
-              <span className="flex gap-1.5">
-                <span className="text-white/50">Samy</span>
-                <span className="text-white/20">•</span>
-                <span className="text-white/50">Hani</span>
-              </span>
+            <div className="mt-3 text-center">
+               <span className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em]">IA Assistant • Cliste v1.0</span>
             </div>
           </div>
         </div>
