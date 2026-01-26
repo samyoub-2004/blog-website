@@ -4,147 +4,124 @@ import { useEffect, useRef, useState } from "react"
 // --- 1. TES NOUVEAUX COMPOSANTS (CEUX QU'ON A CRÉÉ ENSEMBLE) ---
 
 const TypoBox = () => {
-  const [text, setText] = useState("")
   const [styleIndex, setStyleIndex] = useState(0)
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [isChanging, setIsChanging] = useState(false)
 
-  // Phrases plus longues et percutantes
   const styles = [
     { name: "Design System Specialist", class: "font-sans font-black tracking-tighter uppercase text-3xl sm:text-4xl" },
-    { name: "Crafting Digital Experiences", class: "font-[family-name:var(--font-script)] text-4xl sm:text-5xl" },
+    { name: "Crafting Digital Experiences", class: "font-serif italic text-4xl sm:text-5xl" },
     { name: "Building Scalable Systems", class: "font-mono tracking-tight text-2xl sm:text-3xl" },
-    { name: "Pixels with Purpose", class: "font-[family-name:var(--font-handwriting)] text-5xl sm:text-6xl" }
+    { name: "Pixels with Purpose", class: "font-black text-5xl sm:text-6xl" }
   ]
 
-  useEffect(() => {
-    const currentFullText = styles[styleIndex].name
+  const nextStyle = () => {
+    if (isChanging) return
+    setIsChanging(true)
     
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        setText(currentFullText.substring(0, text.length + 1))
-        if (text === currentFullText) {
-          setTimeout(() => setIsDeleting(true), 2000) // Pause plus longue à la fin de la phrase
-        }
-      } else {
-        setText(currentFullText.substring(0, text.length - 1))
-        if (text === "") {
-          setIsDeleting(false)
-          setStyleIndex((prev) => (prev + 1) % styles.length)
-        }
-      }
-    }, isDeleting ? 30 : 80) // Vitesse de frappe optimisée pour les phrases longues
-
-    return () => clearTimeout(timeout)
-  }, [text, isDeleting, styleIndex])
+    // On attend un court instant pour changer le texte pendant qu'il est invisible
+    setTimeout(() => {
+      setStyleIndex((prev) => (prev + 1) % styles.length)
+      setIsChanging(false)
+    }, 200) 
+  }
 
   return (
-    <div className="flex items-center justify-center h-full min-h-[160px] bg-slate-50/50 rounded-2xl border border-slate-100 px-6 overflow-hidden">
-      <div className="text-center">
-        <span className={`${styles[styleIndex].class} text-slate-900 leading-tight block`}>
-          {text}
-          <span className="animate-pulse border-r-4 border-blue-500 ml-1 h-full">&nbsp;</span>
+    <div 
+      onClick={nextStyle}
+      className="flex items-center justify-center h-full min-h-[160px] bg-slate-50/50 rounded-2xl border border-slate-100 px-6 overflow-hidden cursor-pointer active:scale-[0.98] transition-all group relative"
+    >
+      {/* Petit indicateur de changement au survol */}
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-1">
+          {styles.map((_, i) => (
+            <div key={i} className={`h-1 w-3 rounded-full ${i === styleIndex ? "bg-blue-500" : "bg-slate-200"}`} />
+          ))}
+        </div>
+      </div>
+
+      <div className={`text-center transition-all duration-300 ease-in-out ${
+        isChanging 
+          ? "opacity-0 -translate-y-4" // Le texte monte et disparaît
+          : "opacity-100 translate-y-0" // Le texte revient à sa place
+      }`}>
+        <span className={`${styles[styleIndex].class} text-slate-900 leading-tight block select-none`}>
+          {styles[styleIndex].name}
         </span>
       </div>
+
+      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-bold text-slate-400 uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">
+        Cliquer pour changer le style
+      </p>
     </div>
   )
 }
 const ColorBox = () => {
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState(0);
   const palette = [
     { hex: "#6366f1", name: "Indigo" },
     { hex: "#10b981", name: "Emerald" },
     { hex: "#f43f5e", name: "Rose" },
     { hex: "#3b82f6", name: "Blue" },
     { hex: "#f59e0b", name: "Amber" }
-  ]
+  ];
 
-  useEffect(() => {
-    const itv = setInterval(() => {
-      setIndex((prev) => (prev + 1) % palette.length)
-    }, 3000) // Change d'ambiance toutes les 3 secondes
-    return () => clearInterval(itv)
-  }, [])
+  // On change manuellement ici
+  const handleNextColor = () => {
+    setIndex((prev) => (prev + 1) % palette.length);
+  };
 
-  const currentColor = palette[index].hex
+  const currentColor = palette[index].hex;
 
   return (
     <div 
-      className="flex flex-col h-full min-h-[200px] justify-center items-center rounded-3xl transition-all duration-1000 p-8 border border-slate-100 relative overflow-hidden"
-      style={{ backgroundColor: `${currentColor}10` }} // Fond très léger de la couleur actuelle
+      onClick={handleNextColor} // Déclencheur au clic
+      className="flex flex-col h-full min-h-[200px] justify-center items-center rounded-3xl cursor-pointer transition-all duration-1000 p-8 border border-slate-100 relative overflow-hidden active:scale-95"
+      style={{ backgroundColor: `${currentColor}10` }}
     >
-      {/* Cercles décoratifs en fond qui flottent */}
-      <div 
-        className="absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl transition-colors duration-1000"
-        style={{ backgroundColor: currentColor, opacity: 0.2 }}
-      />
-
-      <div className="z-10 text-center space-y-6 w-full">
-        {/* Affichage du code HEX géant */}
-        <h4 
-          className="text-4xl sm:text-5xl font-black font-mono tracking-tighter transition-all duration-500"
-          style={{ color: currentColor }}
-        >
+      <div className="z-10 text-center space-y-6 w-full pointer-events-none">
+        <h4 className="text-4xl sm:text-5xl font-black font-mono tracking-tighter" style={{ color: currentColor }}>
           {currentColor.toUpperCase()}
         </h4>
-
-        {/* Visualiseur de palette */}
         <div className="flex justify-center gap-3">
           {palette.map((color, i) => (
-            <div
-              key={color.hex}
-              className={`h-3 rounded-full transition-all duration-500 ${
-                i === index ? "w-12" : "w-3"
-              }`}
-              style={{ backgroundColor: color.hex }}
-            />
+            <div key={color.hex} className={`h-3 rounded-full transition-all duration-500 ${i === index ? "w-12" : "w-3"}`} style={{ backgroundColor: color.hex }} />
           ))}
         </div>
-
-        {/* Indicateur de thème */}
-        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">
-          Dynamic Theming Engine
-        </p>
+        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">Cliquer pour changer de thème</p>
       </div>
     </div>
-  )
-}
+  );
+};
 const ButtonBox = () => {
-  const [status, setStatus] = useState("idle") // idle, hover, loading, success
+  const [status, setStatus] = useState("idle") // idle, loading, success
 
-  useEffect(() => {
-    const sequence = async () => {
-      // 1. Hover
-      await new Promise(r => setTimeout(r, 1000))
-      setStatus("hover")
-      // 2. Click / Loading
-      await new Promise(r => setTimeout(r, 1000))
-      setStatus("loading")
-      // 3. Success
-      await new Promise(r => setTimeout(r, 1500))
-      setStatus("success")
-      // 4. Reset
-      await new Promise(r => setTimeout(r, 2000))
-      setStatus("idle")
-    }
+  // Cette fonction gère toute la séquence après le clic
+  const handleClick = async () => {
+    if (status !== "idle") return // Empêche de recliquer pendant l'animation
+
+    setStatus("loading")
     
-    const itv = setInterval(sequence, 6000)
-    sequence() // Lancer direct au montage
-    return () => clearInterval(itv)
-  }, [])
+    // On attend 1.5s (simulation de chargement)
+    await new Promise(r => setTimeout(r, 1500))
+    setStatus("success")
+    
+    // On attend 2s puis on revient à l'état initial
+    await new Promise(r => setTimeout(r, 2000))
+    setStatus("idle")
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-full min-h-[200px] bg-slate-50/50 rounded-3xl border border-slate-100 p-8">
       <button 
+        onClick={handleClick} // Déclencheur au clic
         className={`
-          relative w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all duration-500
-          ${status === "idle" ? "bg-slate-900 text-white translate-y-0" : ""}
-          ${status === "hover" ? "bg-slate-700 text-white -translate-y-2 shadow-xl" : ""}
-          ${status === "loading" ? "bg-blue-600 text-white scale-95 opacity-80" : ""}
-          ${status === "success" ? "bg-emerald-500 text-white scale-100" : ""}
+          relative w-full py-4 rounded-2xl font-bold text-xs uppercase tracking-widest cursor-pointer transition-all duration-500 active:scale-95
+          ${status === "idle" ? "bg-slate-900 text-white hover:bg-slate-700 hover:-translate-y-1" : ""}
+          ${status === "loading" ? "bg-blue-600 text-white scale-95 opacity-80 cursor-wait" : ""}
+          ${status === "success" ? "bg-emerald-500 text-white scale-100 shadow-lg shadow-emerald-100" : ""}
         `}
       >
         {status === "idle" && "Confirm Order"}
-        {status === "hover" && "Click Me"}
         {status === "loading" && (
           <span className="flex items-center justify-center gap-2">
             <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -154,31 +131,41 @@ const ButtonBox = () => {
         {status === "success" && "✓ Done"}
       </button>
 
-      <div className="mt-8 flex gap-4 overflow-hidden">
+      {/* Indicateurs visuels en bas */}
+      <div className="mt-8 flex gap-4 overflow-hidden pointer-events-none">
          <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "idle" ? "bg-slate-900 scale-150" : "bg-slate-200"}`} />
-         <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "hover" ? "bg-slate-700 scale-150" : "bg-slate-200"}`} />
          <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "loading" ? "bg-blue-600 scale-150" : "bg-slate-200"}`} />
          <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "success" ? "bg-emerald-500 scale-150" : "bg-slate-200"}`} />
       </div>
+
+      <p className="mt-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+        Cliquer pour tester
+      </p>
     </div>
   )
 }
-
 const ResponsiveBox = () => {
-  const [device, setDevice] = useState("mobile") // mobile, tablet, desktop
+  const [device, setDevice] = useState("mobile");
+  const devices = ["mobile", "tablet", "desktop"];
   
-  useEffect(() => {
-    const itv = setInterval(() => {
-      const devices = ["mobile", "tablet", "desktop"]
-      setDevice(prev => devices[(devices.indexOf(prev) + 1) % devices.length])
-    }, 3000)
-    return () => clearInterval(itv)
-  }, [])
+  const toggleDevice = () => {
+    setDevice(prev => devices[(devices.indexOf(prev) + 1) % devices.length]);
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full min-h-[220px] bg-slate-900 rounded-[2rem] p-6 overflow-hidden relative group">
-      {/* Grille de fond pour le look "Blueprint/Design" */}
-      <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+    <div 
+      onClick={toggleDevice}
+      // On remet bien bg-slate-900 ici pour que la grille blanche se voie
+      className="flex flex-col items-center justify-center h-full min-h-[220px] bg-slate-900 rounded-[2rem] p-6 overflow-hidden relative cursor-pointer active:scale-95 transition-all group"
+    >
+      {/* Grille de fond : On baisse l'opacité à 0.05 pour que ce soit subtil */}
+      <div 
+        className="absolute inset-0 opacity-5 pointer-events-none" 
+        style={{ 
+          backgroundImage: 'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)', 
+          backgroundSize: '20px 20px' 
+        }} 
+      />
 
       <div className="relative z-10 w-full flex flex-col items-center">
         {/* Le Viewport Dynamique */}
@@ -196,12 +183,10 @@ const ResponsiveBox = () => {
             <div className="w-1 h-1 rounded-full bg-emerald-400" />
           </div>
 
-          {/* Contenu qui "Reflow" réellement */}
           <div className="p-2 space-y-2">
             <div className="h-2 bg-slate-200 rounded-full w-full" />
             <div className="h-2 bg-slate-200 rounded-full w-2/3" />
             
-            {/* Grille adaptative interne */}
             <div className={`grid gap-1 transition-all duration-500 ${device === "mobile" ? "grid-cols-1" : "grid-cols-3"}`}>
               <div className="h-8 bg-blue-500/20 rounded-md border border-blue-500/30" />
               <div className={`h-8 bg-blue-500/20 rounded-md border border-blue-500/30 ${device === "mobile" ? "hidden" : "block"}`} />
@@ -210,10 +195,10 @@ const ResponsiveBox = () => {
           </div>
         </div>
 
-        {/* Status Bar style "Console" */}
+        {/* Status Bar */}
         <div className="mt-6 font-mono text-[9px] flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-emerald-400">●</span>
+            <span className="text-emerald-400 animate-pulse">●</span>
             <span className="text-slate-400 uppercase tracking-widest">Viewport:</span>
             <span className="text-white w-12">{device === 'mobile' ? '375px' : device === 'tablet' ? '768px' : '1440px'}</span>
           </div>
@@ -225,20 +210,21 @@ const ResponsiveBox = () => {
 const ThemeBox = () => {
   const [isDark, setIsDark] = useState(true)
 
-  useEffect(() => {
-    const itv = setInterval(() => {
-      setIsDark((prev) => !prev)
-    }, 3000)
-    return () => clearInterval(itv)
-  }, [])
+  // On change l'état manuellement ici
+  const toggleTheme = () => {
+    setIsDark((prev) => !prev)
+  }
 
   return (
-    <div className={`flex flex-col items-center justify-center h-full min-h-[220px] transition-all duration-700 rounded-[2rem] p-8 overflow-hidden relative ${
-      isDark ? "bg-slate-950" : "bg-slate-100"
-    }`}>
+    <div 
+      onClick={toggleTheme} // Déclencheur au clic
+      className={`flex flex-col items-center justify-center h-full min-h-[220px] transition-all duration-700 rounded-[2rem] p-8 overflow-hidden relative cursor-pointer active:scale-95 ${
+        isDark ? "bg-slate-950" : "bg-slate-100"
+      }`}
+    >
       
       {/* Petit indicateur d'état en haut */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 pointer-events-none">
         <span className={`text-[9px] font-mono font-bold tracking-[0.2em] transition-colors duration-700 ${
           isDark ? "text-slate-500" : "text-slate-400"
         }`}>
@@ -246,7 +232,7 @@ const ThemeBox = () => {
         </span>
       </div>
 
-      <div className="relative z-10 w-full space-y-4">
+      <div className="relative z-10 w-full space-y-4 pointer-events-none">
         {/* L'icône animée */}
         <div className="flex justify-center">
           <div className={`p-4 rounded-2xl transition-all duration-700 ${
@@ -271,14 +257,13 @@ const ThemeBox = () => {
         </div>
       </div>
 
-      {/* Effet de lueur (Glow) uniquement en mode sombre */}
-      <div className={`absolute inset-0 transition-opacity duration-1000 bg-blue-500/10 blur-3xl rounded-full ${
+      {/* --- TA LUMIÈRE RÉALISTE CONSERVÉE --- */}
+      <div className={`absolute inset-0 transition-opacity duration-1000 bg-blue-500/10 blur-3xl rounded-full pointer-events-none ${
         isDark ? "opacity-40" : "opacity-0"
       }`} />
     </div>
   )
 }
-
 // --- 2. TA NOUVELLE LISTE DE FEATURES ---
 
 const features = [
