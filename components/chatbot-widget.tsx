@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X, Send, Sparkles, ShieldCheck } from "lucide-react"
+import { MessageCircle, X, Send, Sparkles, ShieldCheck, Lightbulb, Zap } from "lucide-react"
 
 type ChatMessage = {
   id: string
@@ -10,16 +10,15 @@ type ChatMessage = {
 }
 
 export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false) // État réel de présence
-  const [isAnimating, setIsAnimating] = useState(false) // État pour gérer la transition
+  const [isOpen, setIsOpen] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
   const [input, setInput] = useState("")
   const [showNudge, setShowNudge] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
-      content:
-        "Bonjour ! Je suis l’assistant de l’équipe Cliste. Je peux vous guider sur nos solutions web et notre portfolio. Comment puis-je vous aider ?",
+      content: "Bonjour ! Je suis l’assistant Cliste. Comment puis-je vous aider aujourd'hui ?",
     },
   ])
   
@@ -27,16 +26,14 @@ export default function ChatbotWidget() {
   const [isTyping, setIsTyping] = useState(false) 
   const [streaming, setStreaming] = useState(false)
 
-  // --- Gestion des Transitions ---
   const handleOpen = () => {
     setIsOpen(true)
-    setTimeout(() => setIsAnimating(true), 10) // Petit délai pour déclencher le CSS
+    setTimeout(() => setIsAnimating(true), 10)
     setShowNudge(false)
   }
 
   const handleClose = () => {
     setIsAnimating(false)
-    // On attend la fin de l'animation (300ms) avant de démonter le composant
     setTimeout(() => setIsOpen(false), 300)
   }
 
@@ -50,7 +47,7 @@ export default function ChatbotWidget() {
     const seen = typeof window !== "undefined" && localStorage.getItem("chatbot_seen_nudge") === "1"
     if (!seen) {
       setShowNudge(true)
-      const t = setTimeout(() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }, 12000)
+      const t = setTimeout(() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }, 10000)
       return () => clearTimeout(t)
     }
   }, [])
@@ -101,91 +98,92 @@ export default function ChatbotWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-[90] font-sans antialiased">
-      {/* Bouton Flottant (Visible si fermé) */}
+    <div className="fixed bottom-5 right-5 z-[90] font-sans antialiased text-slate-900">
+      
+      {/* Bouton Flottant (Compact & Blanc) */}
       {!isOpen && (
-        <div className="relative animate-in fade-in duration-500">
-           {showNudge && (
-            <div className="absolute -top-[100px] right-0 w-[280px] animate-in slide-in-from-bottom-2 duration-500">
-              <div className="relative rounded-2xl p-4 bg-white text-black shadow-2xl border border-black/5">
-                <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-8 h-8 rounded-full bg-black flex items-center justify-center text-white"><Sparkles className="w-4 h-4" /></div>
-                  <div className="text-sm">
-                    <div className="font-bold text-gray-900">Une question ?</div>
-                    <div className="text-gray-500 leading-tight italic">On vous répond en direct.</div>
-                  </div>
-                </div>
-                <div className="absolute -bottom-2 right-8 w-4 h-4 rotate-45 bg-white border-b border-r border-black/5" />
+        <div className="relative animate-in fade-in scale-in duration-300">
+          {showNudge && (
+            <div className="absolute -top-[110px] right-0 w-[86vw] max-w-[300px] select-none">
+              <div className="relative rounded-2xl px-4 py-3 bg-white border border-slate-200 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+                <div className="text-[12px] font-semibold text-slate-900 mb-1">Besoin d'aide ?</div>
+                <div className="text-[12px] text-slate-600 leading-snug">Utilisez notre assistance intelligente pour obtenir une réponse rapide.</div>
+                <button
+                  aria-label="Fermer"
+                  onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
+                  className="absolute top-2 right-2 p-1 rounded-md hover:bg-slate-100"
+                >
+                  <X className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+                <div className="absolute -bottom-2 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-slate-200" />
               </div>
             </div>
           )}
           <button
             onClick={handleOpen}
-            className="group flex items-center gap-3 rounded-full pl-4 pr-6 py-4 bg-black text-white shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 transition-all duration-300"
+            className="flex items-center gap-2.5 rounded-2xl p-3 bg-white border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 group"
           >
-            <div className="relative">
-              <MessageCircle className="w-6 h-6" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-black rounded-full" />
+            <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center transition-transform group-hover:rotate-12">
+              <MessageCircle className="w-5 h-5 text-white" />
             </div>
-            <span className="hidden sm:inline font-bold tracking-tight">Besoin d'aide ?</span>
+            <div className="pr-2 text-left">
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">En ligne</div>
+              <div className="text-sm font-bold text-slate-800">Chatter avec Cliste</div>
+            </div>
           </button>
         </div>
       )}
 
-      {/* Fenêtre de Chat */}
+      {/* Fenêtre de Chat (Plus petite : 380px x 600px) */}
       {isOpen && (
         <div 
           className={`
-            w-[94vw] sm:w-[440px] h-[70vh] sm:h-[640px] rounded-[2.5rem] overflow-hidden 
-            border border-white/20 bg-black/85 backdrop-blur-3xl text-white shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] 
-            flex flex-col origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
-            ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10"}
+            w-[92vw] sm:w-[380px] h-[65vh] sm:h-[580px] rounded-[2rem] overflow-hidden 
+            border border-slate-200 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] 
+            flex flex-col origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
+            ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-5"}
           `}
         >
           
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-5 border-b border-white/10 bg-white/5">
-            <div className="flex items-center gap-4">
-              <div className="relative h-10 w-10">
-                <div className="absolute inset-0 bg-blue-500 rounded-full animate-pulse opacity-20" />
-                <div className="relative h-full w-full rounded-full bg-gradient-to-tr from-gray-800 to-black border border-white/20 flex items-center justify-center">
-                   <Sparkles className="w-5 h-5 text-blue-400" />
-                </div>
+          {/* Header (Plus compact) */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center shadow-inner">
+                 <Zap className="w-4 h-4 text-blue-400 fill-blue-400" />
               </div>
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold tracking-tight text-white/90">Hani & Samy</span>
-                  <span className="text-[10px] bg-white/10 text-white/60 px-2 py-0.5 rounded-full border border-white/10 font-bold uppercase tracking-widest">Expert</span>
-                </div>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
-                  <span className="text-[11px] text-white/40 font-medium italic">En ligne pour vous</span>
+                  <span className="text-sm font-bold text-slate-900">Samy & Hani</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 </div>
+                <span className="text-[10px] text-slate-400 font-medium">Support Cliste IA</span>
               </div>
             </div>
-            <button 
-              onClick={handleClose} 
-              className="p-2.5 rounded-full hover:bg-white/10 transition-colors group"
-            >
-              <X className="w-5 h-5 text-white/40 group-hover:text-white" />
+            <button onClick={handleClose} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
+              <X className="w-4 h-4 text-slate-400" />
             </button>
           </div>
 
-          {/* Messages */}
-          <div ref={listRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-6 scrollbar-none">
-            <div className="flex justify-center my-4">
-               <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[10px] text-white/30 font-bold uppercase tracking-widest">
-                  <ShieldCheck className="w-3 h-3 text-blue-500/50" />
-                  Sécurisé par Cliste Intelligence
-               </div>
+          {/* Chat Content */}
+          <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-5 scrollbar-none bg-slate-50/30">
+            
+            {/* Guide Info */}
+            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+              <div className="flex items-center gap-2 mb-1.5 text-blue-600">
+                <Lightbulb className="w-3.5 h-3.5 font-bold" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Conseil Cliste</span>
+              </div>
+              <p className="text-[11px] leading-relaxed text-slate-500">
+                Dites-moi quel type de site web vous imaginez, et je vous donnerai une estimation rapide !
+              </p>
             </div>
 
             {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-1 duration-500`}>
-                <div className={`relative max-w-[85%] rounded-[1.4rem] px-5 py-3.5 text-sm leading-relaxed shadow-lg ${
+              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in duration-300`}>
+                <div className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
                   m.role === "user" 
-                    ? "bg-white text-black font-semibold rounded-br-none" 
-                    : "bg-white/10 border border-white/10 text-white/90 rounded-bl-none backdrop-blur-md"
+                    ? "bg-slate-900 text-white font-medium rounded-2xl rounded-tr-none" 
+                    : "bg-white text-slate-700 border border-slate-200 rounded-2xl rounded-tl-none"
                 }`}>
                   {m.content}
                 </div>
@@ -193,40 +191,38 @@ export default function ChatbotWidget() {
             ))}
 
             {isTyping && (
-              <div className="flex justify-start animate-in fade-in duration-300">
-                <div className="bg-white/5 border border-white/10 rounded-full px-5 py-3 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400/80 animate-bounce [animation-delay:-0.3s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400/80 animate-bounce [animation-delay:-0.15s]" />
-                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400/80 animate-bounce" />
+              <div className="flex justify-start">
+                <div className="bg-white border border-slate-100 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1">
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce" />
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.4s]" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Area */}
-          <div className="p-6 bg-gradient-to-t from-black to-transparent">
-            <div className="relative flex items-center gap-2 bg-white/[0.03] border border-white/10 rounded-[1.8rem] p-1.5 focus-within:border-white/40 focus-within:bg-white/5 transition-all duration-500 shadow-inner">
+          {/* Input Area (Plus fine) */}
+          <div className="px-5 py-4 bg-white border-t border-slate-100">
+            <div className="flex items-center gap-2 bg-slate-100/50 border border-slate-200 rounded-xl p-1 focus-within:bg-white focus-within:ring-2 ring-slate-100 transition-all duration-300">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
-                placeholder="Décrivez votre besoin..."
-                className="flex-1 bg-transparent text-sm py-3 px-5 outline-none placeholder:text-white/20 disabled:opacity-50"
+                placeholder="Écrivez ici..."
+                className="flex-1 bg-transparent text-sm py-2 px-3 outline-none placeholder:text-slate-400"
                 disabled={isTyping || streaming}
               />
               <button
                 onClick={sendMessage}
-                className="p-3.5 rounded-full bg-white text-black hover:bg-blue-50 disabled:opacity-10 disabled:grayscale transition-all active:scale-90 flex items-center justify-center shadow-[0_10px_20px_rgba(255,255,255,0.1)]"
+                className="p-2.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-20 transition-all active:scale-95"
                 disabled={!input.trim() || isTyping || streaming}
               >
-                <Send className="w-4 h-4 fill-current" />
+                <Send className="w-3.5 h-3.5 fill-current" />
               </button>
             </div>
             
-            <div className="mt-4 flex items-center justify-center gap-3 text-[9px] uppercase tracking-[0.3em] text-white/15 font-black">
-               <div className="h-[1px] flex-1 bg-white/5" />
-               <span className="shrink-0">Assistant Officiel Cliste</span>
-               <div className="h-[1px] flex-1 bg-white/5" />
+            <div className="mt-3 text-center">
+               <span className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em]">IA Assistant • Cliste v1.0</span>
             </div>
           </div>
         </div>
