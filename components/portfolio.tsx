@@ -53,9 +53,7 @@ export function PortfolioSection() {
             </p>
           </div>
           <a
-            href={projects[0].link}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/portfolio"
             className="group flex items-center gap-2 text-white border-b border-white/20 pb-2 hover:border-white transition-all"
           >
             Voir tous les projets <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
