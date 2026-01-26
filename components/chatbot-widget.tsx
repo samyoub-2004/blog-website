@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X, Send, Sparkles, Lightbulb, Zap } from "lucide-react"
+import { MessageCircle, X, Send } from "lucide-react"
 
 type ChatMessage = {
   id: string
@@ -10,36 +10,43 @@ type ChatMessage = {
 }
 
 export default function ChatbotWidget() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [isOpen, setIsOpen] = useState(false) // Présence dans le DOM
+  const [isAnimating, setIsAnimating] = useState(false) // Déclencheur CSS
   const [input, setInput] = useState("")
   const [showNudge, setShowNudge] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
       role: "assistant",
-      content: "Bonjour ! Je suis l’assistant Cliste. Comment puis-je vous aider aujourd'hui ?",
+      content:
+        "Bonjour ! Je suis l’assistant de l’équipe Cliste. Je peux vous guider sur nos solutions web, notre portfolio et la meilleure façon de démarrer. Posez votre question.",
     },
   ])
-  
   const listRef = useRef<HTMLDivElement | null>(null)
-  const [isTyping, setIsTyping] = useState(false) 
+  const [isTyping, setIsTyping] = useState(false)
   const [streaming, setStreaming] = useState(false)
 
+  // Gestion fluide de l'ouverture
   const handleOpen = () => {
     setIsOpen(true)
+    // Petit délai pour laisser le temps au DOM de monter le composant avant l'animation
     setTimeout(() => setIsAnimating(true), 10)
     setShowNudge(false)
   }
 
+  // Gestion fluide de la fermeture
   const handleClose = () => {
-    setIsAnimating(false)
+    setIsAnimating(false) // On lance l'animation de sortie
+    // On attend la fin de la transition (300ms) avant de retirer du DOM
     setTimeout(() => setIsOpen(false), 300)
   }
 
   useEffect(() => {
     if (listRef.current) {
-      listRef.current.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" })
+      listRef.current.scrollTo({
+        top: listRef.current.scrollHeight,
+        behavior: "smooth",
+      })
     }
   }, [messages, isOpen, isTyping])
 
@@ -47,7 +54,10 @@ export default function ChatbotWidget() {
     const seen = typeof window !== "undefined" && localStorage.getItem("chatbot_seen_nudge") === "1"
     if (!seen) {
       setShowNudge(true)
-      const t = setTimeout(() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }, 10000)
+      const t = setTimeout(() => {
+        setShowNudge(false)
+        try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {}
+      }, 12000)
       return () => clearTimeout(t)
     }
   }, [])
@@ -55,6 +65,7 @@ export default function ChatbotWidget() {
   const sendMessage = async () => {
     const text = input.trim()
     if (!text) return
+
     const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text }
     setMessages((prev) => [...prev, userMsg])
     setInput("")
@@ -67,6 +78,7 @@ export default function ChatbotWidget() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: history }),
       })
+
       if (!respStream.ok || !respStream.body) throw new Error("stream failed")
       const assistantId = crypto.randomUUID()
       const reader = respStream.body.getReader()
@@ -88,101 +100,100 @@ export default function ChatbotWidget() {
           }
         }
       }
+      setStreaming(false)
     } catch (e) {
       console.error(e)
-      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: "Désolé, un souci technique est survenu." }])
+      setIsTyping(false)
+      setMessages((prev) => [...prev, {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: "Désolé, un incident technique empêche l'envoi de la réponse. Merci de réessayer ou de nous contacter via /contact.",
+      }])
     } finally {
       setIsTyping(false)
       setStreaming(false)
     }
   }
 
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }
+
   return (
-    <div className="fixed bottom-5 right-5 z-[90] font-sans antialiased">
-      
-      {/* Bouton Flottant (Blanc & Compact - inchangé) */}
+    <div className="fixed bottom-4 right-4 z-[90] font-sans antialiased">
+      {/* Bouton Bulle flottante */}
       {!isOpen && (
-        <div className="relative animate-in fade-in scale-in duration-300">
+        <div className="relative animate-in fade-in duration-500">
           {showNudge && (
-            <div className="absolute -top-[110px] right-0 w-[280px] select-none">
-              <div className="relative rounded-2xl px-4 py-3 bg-white border border-slate-100 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
-                <div className="text-[12px] font-bold text-slate-900 mb-0.5">Besoin d'aide ?</div>
-                <div className="text-[11px] text-slate-500 leading-tight">Posez votre question à notre IA pour une réponse instantanée.</div>
-                <button
-                  onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
-                  className="absolute top-2 right-2 p-1 rounded-md hover:bg-slate-50"
-                >
-                  <X className="w-3 h-3 text-slate-400" />
-                </button>
-                <div className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-slate-100" />
+            <div className="absolute -top-[120px] right-0 w-[86vw] max-w-[320px] select-none animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="relative rounded-2xl px-4 py-3 bg-white text-black shadow-2xl border border-black/10">
+                <div className="flex items-start gap-3">
+                  <div className="shrink-0 w-8 h-8 rounded-full bg-black/90 flex items-center justify-center text-white">
+                    <MessageCircle className="w-4 h-4" />
+                  </div>
+                  <div className="text-sm leading-snug">
+                    <div className="font-semibold text-gray-900">Besoin d'aide ?</div>
+                    <div className="text-gray-600">Hani ou Samy peuvent répondre à vos questions ici.</div>
+                  </div>
+                  <button
+                    onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
+                    className="ml-1 p-1 rounded hover:bg-black/5 transition-colors"
+                  >
+                    <X className="w-4 h-4 text-black/40" />
+                  </button>
+                </div>
+                <div className="absolute -bottom-2 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-black/10" />
               </div>
             </div>
           )}
           <button
             onClick={handleOpen}
-            className="flex items-center gap-2.5 rounded-full px-4 py-2.5 bg-white border border-slate-200 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group"
+            className="flex items-center gap-2 rounded-full px-5 py-3 bg-white text-black shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200"
           >
-            <div className="relative flex items-center justify-center">
-              <MessageCircle className="w-5 h-5 text-slate-900" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-white" />
-            </div>
-            <span className="text-sm font-bold text-slate-900 pr-1">Chat</span>
+            <MessageCircle className="w-5 h-5" />
+            <span className="hidden sm:inline font-semibold">Chat</span>
           </button>
         </div>
       )}
 
-      {/* Fenêtre de Chat (Fluid Deep Dark) */}
+      {/* Fenêtre de Chat avec Transition Fluide */}
       {isOpen && (
         <div 
           className={`
-            w-[92vw] sm:w-[380px] h-[65vh] sm:h-[580px] rounded-[2rem] overflow-hidden 
-            border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]
-            bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-800/30 via-zinc-950 to-black
-            text-white flex flex-col origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
-            ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-5"}
+            w-[92vw] sm:w-[400px] h-[60vh] sm:h-[550px] rounded-3xl overflow-hidden 
+            border border-white/15 bg-black/80 backdrop-blur-2xl text-white shadow-2xl 
+            flex flex-col origin-bottom-right transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]
+            ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-90 translate-y-10"}
           `}
         >
-          
-          {/* Header (Glass Effect) */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
-            <div className="flex items-center gap-3">
-              {/* Icone avec un dégradé subtil style "onyx" */}
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center shadow-lg border border-white/5">
-                 <Zap className="w-4 h-4 text-white" />
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-white/5">
+            <div className="flex items-center gap-2.5">
+              <div className="relative">
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-40" />
               </div>
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-bold text-white/90 tracking-tight">Cliste Assistant</span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
-                </div>
-                <span className="text-[10px] text-zinc-400 font-medium tracking-wide">Intelligence Artificielle</span>
-              </div>
+              <span className="text-sm font-bold tracking-tight">Hani & Samy</span>
             </div>
-            <button onClick={handleClose} className="p-2 rounded-xl hover:bg-white/5 transition-colors group">
-              <X className="w-4 h-4 text-zinc-400 group-hover:text-white" />
+            <button
+              onClick={handleClose}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+            >
+              <X className="w-4 h-4 text-white/70" />
             </button>
           </div>
 
-          {/* Chat Content */}
-          <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-6 space-y-6 scrollbar-none">
-            
-            {/* Guide Info Sombre & Fluide */}
-            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-700 shadow-inner">
-              <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="w-3.5 h-3.5 text-zinc-300" />
-                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Conseil</span>
-              </div>
-              <p className="text-[12px] leading-relaxed text-zinc-400/90 font-medium">
-                Décrivez votre projet web ou posez une question sur nos services. Je suis là pour vous accompagner.
-              </p>
-            </div>
-
+          {/* Messages */}
+          <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-thin scrollbar-thumb-white/10">
             {messages.map((m) => (
-              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in duration-300`}>
-                <div className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed shadow-sm ${
-                  m.role === "user" 
-                    ? "bg-white text-black font-bold rounded-2xl rounded-tr-none" 
-                    : "bg-zinc-800/40 text-zinc-200 border border-white/5 rounded-2xl rounded-tl-none backdrop-blur-sm"
+              <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                  m.role === "user"
+                    ? "bg-white text-black font-medium"
+                    : "bg-white/10 border border-white/10 text-white/90"
                 }`}>
                   {m.content}
                 </div>
@@ -190,38 +201,43 @@ export default function ChatbotWidget() {
             ))}
 
             {isTyping && (
-              <div className="flex justify-start">
-                <div className="bg-zinc-800/40 border border-white/5 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5 backdrop-blur-sm">
-                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce" />
-                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.4s]" />
+              <div className="flex justify-start animate-in fade-in duration-300">
+                <div className="bg-white/10 border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-1.5 shadow-inner">
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce [animation-delay:-0.15s]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Area (Console Dark) */}
-          <div className="px-5 py-5 bg-black/40 border-t border-white/5 backdrop-blur-md">
-            <div className="flex items-center gap-2 bg-zinc-900/50 border border-white/10 rounded-2xl p-1 focus-within:border-white/20 focus-within:bg-zinc-900 transition-all duration-300">
+          {/* Input Box */}
+          <div className="p-4 bg-white/5 border-t border-white/10 backdrop-blur-md">
+            <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-3.5 py-1.5 focus-within:border-white/40 transition-all duration-200">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
-                placeholder="Écrivez votre message..."
-                className="flex-1 bg-transparent text-sm py-2.5 px-3 outline-none placeholder:text-zinc-500 text-white"
+                onKeyDown={onKeyDown}
+                placeholder="Posez votre question..."
+                className="flex-1 bg-transparent text-sm py-2 outline-none placeholder:text-white/30 disabled:opacity-50"
                 disabled={isTyping || streaming}
               />
               <button
                 onClick={sendMessage}
-                className="p-2.5 rounded-xl bg-white text-black hover:bg-zinc-200 disabled:opacity-20 transition-all active:scale-95 flex items-center justify-center shadow-lg"
+                className="p-2 rounded-xl bg-white text-black hover:bg-gray-200 disabled:opacity-20 disabled:grayscale transition-all active:scale-90"
                 disabled={!input.trim() || isTyping || streaming}
               >
-                <Send className="w-4 h-4 fill-current" />
+                <Send className="w-4 h-4" />
               </button>
             </div>
-            
-            <div className="mt-4 flex items-center justify-center gap-2 opacity-30 hover:opacity-50 transition-opacity">
-               <span className="text-[9px] text-white font-bold uppercase tracking-[0.3em]">Cliste Intelligence</span>
+            {/* Footer */}
+            <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.1em] text-white/30 font-bold">
+              <span>Assistant Officiel</span>
+              <span className="flex gap-1.5">
+                <span className="text-white/50">Samy</span>
+                <span className="text-white/20">•</span>
+                <span className="text-white/50">Hani</span>
+              </span>
             </div>
           </div>
         </div>
