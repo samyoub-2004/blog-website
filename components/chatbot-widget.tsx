@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { MessageCircle, X, Send, Sparkles, ShieldCheck, Lightbulb, Zap } from "lucide-react"
+import { MessageCircle, X, Send, Sparkles, Lightbulb, Zap } from "lucide-react"
 
 type ChatMessage = {
   id: string
@@ -98,92 +98,91 @@ export default function ChatbotWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-[90] font-sans antialiased text-slate-900">
+    <div className="fixed bottom-5 right-5 z-[90] font-sans antialiased">
       
-      {/* Bouton Flottant (Compact & Blanc) */}
+      {/* Bouton Flottant (Blanc & Compact - inchangé) */}
       {!isOpen && (
         <div className="relative animate-in fade-in scale-in duration-300">
           {showNudge && (
-            <div className="absolute -top-[110px] right-0 w-[86vw] max-w-[300px] select-none">
-              <div className="relative rounded-2xl px-4 py-3 bg-white border border-slate-200 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
-                <div className="text-[12px] font-semibold text-slate-900 mb-1">Besoin d'aide ?</div>
-                <div className="text-[12px] text-slate-600 leading-snug">Utilisez notre assistance intelligente pour obtenir une réponse rapide.</div>
+            <div className="absolute -top-[110px] right-0 w-[280px] select-none">
+              <div className="relative rounded-2xl px-4 py-3 bg-white border border-slate-100 shadow-[0_12px_30px_rgba(0,0,0,0.12)]">
+                <div className="text-[12px] font-bold text-slate-900 mb-0.5">Besoin d'aide ?</div>
+                <div className="text-[11px] text-slate-500 leading-tight">Posez votre question à notre IA pour une réponse instantanée.</div>
                 <button
-                  aria-label="Fermer"
                   onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
-                  className="absolute top-2 right-2 p-1 rounded-md hover:bg-slate-100"
+                  className="absolute top-2 right-2 p-1 rounded-md hover:bg-slate-50"
                 >
-                  <X className="w-3.5 h-3.5 text-slate-400" />
+                  <X className="w-3 h-3 text-slate-400" />
                 </button>
-                <div className="absolute -bottom-2 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-slate-200" />
+                <div className="absolute -bottom-1.5 right-6 w-3 h-3 rotate-45 bg-white border-b border-r border-slate-100" />
               </div>
             </div>
           )}
           <button
             onClick={handleOpen}
-            className="flex items-center gap-2.5 rounded-2xl p-3 bg-white border border-slate-100 shadow-[0_10px_30px_rgba(0,0,0,0.08)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.12)] hover:-translate-y-1 transition-all duration-300 group"
+            className="flex items-center gap-2.5 rounded-full px-4 py-2.5 bg-white border border-slate-200 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group"
           >
-            <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center transition-transform group-hover:rotate-12">
-              <MessageCircle className="w-5 h-5 text-white" />
+            <div className="relative flex items-center justify-center">
+              <MessageCircle className="w-5 h-5 text-slate-900" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full border border-white" />
             </div>
-            <div className="pr-2 text-left">
-              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">En ligne</div>
-              <div className="text-sm font-bold text-slate-800">Chatter avec Cliste</div>
-            </div>
+            <span className="text-sm font-bold text-slate-900 pr-1">Chat</span>
           </button>
         </div>
       )}
 
-      {/* Fenêtre de Chat (Plus petite : 380px x 600px) */}
+      {/* Fenêtre de Chat (Fluid Deep Dark) */}
       {isOpen && (
         <div 
           className={`
             w-[92vw] sm:w-[380px] h-[65vh] sm:h-[580px] rounded-[2rem] overflow-hidden 
-            border border-slate-200 bg-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] 
-            flex flex-col origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
+            border border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]
+            bg-zinc-950 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-800/30 via-zinc-950 to-black
+            text-white flex flex-col origin-bottom-right transition-all duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]
             ${isAnimating ? "opacity-100 scale-100 translate-y-0" : "opacity-0 scale-95 translate-y-5"}
           `}
         >
           
-          {/* Header (Plus compact) */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-10">
+          {/* Header (Glass Effect) */}
+          <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-slate-900 flex items-center justify-center shadow-inner">
-                 <Zap className="w-4 h-4 text-blue-400 fill-blue-400" />
+              {/* Icone avec un dégradé subtil style "onyx" */}
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-zinc-700 to-black flex items-center justify-center shadow-lg border border-white/5">
+                 <Zap className="w-4 h-4 text-white" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-bold text-slate-900">Samy & Hani</span>
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-sm font-bold text-white/90 tracking-tight">Cliste Assistant</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)] animate-pulse" />
                 </div>
-                <span className="text-[10px] text-slate-400 font-medium">Support Cliste IA</span>
+                <span className="text-[10px] text-zinc-400 font-medium tracking-wide">Intelligence Artificielle</span>
               </div>
             </div>
-            <button onClick={handleClose} className="p-2 rounded-lg hover:bg-slate-100 transition-colors">
-              <X className="w-4 h-4 text-slate-400" />
+            <button onClick={handleClose} className="p-2 rounded-xl hover:bg-white/5 transition-colors group">
+              <X className="w-4 h-4 text-zinc-400 group-hover:text-white" />
             </button>
           </div>
 
           {/* Chat Content */}
-          <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-4 space-y-5 scrollbar-none bg-slate-50/30">
+          <div ref={listRef} className="flex-1 overflow-y-auto px-5 py-6 space-y-6 scrollbar-none">
             
-            {/* Guide Info */}
-            <div className="p-4 rounded-2xl bg-white border border-slate-100 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-              <div className="flex items-center gap-2 mb-1.5 text-blue-600">
-                <Lightbulb className="w-3.5 h-3.5 font-bold" />
-                <span className="text-[10px] font-black uppercase tracking-widest">Conseil Cliste</span>
+            {/* Guide Info Sombre & Fluide */}
+            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-700 shadow-inner">
+              <div className="flex items-center gap-2 mb-2">
+                <Lightbulb className="w-3.5 h-3.5 text-zinc-300" />
+                <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest">Conseil</span>
               </div>
-              <p className="text-[11px] leading-relaxed text-slate-500">
-                Dites-moi quel type de site web vous imaginez, et je vous donnerai une estimation rapide !
+              <p className="text-[12px] leading-relaxed text-zinc-400/90 font-medium">
+                Décrivez votre projet web ou posez une question sur nos services. Je suis là pour vous accompagner.
               </p>
             </div>
 
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in duration-300`}>
-                <div className={`max-w-[85%] px-4 py-2.5 text-sm leading-relaxed shadow-sm ${
+                <div className={`max-w-[85%] px-4 py-3 text-[13px] leading-relaxed shadow-sm ${
                   m.role === "user" 
-                    ? "bg-slate-900 text-white font-medium rounded-2xl rounded-tr-none" 
-                    : "bg-white text-slate-700 border border-slate-200 rounded-2xl rounded-tl-none"
+                    ? "bg-white text-black font-bold rounded-2xl rounded-tr-none" 
+                    : "bg-zinc-800/40 text-zinc-200 border border-white/5 rounded-2xl rounded-tl-none backdrop-blur-sm"
                 }`}>
                   {m.content}
                 </div>
@@ -192,37 +191,37 @@ export default function ChatbotWidget() {
 
             {isTyping && (
               <div className="flex justify-start">
-                <div className="bg-white border border-slate-100 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1">
-                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce" />
-                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.2s]" />
-                  <span className="w-1 h-1 rounded-full bg-slate-300 animate-bounce [animation-delay:0.4s]" />
+                <div className="bg-zinc-800/40 border border-white/5 rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5 backdrop-blur-sm">
+                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce" />
+                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.2s]" />
+                  <span className="w-1 h-1 rounded-full bg-zinc-400 animate-bounce [animation-delay:0.4s]" />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Input Area (Plus fine) */}
-          <div className="px-5 py-4 bg-white border-t border-slate-100">
-            <div className="flex items-center gap-2 bg-slate-100/50 border border-slate-200 rounded-xl p-1 focus-within:bg-white focus-within:ring-2 ring-slate-100 transition-all duration-300">
+          {/* Input Area (Console Dark) */}
+          <div className="px-5 py-5 bg-black/40 border-t border-white/5 backdrop-blur-md">
+            <div className="flex items-center gap-2 bg-zinc-900/50 border border-white/10 rounded-2xl p-1 focus-within:border-white/20 focus-within:bg-zinc-900 transition-all duration-300">
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if(e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }}}
-                placeholder="Écrivez ici..."
-                className="flex-1 bg-transparent text-sm py-2 px-3 outline-none placeholder:text-slate-400"
+                placeholder="Écrivez votre message..."
+                className="flex-1 bg-transparent text-sm py-2.5 px-3 outline-none placeholder:text-zinc-500 text-white"
                 disabled={isTyping || streaming}
               />
               <button
                 onClick={sendMessage}
-                className="p-2.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-20 transition-all active:scale-95"
+                className="p-2.5 rounded-xl bg-white text-black hover:bg-zinc-200 disabled:opacity-20 transition-all active:scale-95 flex items-center justify-center shadow-lg"
                 disabled={!input.trim() || isTyping || streaming}
               >
-                <Send className="w-3.5 h-3.5 fill-current" />
+                <Send className="w-4 h-4 fill-current" />
               </button>
             </div>
             
-            <div className="mt-3 text-center">
-               <span className="text-[9px] text-slate-300 font-bold uppercase tracking-[0.2em]">IA Assistant • Cliste v1.0</span>
+            <div className="mt-4 flex items-center justify-center gap-2 opacity-30 hover:opacity-50 transition-opacity">
+               <span className="text-[9px] text-white font-bold uppercase tracking-[0.3em]">Cliste Intelligence</span>
             </div>
           </div>
         </div>
