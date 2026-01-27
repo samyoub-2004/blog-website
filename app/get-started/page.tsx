@@ -419,7 +419,18 @@ export default function GetStartedPage() {
                 Suivant
               </Button>
             ) : (
-              <Button className="bg-white text-black hover:bg-gray-100" onClick={() => router.push("/contact")}>Demander un devis</Button>
+              <Button
+                className="bg-white text-black hover:bg-gray-100"
+                onClick={() => {
+                  try {
+                    window.dispatchEvent(new CustomEvent("cc:navigate", { detail: { to: "/contact" } }))
+                  } catch {
+                    router.push("/contact")
+                  }
+                }}
+              >
+                Demander un devis
+              </Button>
             )}
           </div>
           {state.siteType === "surmesure" && (

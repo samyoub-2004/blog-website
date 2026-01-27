@@ -136,7 +136,7 @@ export default function ChatbotWidget() {
                   </div>
                   <div className="text-sm leading-snug">
                     <div className="font-semibold text-gray-900">Besoin d'aide ?</div>
-                    <div className="text-gray-600">Hani ou Samy peuvent répondre à vos questions ici.</div>
+                    <div className="text-gray-600">Si vous avez besoin d’aide, vous pouvez interroger notre chatbot.</div>
                   </div>
                   <button
                     onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
