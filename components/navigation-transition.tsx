@@ -7,68 +7,131 @@ export function NavigationTransition() {
   const pathname = usePathname()
   const router = useRouter()
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const [targetPath, setTargetPath] = useState<string | null>(null)
+  const [reduceMotion, setReduceMotion] = useState(false)
   const previousPathname = useRef(pathname)
 
-  useEffect(() => {
-    console.log("[v0] NavigationTransition mounted for path:", pathname)
+  const startTransitionTo = (to: string) => {
+    if (to === pathname) return
+    if (isTransitioning) return
 
-    // Handle link clicks for smooth transitions
+    setTargetPath(to)
+
+    if (reduceMotion) {
+      router.push(to)
+      return
+    }
+
+    setIsTransitioning(true)
+    window.setTimeout(() => {
+      router.push(to)
+    }, 520)
+  }
+
+  useEffect(() => {
+    const mql = window.matchMedia("(prefers-reduced-motion: reduce)")
+    const update = () => setReduceMotion(Boolean(mql.matches))
+    update()
+    mql.addEventListener?.("change", update)
+    return () => mql.removeEventListener?.("change", update)
+  }, [])
+
+  useEffect(() => {
     const handleLinkClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      const link = target.closest("a")
+      const link = target.closest("a") as HTMLAnchorElement | null
 
-      if (link && link.href && link.href.startsWith(window.location.origin)) {
-        const url = new URL(link.href)
+      if (!link || !link.href) return
 
-        // Only intercept internal navigation to different pages
-        if (url.pathname !== pathname && !url.hash) {
-          console.log("[v0] Intercepting navigation to:", url.pathname)
-          e.preventDefault()
+      // Respect default browser behaviors
+      if (e.button !== 0) return // only left click
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      if (link.target && link.target !== "_self") return
+      if (link.hasAttribute("download")) return
 
-          // Start fade out
-          setIsTransitioning(true)
-          console.log("[v0] Transition state set to true")
+      const isInternal = link.href.startsWith(window.location.origin)
+      if (!isInternal) return
 
-          // Navigate after fade out
-          setTimeout(() => {
-            console.log("[v0] Navigating to:", url.pathname)
-            router.push(url.pathname)
-          }, 300)
-        }
-      }
+      const url = new URL(link.href)
+
+      if (url.hash) return
+      if (url.pathname === pathname) return
+      if (isTransitioning) return
+
+      e.preventDefault()
+      startTransitionTo(url.pathname)
     }
 
-    document.addEventListener("click", handleLinkClick)
+    // Use capture to run BEFORE Next.js <Link> onClick, which calls preventDefault.
+    document.addEventListener("click", handleLinkClick, true)
+    return () => document.removeEventListener("click", handleLinkClick, true)
+  }, [pathname, router, isTransitioning, reduceMotion])
 
-    return () => {
-      document.removeEventListener("click", handleLinkClick)
+  useEffect(() => {
+    const handleProgrammaticNavigate = (e: Event) => {
+      const ce = e as CustomEvent<{ to?: string }>
+      const to = ce.detail?.to
+      if (!to) return
+      startTransitionTo(to)
     }
-  }, [pathname, router])
+
+    window.addEventListener("cc:navigate", handleProgrammaticNavigate as EventListener)
+    return () => window.removeEventListener("cc:navigate", handleProgrammaticNavigate as EventListener)
+  }, [pathname, router, isTransitioning, reduceMotion])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (reduceMotion) return
+      if (isTransitioning) return
+      const to = window.location.pathname
+      if (to === pathname) return
+      setTargetPath(to)
+      setIsTransitioning(true)
+    }
+
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [pathname, isTransitioning, reduceMotion])
 
   useEffect(() => {
     // Check if pathname actually changed
     if (pathname !== previousPathname.current) {
-      console.log("[v0] Pathname changed from", previousPathname.current, "to", pathname)
-      console.log("[v0] isTransitioning state:", isTransitioning)
-
-      if (isTransitioning) {
-        console.log("[v0] Page loaded, fading in")
-      }
-
-      // Always fade in after navigation, even if state wasn't set
-      setTimeout(() => {
+      const closeDelay = reduceMotion ? 0 : 260
+      window.setTimeout(() => {
         setIsTransitioning(false)
-      }, 50)
+        setTargetPath(null)
+      }, closeDelay)
 
       previousPathname.current = pathname
     }
-  }, [pathname, isTransitioning])
+  }, [pathname, reduceMotion])
 
   return (
     <div
-      className={`fixed inset-0 bg-black pointer-events-none transition-opacity duration-300 ease-in-out z-[100] ${
-        isTransitioning ? "opacity-100" : "opacity-0"
-      }`}
-    />
+      className={`fixed inset-0 z-[100] ${isTransitioning ? "pointer-events-auto" : "pointer-events-none"}`}
+      aria-hidden
+    >
+      <div
+        className={`absolute inset-0 transition-opacity duration-300 ease-out ${
+          isTransitioning ? "opacity-100" : "opacity-0"
+        } cc-overlay`}
+      />
+
+      <div className="absolute inset-0 overflow-hidden">
+        <div className={`cc-bubble cc-bubble-1 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
+        <div className={`cc-bubble cc-bubble-2 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
+        <div className={`cc-bubble cc-bubble-3 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
+        <div className={`cc-bubble cc-bubble-4 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
+        <div className={`cc-bubble cc-bubble-5 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
+      </div>
+
+      <div
+        className={`absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+          isTransitioning ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
+        }`}
+      >
+        <div className="cc-sheet absolute inset-0" />
+      </div>
+    </div>
   )
 }
