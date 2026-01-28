@@ -11,6 +11,13 @@ import { Footer } from "@/components/footer"
 import { PricingSection } from "@/components/pricing-section"
 import { InteractiveExpertise } from "@/components/intrctive-screen"
 import { BusinessTypesSectionCreation } from "@/components/business-types-section-creation"
+import { AdBillboard } from "@/components/ad-billboard"
+import { ResponsiveDevices } from "@/components/responsive-devices"
+import { LogosMarquee } from "@/components/logos-marquee"
+
+import { ProcessSteps } from "@/components/process-steps"
+import { FAQ } from "@/components/faq"
+
 
 export default function HomePage() {
   return (
@@ -19,15 +26,20 @@ export default function HomePage() {
         <div className="relative z-10">
           <GlassmorphismNav />
           <HeroSection />
-          <ProblemSolutionSection />
-          {/* <FeaturesSection /> */}
+          <LogosMarquee />
+          <AdBillboard />
+          <ResponsiveDevices />
+          {/* <ProblemSolutionSection /> */}
+          <ProcessSteps />
           <ShowcaseSection />
           <TechStackSection />
+          {/* <FeaturesSection /> */}
           {/* <InteractiveExpertise /> */}
           {/* <ROICalculatorSection /> */}
           <BusinessTypesSectionCreation />
-          <CTASection />
           <PricingSection />
+          <FAQ />
+          <CTASection />
           <ContactCTASection />
           <Footer />
         </div>

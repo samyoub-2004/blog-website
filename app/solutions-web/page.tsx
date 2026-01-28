@@ -5,6 +5,8 @@ import { PortfolioSection } from "@/components/portfolio"
 import { CTASection } from "@/components/cta-section"
 import { ContactCTASection } from "@/components/contact-cta-section"
 import { Footer } from "@/components/footer"
+import { ProblemSolutionSection } from "@/components/problem-solution-section"
+
 
 export default function CreationSitesWebPage() {
   return (
@@ -52,6 +54,7 @@ export default function CreationSitesWebPage() {
           <FeaturesSection />
           <BusinessTypesSectionCreation />
           <PortfolioSection />
+          <ProblemSolutionSection />
           <CTASection />
           <ContactCTASection />
           <Footer />
