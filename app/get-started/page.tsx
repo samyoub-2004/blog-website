@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 
 // Hidden pricing config (not rendered as per-option prices)
-const PRICING = {
+const PRICING_EUR = {
   base: {
     vitrine: 999,
     business: 1999,
@@ -28,6 +28,45 @@ const PRICING = {
     vitrine: { monthly: 99, yearly: 999 },
     business: { monthly: 159, yearly: 1590 },
     ecommerce: { monthly: 299, yearly: 2990 },
+    surmesure: { monthly: 0, yearly: 0 },
+  },
+} as const
+
+// DZD pricing (you can replace these with your exact dinar prices)
+// By default, it's derived from EUR using a simple FX multiplier.
+const EUR_TO_DZD = 150
+
+const PRICING_DZD = {
+  base: {
+    vitrine: PRICING_EUR.base.vitrine * EUR_TO_DZD,
+    business: PRICING_EUR.base.business * EUR_TO_DZD,
+    ecommerce: PRICING_EUR.base.ecommerce * EUR_TO_DZD,
+    surmesure: 0,
+  },
+  pageUnit: PRICING_EUR.pageUnit * EUR_TO_DZD,
+  options: {
+    glass: PRICING_EUR.options.glass * EUR_TO_DZD,
+    micro: PRICING_EUR.options.micro * EUR_TO_DZD,
+    carousel: PRICING_EUR.options.carousel * EUR_TO_DZD,
+    gallery: PRICING_EUR.options.gallery * EUR_TO_DZD,
+    blog: PRICING_EUR.options.blog * EUR_TO_DZD,
+    formAdv: PRICING_EUR.options.formAdv * EUR_TO_DZD,
+    seoAdv: PRICING_EUR.options.seoAdv * EUR_TO_DZD,
+    multilingual: PRICING_EUR.options.multilingual * EUR_TO_DZD,
+  },
+  maintenance: {
+    vitrine: {
+      monthly: PRICING_EUR.maintenance.vitrine.monthly * EUR_TO_DZD,
+      yearly: PRICING_EUR.maintenance.vitrine.yearly * EUR_TO_DZD,
+    },
+    business: {
+      monthly: PRICING_EUR.maintenance.business.monthly * EUR_TO_DZD,
+      yearly: PRICING_EUR.maintenance.business.yearly * EUR_TO_DZD,
+    },
+    ecommerce: {
+      monthly: PRICING_EUR.maintenance.ecommerce.monthly * EUR_TO_DZD,
+      yearly: PRICING_EUR.maintenance.ecommerce.yearly * EUR_TO_DZD,
+    },
     surmesure: { monthly: 0, yearly: 0 },
   },
 } as const
@@ -69,7 +108,76 @@ const DEFAULT_STATE: WizardState = {
   hosting: "agency",
 }
 
-function formatEUR(amount: number) {
+type Currency = "EUR" | "DZD"
+
+const AFRICA_COUNTRIES = new Set([
+  "DZ",
+  "MA",
+  "TN",
+  "LY",
+  "EG",
+  "SD",
+  "SS",
+  "EH",
+  "MR",
+  "ML",
+  "NE",
+  "TD",
+  "SN",
+  "GM",
+  "GW",
+  "GN",
+  "SL",
+  "LR",
+  "CI",
+  "GH",
+  "TG",
+  "BJ",
+  "BF",
+  "NG",
+  "CM",
+  "CF",
+  "GQ",
+  "GA",
+  "CG",
+  "CD",
+  "AO",
+  "NA",
+  "BW",
+  "ZA",
+  "LS",
+  "SZ",
+  "ZM",
+  "ZW",
+  "MW",
+  "MZ",
+  "MG",
+  "MU",
+  "SC",
+  "KM",
+  "RE",
+  "YT",
+  "KE",
+  "UG",
+  "TZ",
+  "RW",
+  "BI",
+  "ET",
+  "ER",
+  "DJ",
+  "SO",
+  "AO",
+  "ST",
+  "CV",
+])
+
+function formatMoney(amount: number, currency: Currency) {
+  if (currency === "DZD") {
+    const grouped = new Intl.NumberFormat("fr-DZ", { maximumFractionDigits: 0, useGrouping: true }).format(amount)
+    // Some locales use spaces (including NBSP / narrow NBSP) for grouping; user wants commas.
+    const withCommas = grouped.replace(/[\s\u00A0\u202F]/g, ",")
+    return withCommas + " DZD"
+  }
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount)
 }
 
@@ -81,6 +189,9 @@ export default function GetStartedPage() {
   const [step, setStep] = useState(1)
   const [state, setState] = useState<WizardState>(DEFAULT_STATE)
   const [showCustomModal, setShowCustomModal] = useState(false)
+
+  const [currency, setCurrency] = useState<Currency>("EUR")
+  const [geoLoading, setGeoLoading] = useState(true)
 
   // Initialize site type from query
   useEffect(() => {
@@ -97,6 +208,29 @@ export default function GetStartedPage() {
     if (site) setState((s) => ({ ...s, siteType: site }))
   }, [planParam])
 
+  // Geo detection (Africa => DZD, else EUR)
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      try {
+        setGeoLoading(true)
+        const res = await fetch("https://ipinfo.io/json")
+        const data = (await res.json()) as { country?: string }
+        const country = (data.country || "").toUpperCase()
+        const isAfrica = country ? AFRICA_COUNTRIES.has(country) : false
+        if (!cancelled) setCurrency(isAfrica ? "DZD" : "EUR")
+      } catch {
+        if (!cancelled) setCurrency("EUR")
+      } finally {
+        if (!cancelled) setGeoLoading(false)
+      }
+    }
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   // Open a contact explanation modal when Sur‑mesure is selected
   useEffect(() => {
     if (state.siteType === "surmesure") {
@@ -106,6 +240,7 @@ export default function GetStartedPage() {
 
   // Price computation (not exposing unit prices)
   const totals = useMemo(() => {
+    const PRICING = currency === "DZD" ? PRICING_DZD : PRICING_EUR
     if (state.siteType === "surmesure") {
       return { buildTotal: 0, maintenance: 0 }
     }
@@ -126,7 +261,7 @@ export default function GetStartedPage() {
     const maint = PRICING.maintenance[state.siteType]
     const maintenance = state.billing === "monthly" ? maint.monthly : maint.yearly
     return { buildTotal, maintenance }
-  }, [state])
+  }, [state, currency])
 
   const siteTypeLabel: Record<SiteType, string> = {
     vitrine: "Vitrine",
@@ -352,11 +487,11 @@ export default function GetStartedPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                   <div className="text-white/70 text-sm mb-1">Création</div>
-                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatEUR(totals.buildTotal)}</div>
+                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatMoney(totals.buildTotal, currency)}</div>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                   <div className="text-white/70 text-sm mb-1">Maintenance ({state.billing === "monthly" ? "mensuelle" : "annuelle"})</div>
-                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatEUR(totals.maintenance) : "Sur devis"}</div>
+                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatMoney(totals.maintenance, currency) : "Sur devis"}</div>
                 </div>
               </div>
 
@@ -443,12 +578,12 @@ export default function GetStartedPage() {
             <div className="flex items-center gap-6">
               <div>
                 <div className="text-xs text-white/60">Total création</div>
-                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatEUR(totals.buildTotal)}</div>
+                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatMoney(totals.buildTotal, currency)}</div>
               </div>
               <div className="hidden md:block w-px h-10 bg-white/10" />
               <div>
                 <div className="text-xs text-white/60">Maintenance ({state.billing === "monthly" ? "mois" : "an"})</div>
-                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatEUR(totals.maintenance) : "—"}</div>
+                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatMoney(totals.maintenance, currency) : "—"}</div>
               </div>
             </div>
           </div>

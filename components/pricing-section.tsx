@@ -1,12 +1,83 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight } from "lucide-react"
 
 type Billing = "monthly" | "yearly"
+
+type Currency = "EUR" | "DZD"
+
+const AFRICA_COUNTRIES = new Set([
+  "DZ",
+  "MA",
+  "TN",
+  "LY",
+  "EG",
+  "SD",
+  "SS",
+  "EH",
+  "MR",
+  "ML",
+  "NE",
+  "TD",
+  "SN",
+  "GM",
+  "GW",
+  "GN",
+  "SL",
+  "LR",
+  "CI",
+  "GH",
+  "TG",
+  "BJ",
+  "BF",
+  "NG",
+  "CM",
+  "CF",
+  "GQ",
+  "GA",
+  "CG",
+  "CD",
+  "AO",
+  "NA",
+  "BW",
+  "ZA",
+  "LS",
+  "SZ",
+  "ZM",
+  "ZW",
+  "MW",
+  "MZ",
+  "MG",
+  "MU",
+  "SC",
+  "KM",
+  "RE",
+  "YT",
+  "KE",
+  "UG",
+  "TZ",
+  "RW",
+  "BI",
+  "ET",
+  "ER",
+  "DJ",
+  "SO",
+  "ST",
+  "CV",
+])
+
+function formatMoney(amount: number, currency: Currency) {
+  if (currency === "DZD") {
+    const grouped = new Intl.NumberFormat("fr-DZ", { maximumFractionDigits: 0, useGrouping: true }).format(amount)
+    const withCommas = grouped.replace(/[\s\u00A0\u202F]/g, ",")
+    return withCommas + " DZD"
+  }
+  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount)
+}
 
 type Plan = {
   name: string
@@ -20,7 +91,7 @@ type Plan = {
   custom?: boolean
 }
 
-const PLANS: Plan[] = [
+const PLANS_EUR: Plan[] = [
   {
     name: "Vitrine",
     pitch: "Site élégant pour présenter votre activité.",
@@ -86,9 +157,99 @@ const PLANS: Plan[] = [
   },
 ]
 
+// Editable DZD plan pricing (edit values here for Algeria/Africa pricing)
+const PLANS_DZD: Plan[] = [
+  {
+    name: "Vitrine",
+    pitch: "Site élégant pour présenter votre activité.",
+    buildPrice: 149850,
+    maintenanceMonthly: 14850,
+    maintenanceYearly: 149850,
+    features: [
+      "Jusqu'à 5 pages",
+      "Design responsive",
+      "SEO technique de base",
+      "Formulaire de contact",
+      "Intégration Analytics",
+      "Déploiement & SSL",
+    ],
+    cta: "Démarrer",
+  },
+  {
+    name: "Business",
+    pitch: "Plus de pages, plus d'impact, mieux optimisé.",
+    buildPrice: 299850,
+    maintenanceMonthly: 23850,
+    maintenanceYearly: 238500,
+    popular: true,
+    features: [
+      "Jusqu'à 12 pages",
+      "Design system léger",
+      "Animations subtiles",
+      "Blog / Actualités",
+      "Perf & SEO avancés",
+      "Support prioritaire",
+    ],
+    cta: "Choisir ce plan",
+  },
+  {
+    name: "E‑commerce",
+    pitch: "Boutique en ligne performante et rassurante.",
+    buildPrice: 524850,
+    maintenanceMonthly: 44850,
+    maintenanceYearly: 448500,
+    features: [
+      "Catalogue & variantes",
+      "Paiements sécurisés",
+      "Fiches produits optimisées",
+      "Panier & emails",
+      "Optimisation conversion",
+      "Suivi + formation",
+    ],
+    cta: "Lancer ma boutique",
+  },
+  {
+    name: "Sur‑mesure",
+    pitch: "Projet ambitieux, intégrations, animations premium.",
+    custom: true,
+    features: [
+      "Architecture headless",
+      "Intégrations avancées",
+      "Design system complet",
+      "Multi‑langue",
+      "Animations premium",
+      "Accompagnement dédié",
+    ],
+    cta: "Demander un devis",
+  },
+]
+
 export function PricingSection() {
   const [billing, setBilling] = useState<Billing>("monthly")
   const [modalPlan, setModalPlan] = useState<Plan | null>(null)
+
+  const [currency, setCurrency] = useState<Currency>("EUR")
+
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      try {
+        const res = await fetch("https://ipinfo.io/json")
+        const data = (await res.json()) as { country?: string }
+        const country = (data.country || "").toUpperCase()
+        const isAfrica = country ? AFRICA_COUNTRIES.has(country) : false
+        if (!cancelled) setCurrency(isAfrica ? "DZD" : "EUR")
+      } catch {
+        if (!cancelled) setCurrency("EUR")
+      }
+    }
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const plans = currency === "DZD" ? PLANS_DZD : PLANS_EUR
 
   return (
     <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8">
@@ -129,14 +290,14 @@ export function PricingSection() {
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {PLANS.map((plan) => {
+          {plans.map((plan) => {
             const isCustom = !!plan.custom
-            const creationPrice = isCustom ? "Sur devis" : `${plan.buildPrice}€`
+            const creationPrice = isCustom ? "Sur devis" : formatMoney(plan.buildPrice || 0, currency)
             const maintenancePrice = isCustom
               ? "Sur devis"
               : billing === "monthly"
-              ? `${plan.maintenanceMonthly}€ / mois`
-              : `${plan.maintenanceYearly}€ / an`
+              ? `${formatMoney(plan.maintenanceMonthly || 0, currency)} / mois`
+              : `${formatMoney(plan.maintenanceYearly || 0, currency)} / an`
             const slug = plan.name.toLowerCase().replace(/[^a-z0-9]+/g, "").replace("é", "e").replace("‑", "-")
 
             return (
@@ -274,14 +435,16 @@ export function PricingSection() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   <div className="bg-white/5 border border-white/15 rounded-xl p-4">
                     <div className="text-white/70 text-xs mb-1">Création</div>
-                    <div className="text-xl font-semibold">{`${modalPlan.buildPrice}€`}</div>
+                    <div className="text-xl font-semibold">{formatMoney(modalPlan.buildPrice || 0, currency)}</div>
                   </div>
                   <div className="bg-white/5 border border-white/15 rounded-xl p-4">
                     <div className="flex items-center gap-2">
                       <div className="text-white/70 text-xs">Maintenance ({billing === "monthly" ? "mensuelle" : "annuelle"})</div>
                     </div>
                     <div className="text-xl font-semibold">
-                      {billing === "monthly" ? `${modalPlan.maintenanceMonthly}€ / mois` : `${modalPlan.maintenanceYearly}€ / an`}
+                      {billing === "monthly"
+                        ? `${formatMoney(modalPlan.maintenanceMonthly || 0, currency)} / mois`
+                        : `${formatMoney(modalPlan.maintenanceYearly || 0, currency)} / an`}
                     </div>
                   </div>
                 </div>

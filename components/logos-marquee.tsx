@@ -26,7 +26,16 @@ export function LogosMarquee() {
 dark:opacity-80" style={{ width: "200%", animation: "marquee 30s linear infinite" }}>
               {row.map((src, i) => (
                 <div key={i} className="shrink-0 h-8 sm:h-10 opacity-80 hover:opacity-100 transition-opacity">
-                  <img src={src} alt="logo" className="h-full w-auto" />
+                  <div
+                    className="h-full w-[120px]"
+                    style={{
+                      backgroundImage: `url(${src})`,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                    aria-hidden
+                  />
                 </div>
               ))}
             </div>

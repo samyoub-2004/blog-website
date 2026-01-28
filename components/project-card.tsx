@@ -1,4 +1,3 @@
-import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -43,14 +42,28 @@ export default function ProjectCard({
       >
         <div className="relative overflow-hidden rounded-[1.35rem] bg-black lg:h-full">
           <div className={cn("relative w-full aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full", imageContainerClassName)}>
-            <Image
-              src={imageSrc || "/placeholder.svg"}
-              alt={title}
-              fill
-              sizes="(min-width: 1024px) 66vw, 100vw"
-              priority={priority}
-              className="object-cover"
-            />
+            <div className="absolute inset-0">
+              <div
+                className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                style={{
+                  backgroundImage: `url(${imageSrc || "/placeholder.svg"})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-hidden
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(${imageSrc || "/placeholder.svg"})`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-hidden
+              />
+            </div>
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/30" />
           </div>
 
