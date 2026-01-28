@@ -1,8 +1,7 @@
 import { GlassmorphismNav } from "@/components/glassmorphism-nav"
 import { HeroSection } from "@/components/hero-section"
 import { ProblemSolutionSection } from "@/components/problem-solution-section"
-import { FeaturesSection } from "@/components/features-section"
-import { AITeamSection } from "@/components/ai-team-section"
+import { ShowcaseSection } from "@/components/show-case-section"
 import { TechStackSection } from "@/components/tech-stack-section"
 // import { ROICalculatorSection } from "@/components/roi-calculator-section"
 import { BusinessTypesSection } from "@/components/business-types-section"
@@ -32,7 +31,7 @@ export default function HomePage() {
           <ResponsiveDevices />
           {/* <ProblemSolutionSection /> */}
           <ProcessSteps />
-          <AITeamSection />
+          <ShowcaseSection />
           <TechStackSection />
           {/* <FeaturesSection /> */}
           {/* <InteractiveExpertise /> */}
