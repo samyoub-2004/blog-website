@@ -23,6 +23,18 @@ const projects = [
     category: "E-commerce • 2024",
     image: "/dzshop.png",
   },
+  {
+    id: 4,
+    title: "Hanane's Signature Patisserie",
+    category: "Site Vitrine • 2025",
+    image: "/pattiserie.webp",
+  },
+  {
+    id: 5,
+    title: "AAFD Val de Saône",
+    category: "Application Web • 2026",
+    image: "/aafd.webp",
+  }
 ]
 
 export function PortfolioCarousel() {
