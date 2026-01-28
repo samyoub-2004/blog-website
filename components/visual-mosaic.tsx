@@ -41,11 +41,28 @@ export function VisualMosaic() {
                   tileClass,
                 ].join(" ")}
               >
-                <img
-                  src={src}
-                  alt="Showcase visuel"
-                  className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] group-hover:rotate-[0.2deg]"
-                />
+                <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.03] group-hover:rotate-[0.2deg]">
+                  <div
+                    className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                    style={{
+                      backgroundImage: `url(${src})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                    aria-hidden
+                  />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      backgroundImage: `url(${src})`,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                    aria-hidden
+                  />
+                </div>
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               </div>
             )

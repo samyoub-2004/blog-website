@@ -32,10 +32,15 @@ export const TechStackColumn = (props: { items: TechItem[], duration?: number, c
                 <div className="flex items-center gap-4 mb-4">
                   {/* LOGO ORIGINAL ICI */}
                   <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 p-2 group-hover:scale-110 transition-transform duration-300">
-                    <img 
-                      src={item.logo} 
-                      alt={item.name} 
-                      className="w-full h-full object-contain"
+                    <div
+                      className="w-full h-full"
+                      style={{
+                        backgroundImage: `url(${item.logo})`,
+                        backgroundSize: "contain",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                      }}
+                      aria-hidden
                     />
                   </div>
                   <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/50">

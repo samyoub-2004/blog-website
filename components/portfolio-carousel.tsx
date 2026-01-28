@@ -3,26 +3,25 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react"
-import Image from "next/image"
 
 const projects = [
   {
     id: 1,
-    title: "E-commerce Luxury",
-    category: "Next.js / Shopify",
-    image: "/images/1 (1).webp", // Remplace par tes vraies images
+    title: "Lily Go",
+    category: "E-commerce • 2024",
+    image: "/lilygoLaptop.png",
   },
   {
     id: 2,
-    title: "Plateforme SaaS AI",
-    category: "Fullstack App",
-    image: "/images/1 (2).webp",
+    title: "Le Parking VTC",
+    category: "Site Vitrine • Mobile",
+    image: "/leparkingvtcLaptop.png",
   },
   {
     id: 3,
-    title: "Agence Créative",
-    category: "Design & Dev",
-    image: "/images/1 (3).webp",
+    title: "DZ Shop",
+    category: "E-commerce • 2024",
+    image: "/dzshop.png",
   },
 ]
 
@@ -59,14 +58,29 @@ export function PortfolioCarousel() {
           >
             {/* Si tu n'as pas encore les images, ce div servira de placeholder coloré */}
             <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 to-transparent z-10" />
-            
-            <Image
-              src={projects[index].image}
-              alt={projects[index].title}
-              fill
-              className="object-cover"
-              priority
-            />
+
+            {/* Background (cover) + Foreground (contain) to avoid important content being cropped */}
+            <div className="absolute inset-0">
+              <div
+                className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                style={{
+                  backgroundImage: `url(${projects[index].image})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: `url(${projects[index].image})`,
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-hidden
+              />
+            </div>
 
             {/* Overlay Infos Projet */}
             <div className="absolute bottom-0 left-0 right-0 p-8 z-30 bg-gradient-to-t from-black/90 via-black/40 to-transparent">

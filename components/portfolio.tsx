@@ -1,40 +1,39 @@
 "use client"
 
-import Image from "next/image"
 import { ExternalLink, ArrowUpRight } from "lucide-react"
 
 const projects = [
   {
-    title: "Eco-Sphere",
+    title: "Lily Go",
     category: "E-commerce • 2024",
-    image: "/project1.jpg", // Remplace par tes images
-    gridClass: "md:col-span-2 md:row-span-2", // Grande carte
+    image: "/lilygoLaptop.png",
+    gridClass: "md:col-span-2 md:row-span-2",
     color: "from-emerald-500/20",
-    link: "https://eco-sphere.com",
+    link: "https://lilygo.fr",
   },
   {
-    title: "Nova Studio",
-    category: "Site Vitrine",
-    image: "/project2.jpg",
+    title: "Le Parking VTC",
+    category: "Site Vitrine • Mobile",
+    image: "/leparkingvtcLaptop.png",
     gridClass: "md:col-span-1 md:row-span-1",
     color: "from-blue-500/20",
-    link: "https://nova-studio.com",
+    link: "leparkingvtc.fr",
   },
   {
-    title: "Apex App",
-    category: "SaaS / Sur-mesure",
-    image: "/project3.jpg",
-    gridClass: "md:col-span-1 md:row-span-2", // Carte verticale
+    title: "DZ Shop",
+    category: "E-commerce • 2024",
+    image: "/dzshop.png",
+    gridClass: "md:col-span-1 md:row-span-2",
     color: "from-purple-500/20",
-    link: "https://apex-app.com",
+    link: "",
   },
   {
-    title: "Lumina",
-    category: "Branding",
-    image: "/project4.jpg",
+    title: "Portfolio Pro",
+    category: "Portfolio • Design",
+    image: "/portfolio.png",
     gridClass: "md:col-span-1 md:row-span-1",
     color: "from-orange-500/20",
-    link: "https://lumina-brand.com",
+    link: "https://portfolio.example.com",
   },
 ]
 
@@ -65,23 +64,41 @@ export function PortfolioSection() {
           {projects.map((project, index) => (
             <div
               key={index}
-              className={`group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 ${project.gridClass}`}
+              className={`group relative overflow-hidden rounded-3xl bg-white/5 border border-white/10 ${project.gridClass} flex items-center justify-center`}
             >
               {/* Image de fond avec overlay */}
               <div className="absolute inset-0 z-0">
-                {/* Remplace par un composant <Image /> Next.js si possible */}
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500 z-10" />
-                <div className={`absolute inset-0 bg-gradient-to-t ${project.color} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10`} />
-                <div className="w-full h-full bg-neutral-800 animate-pulse" /> {/* Placeholder */}
+                <div
+                  className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60 transition-transform duration-700 ease-out group-hover:scale-[1.1]"
+                  style={{
+                    backgroundImage: `url(${project.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: `url(${project.image})`,
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/60 group-hover:from-black/40 group-hover:via-transparent group-hover:to-black/40 transition-all duration-500 z-10" />
+                <div className={`absolute inset-0 bg-gradient-to-t ${project.color} to-transparent opacity-0 group-hover:opacity-50 transition-opacity duration-500 z-10`} />
               </div>
 
               {/* Contenu Texte */}
-              <div className="absolute bottom-0 left-0 w-full p-8 z-20 flex justify-between items-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="absolute bottom-0 left-0 w-full p-6 z-20 flex justify-between items-end transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                 <div>
-                  <p className="text-white/50 text-sm font-medium mb-1 uppercase tracking-widest">
+                  <p className="text-white/70 text-xs font-medium mb-1 uppercase tracking-widest drop-shadow-lg">
                     {project.category}
                   </p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white leading-none">
+                  <h3 className="text-xl md:text-2xl font-bold text-white leading-none drop-shadow-lg">
                     {project.title}
                   </h3>
                 </div>
@@ -89,10 +106,10 @@ export function PortfolioSection() {
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white text-black p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0"
+                  className="bg-white/90 backdrop-blur-sm text-black p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0 hover:scale-110 shadow-lg"
                   aria-label={`Voir le site de ${project.title}`}
                 >
-                  <ExternalLink className="w-5 h-5" />
+                  <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </div>

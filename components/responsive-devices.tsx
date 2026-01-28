@@ -18,21 +18,87 @@ export function ResponsiveDevices() {
               <span className="w-2.5 h-2.5 rounded-full bg-green-400/70" />
             </div>
             <div className="aspect-[16/10]">
-              <img src="/images/1 (4).webp" alt="Desktop preview" className="h-full w-full object-cover" />
+              <div className="relative h-full w-full">
+                <div
+                  className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(4).webp)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(4).webp)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-label="Desktop preview"
+                  role="img"
+                />
+              </div>
             </div>
           </div>
 
           <div className="absolute -bottom-6 -left-3 sm:-left-8 w-28 sm:w-36 rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="h-4 bg-white/10 border-b border-white/10"></div>
             <div className="aspect-[3/5]">
-              <img src="/images/1 (2).webp" alt="Mobile preview" className="h-full w-full object-cover" />
+              <div className="relative h-full w-full">
+                <div
+                  className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(2).webp)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(2).webp)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-label="Mobile preview"
+                  role="img"
+                />
+              </div>
             </div>
           </div>
 
           <div className="absolute -right-6 -bottom-10 w-44 sm:w-56 rounded-[20px] border border-white/10 bg-white/5 backdrop-blur-md shadow-[0_25px_50px_rgba(0,0,0,0.5)] overflow-hidden">
             <div className="h-5 bg-white/10 border-b border-white/10" />
             <div className="aspect-[4/5]">
-              <img src="/images/1 (6).webp" alt="Tablet preview" className="h-full w-full object-cover" />
+              <div className="relative h-full w-full">
+                <div
+                  className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(6).webp)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(6).webp)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-label="Tablet preview"
+                  role="img"
+                />
+              </div>
             </div>
           </div>
         </div>

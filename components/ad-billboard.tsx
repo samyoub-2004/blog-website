@@ -107,14 +107,32 @@ export function AdBillboard() {
                 </div>
                 <div className="relative aspect-[16/10]">
                   {SLIDES.map((s, i) => (
-                    <img
+                    <div
                       key={s.src}
-                      src={s.src}
-                      alt={s.title}
-                      className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${
+                      className={`absolute inset-0 transition-opacity duration-700 ease-out ${
                         i === index ? "opacity-100" : "opacity-0"
                       }`}
-                    />
+                      aria-hidden
+                    >
+                      <div
+                        className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                        style={{
+                          backgroundImage: `url(${s.src})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backgroundImage: `url(${s.src})`,
+                          backgroundSize: "contain",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
+                      />
+                    </div>
                   ))}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
                 </div>

@@ -14,12 +14,56 @@ export function BeforeAfterSlider() {
 
         <div className="relative mx-auto max-w-5xl rounded-2xl overflow-hidden border border-white/10 bg-white/5 shadow-[0_30px_60px_rgba(0,0,0,0.5)]">
           <div className="relative aspect-[16/9]">
-            <img src="/images/1 (5).webp" alt="Après" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0">
+              <div
+                className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                style={{
+                  backgroundImage: "url(/images/1\u0020(5).webp)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-hidden
+              />
+              <div
+                className="absolute inset-0"
+                style={{
+                  backgroundImage: "url(/images/1\u0020(5).webp)",
+                  backgroundSize: "contain",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                }}
+                aria-label="Après"
+                role="img"
+              />
+            </div>
             <div
               className="absolute inset-0 overflow-hidden"
               style={{ width: `${pos}%` }}
             >
-              <img src="/images/1 (3).webp" alt="Avant" className="h-full w-full object-cover" />
+              <div className="relative h-full w-full">
+                <div
+                  className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(3).webp)",
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-hidden
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage: "url(/images/1\u0020(3).webp)",
+                    backgroundSize: "contain",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                  }}
+                  aria-label="Avant"
+                  role="img"
+                />
+              </div>
             </div>
             <div className="absolute inset-y-0" style={{ left: `${pos}%` }}>
               <div className="h-full w-[2px] bg-white/70" />

@@ -110,7 +110,28 @@ export function ShowcaseCarousel() {
                     <span className="ml-2 text-[10px] uppercase tracking-wider text-white/60">{s.title}</span>
                   </div>
                   <div className="aspect-[16/10]">
-                    <img src={s.src} alt={s.title} className="h-full w-full object-cover" />
+                    <div className="relative h-full w-full">
+                      <div
+                        className="absolute inset-0 scale-[1.06] blur-[18px] opacity-60"
+                        style={{
+                          backgroundImage: `url(${s.src})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
+                        aria-hidden
+                      />
+                      <div
+                        className="absolute inset-0"
+                        style={{
+                          backgroundImage: `url(${s.src})`,
+                          backgroundSize: "contain",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
+                        aria-hidden
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
