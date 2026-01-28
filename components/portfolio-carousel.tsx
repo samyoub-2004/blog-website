@@ -1,142 +1,106 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { useState } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ChevronLeft, ChevronRight, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 
-const portfolioItems = [
+const projects = [
   {
     id: 1,
-    title: "Modern Ecommerce Store",
-    description: "High-converting online store",
-    image: "/portfolio/ecommerce-1.jpg",
+    title: "E-commerce Luxury",
+    category: "Next.js / Shopify",
+    image: "/images/1 (1).webp", // Remplace par tes vraies images
   },
   {
     id: 2,
-    title: "Luxury Boutique Website",
-    description: "Premium shopping experience",
-    image: "/portfolio/boutique-1.jpg",
+    title: "Plateforme SaaS AI",
+    category: "Fullstack App",
+    image: "/images/1 (2).webp",
   },
   {
     id: 3,
-    title: "Portfolio & Agency Site",
-    description: "Creative showcase",
-    image: "/portfolio/portfolio-1.jpg",
-  },
-  {
-    id: 4,
-    title: "Business Website",
-    description: "Professional corporate site",
-    image: "/portfolio/business-1.jpg",
-  },
-  {
-    id: 5,
-    title: "Blog Platform",
-    description: "Content-rich community",
-    image: "/portfolio/blog-1.jpg",
+    title: "Agence Créative",
+    category: "Design & Dev",
+    image: "/images/1 (3).webp",
   },
 ]
 
 export function PortfolioCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isAutoPlay, setIsAutoPlay] = useState(true)
+  const [index, setIndex] = useState(0)
 
-  useEffect(() => {
-    if (!isAutoPlay) return
-
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % portfolioItems.length)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [isAutoPlay])
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev - 1 + portfolioItems.length) % portfolioItems.length)
-    setIsAutoPlay(false)
-  }
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % portfolioItems.length)
-    setIsAutoPlay(false)
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentIndex(index)
-    setIsAutoPlay(false)
-  }
+  const next = () => setIndex((prev) => (prev + 1) % projects.length)
+  const prev = () => setIndex((prev) => (prev - 1 + projects.length) % projects.length)
 
   return (
-    <div className="relative w-full h-full">
-      {/* Main Carousel */}
-      <div className="relative w-full h-full overflow-hidden rounded-2xl bg-slate-900">
-        {portfolioItems.map((item, index) => (
-          <div
-            key={item.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentIndex ? "opacity-100" : "opacity-0"
-            }`}
+    <div className="relative group">
+      {/* Conteneur Principal (Mockup Laptop) */}
+      <div className="relative aspect-[16/9] w-full bg-[#161b22] rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+        
+        {/* Navigation Overlays */}
+        <div className="absolute inset-0 z-20 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={prev} className="p-3 rounded-full bg-black/50 backdrop-blur-md text-white border border-white/10 hover:bg-blue-600 transition-colors">
+            <ChevronLeft size={24} />
+          </button>
+          <button onClick={next} className="p-3 rounded-full bg-black/50 backdrop-blur-md text-white border border-white/10 hover:bg-blue-600 transition-colors">
+            <ChevronRight size={24} />
+          </button>
+        </div>
+
+        {/* Images avec Transition */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.6, ease: "circOut" }}
+            className="relative w-full h-full"
           >
-            <div className="relative w-full h-full">
-              {/* Placeholder for portfolio image */}
-              <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-6xl font-bold text-slate-700 mb-4">{index + 1}</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">{item.title}</h3>
-                  <p className="text-slate-400">{item.description}</p>
+            {/* Si tu n'as pas encore les images, ce div servira de placeholder coloré */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-900/20 to-transparent z-10" />
+            
+            <Image
+              src={projects[index].image}
+              alt={projects[index].title}
+              fill
+              className="object-cover"
+              priority
+            />
+
+            {/* Overlay Infos Projet */}
+            <div className="absolute bottom-0 left-0 right-0 p-8 z-30 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex justify-between items-end"
+              >
+                <div>
+                  <p className="text-blue-400 font-mono text-sm mb-2">{projects[index].category}</p>
+                  <h3 className="text-3xl font-bold text-white">{projects[index].title}</h3>
                 </div>
-              </div>
+                <button className="flex items-center gap-2 bg-white text-black px-6 py-3 rounded-full font-bold hover:bg-blue-500 hover:text-white transition-all">
+                  Voir le projet <ArrowUpRight size={18} />
+                </button>
+              </motion.div>
             </div>
-          </div>
-        ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* Navigation Arrows */}
-      <button
-        onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-md transition-all duration-300 group"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6 group-hover:scale-110 transition-transform" />
-      </button>
-
-      <button
-        onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full backdrop-blur-md transition-all duration-300 group"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6 group-hover:scale-110 transition-transform" />
-      </button>
-
-      {/* Slide Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-        {portfolioItems.map((_, index) => (
+      {/* Indicateurs (Dots) */}
+      <div className="flex justify-center gap-2 mt-8">
+        {projects.map((_, i) => (
           <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex ? "bg-white w-8" : "bg-white/40 w-2 hover:bg-white/60"
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`h-1.5 transition-all duration-300 rounded-full ${
+              i === index ? "w-12 bg-blue-500" : "w-3 bg-gray-700 hover:bg-gray-500"
             }`}
-            aria-label={`Go to slide ${index + 1}`}
           />
         ))}
       </div>
-
-      {/* Info Bar */}
-      <div className="absolute top-6 right-6 z-10 bg-black/40 backdrop-blur-md border border-white/10 rounded-lg px-4 py-2">
-        <p className="text-white font-medium text-sm">
-          {currentIndex + 1} / {portfolioItems.length}
-        </p>
-      </div>
-
-      {/* Auto-play toggle */}
-      <button
-        onClick={() => setIsAutoPlay(!isAutoPlay)}
-        className="absolute bottom-6 right-6 z-10 bg-white/20 hover:bg-white/40 text-white px-3 py-1 rounded-full text-sm backdrop-blur-md transition-all duration-300"
-        aria-label="Toggle autoplay"
-      >
-        {isAutoPlay ? "⏸" : "▶"}
-      </button>
     </div>
   )
-}
+} 
