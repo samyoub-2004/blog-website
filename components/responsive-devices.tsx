@@ -28,7 +28,7 @@ export function ResponsiveDevices() {
             <div className="aspect-[16/10] relative">
               {/* Image Floue (Effet Glow) */}
               <Image 
-                src="/images/desktop.webp" 
+                src="/leparkingvtcLaptop.png" 
                 alt="" 
                 fill 
                 className="object-cover scale-[1.06] blur-[18px] opacity-60"
@@ -49,7 +49,7 @@ export function ResponsiveDevices() {
             <div className="h-4 bg-white/10 border-b border-white/10"></div>
             <div className="aspect-[3/5] relative">
               <Image 
-                src="/images/mobile.webp" 
+                src="/leparkingvtcPhone.png" 
                 alt="" 
                 fill 
                 className="object-cover scale-[1.06] blur-[18px] opacity-60"
@@ -68,7 +68,7 @@ export function ResponsiveDevices() {
             <div className="h-5 bg-white/10 border-b border-white/10" />
             <div className="aspect-[4/5] relative">
               <Image 
-                src="/images/tablet.webp" 
+                src="/leparkingvtcTablette.png" 
                 alt="" 
                 fill 
                 className="object-cover scale-[1.06] blur-[18px] opacity-60"
