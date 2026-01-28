@@ -30,7 +30,7 @@ export default function HomePage() {
           <LogosMarquee />
           <AdBillboard />
           <ResponsiveDevices />
-          <ProblemSolutionSection />
+          {/* <ProblemSolutionSection /> */}
           <ProcessSteps />
           <AITeamSection />
           <TechStackSection />
