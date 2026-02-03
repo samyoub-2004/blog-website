@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { TechStackColumn } from "@/components/ui/tech-stack-column"
+import { motion } from "framer-motion"
 
 export function TechStackSection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -30,98 +30,127 @@ export function TechStackSection() {
 const techItems = [
     { 
       name: "React", 
-      role: "Frontend", 
-      logo: "https://cdn.simpleicons.org/react/61DAFB", 
-      text: "Interfaces réactives et composants réutilisables." 
+      logo: "https://cdn.simpleicons.org/react/61DAFB" 
     },
     { 
       name: "Next.js", 
-      role: "Framework", 
-      logo: "https://cdn.simpleicons.org/nextdotjs/white", 
-      text: "Optimisation SEO et rendu côté serveur (SSR)." 
+      logo: "https://cdn.simpleicons.org/nextdotjs/white" 
     },
     { 
       name: "Tailwind CSS", 
-      role: "Design", 
-      logo: "https://cdn.simpleicons.org/tailwindcss/06B6D4", 
-      text: "Design moderne et responsive ultra-rapide." 
+      logo: "https://cdn.simpleicons.org/tailwindcss/06B6D4" 
     },
     { 
       name: "TypeScript", 
-      role: "Language", 
-      logo: "https://cdn.simpleicons.org/typescript/3178C6", 
-      text: "Code sécurisé et typage statique rigoureux." 
+      logo: "https://cdn.simpleicons.org/typescript/3178C6" 
     },
     { 
       name: "Node.js", 
-      role: "Backend", 
-      logo: "https://cdn.simpleicons.org/nodedotjs/339933", 
-      text: "Développement serveur performant et scalable." 
+      logo: "https://cdn.simpleicons.org/nodedotjs/339933" 
     },
     { 
       name: "PostgreSQL", 
-      role: "Database", 
-      logo: "https://cdn.simpleicons.org/postgresql/4169E1", 
-      text: "Base de données relationnelle puissante et fiable." 
+      logo: "https://cdn.simpleicons.org/postgresql/4169E1" 
     },
     { 
       name: "Prisma", 
-      role: "ORM", 
-      logo: "https://cdn.simpleicons.org/prisma/2D3748", 
-      text: "Gestion simplifiée de la base de données." 
+      logo: "https://cdn.simpleicons.org/prisma/2D3748" 
     },
     { 
       name: "Supabase", 
-      role: "BaaS", 
-      logo: "https://cdn.simpleicons.org/supabase/3ECF8E", 
-      text: "Auth et DB temps réel en toute simplicité." 
+      logo: "https://cdn.simpleicons.org/supabase/3ECF8E" 
+    },
+    { 
+      name: "Firebase", 
+      logo: "https://cdn.simpleicons.org/firebase/FFCA28" 
+    },
+    { 
+      name: "Google Analytics", 
+      logo: "https://cdn.simpleicons.org/googleanalytics/E37400" 
+    },
+    { 
+      name: "Google Cloud", 
+      logo: "https://cdn.simpleicons.org/googlecloud/4285F4" 
     },
     { 
       name: "Framer Motion", 
-      role: "Motion", 
-      logo: "https://cdn.simpleicons.org/framer/0055FF", 
-      text: "Animations web fluides et interactives." 
+      logo: "https://cdn.simpleicons.org/framer/0055FF" 
     },
     { 
       name: "Resend", 
-      role: "Email", 
-      logo: "https://cdn.simpleicons.org/resend/white", 
-      text: "Envoi d'emails transactionnels moderne." 
+      logo: "https://cdn.simpleicons.org/resend/white" 
     },
     { 
       name: "Figma", 
-      role: "Design Tool", 
-      logo: "https://cdn.simpleicons.org/figma/F24E1E", 
-      text: "Conception d'interfaces et prototypage." 
+      logo: "https://cdn.simpleicons.org/figma/F24E1E" 
     },
     { 
       name: "GitHub", 
-      role: "Workflow", 
-      logo: "https://cdn.simpleicons.org/github/white", 
-      text: "Gestion de version et travail collaboratif." 
+      logo: "https://cdn.simpleicons.org/github/white" 
     }
   ]
 
   return (
     <section id="tech-stack" ref={sectionRef} className="relative pt-16 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-7xl mx-auto">
-        <div className="text-center mb-16 md:mb-32">
+        <div className="text-center mb-8">
           <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out inline-flex items-center gap-2 text-white/60 text-sm font-medium tracking-wider uppercase mb-6">
             <div className="w-8 h-px bg-white/30"></div>
             Expertise Technique
             <div className="w-8 h-px bg-white/30"></div>
           </div>
           <h2 className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out text-4xl md:text-6xl font-bold text-white tracking-tight">
-            Ma <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">stack</span> de prédilection
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Stack</span> de prédilection
           </h2>
         </div>
 
-        <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out relative flex justify-center items-center min-h-[600px] md:min-h-[800px] overflow-hidden">
-          <div className="flex gap-8 max-w-6xl" style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%)" }}>
-            <TechStackColumn items={techItems.slice(0, 4)} duration={25} className="flex-1" />
-            <TechStackColumn items={techItems.slice(4, 8)} duration={18} className="flex-1 hidden md:block" />
-            <TechStackColumn items={techItems.slice(8, 12)} duration={30} className="flex-1 hidden lg:block" />
-          </div>
+        <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out relative overflow-hidden">
+          <motion.div
+            animate={{ translateX: "-50%" }}
+            transition={{
+              duration: 45,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "linear",
+              repeatType: "loop",
+            }}
+            className="flex py-8"
+            style={{ 
+              width: `${15 * 160 * 2}px`,
+              gap: "0px"
+            }}
+          >
+            {[...new Array(2)].map((_, index) => (
+              <div key={index} className="flex shrink-0" style={{ gap: "0px" }}>
+                {techItems.map((item, i) => (
+                  <div
+                    key={`${index}-${i}`}
+                    className="group flex flex-col items-center justify-center shrink-0"
+                    style={{ 
+                      width: "160px",
+                      minWidth: "160px",
+                      padding: "0 20px"
+                    }}
+                  >
+                    <div className="w-20 h-20 flex items-center justify-center p-4 group-hover:scale-110 transition-transform duration-300 mb-4">
+                      <div
+                        className="w-full h-full"
+                        style={{
+                          backgroundImage: `url(${item.logo})`,
+                          backgroundSize: "contain",
+                          backgroundPosition: "center",
+                          backgroundRepeat: "no-repeat",
+                        }}
+                        aria-hidden
+                      />
+                    </div>
+                    <div className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors text-center whitespace-nowrap px-2">
+                      {item.name}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </motion.div>
         </div>
       </div>
     </section>
