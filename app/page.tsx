@@ -26,8 +26,8 @@ export default function HomePage() {
         <div className="relative z-10">
           <GlassmorphismNav />
           <HeroSection />
-          <LogosMarquee />
-          <AdBillboard />
+          {/* <LogosMarquee /> */}
+          {/* <AdBillboard /> */}
           <ResponsiveDevices />
           {/* <ProblemSolutionSection /> */}
           <ProcessSteps />
