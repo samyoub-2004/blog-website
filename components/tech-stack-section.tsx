@@ -115,8 +115,8 @@ const techItems = [
             Expertise Technique
             <div className="w-8 h-px bg-white/30"></div>
           </div>
-          <h2 className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out text-5xl md:text-6xl lg:text-7xl font-light text-white mb-8 tracking-tight text-balance">
-            Ma <span className="font-medium italic">stack</span> de prédilection
+          <h2 className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out text-4xl md:text-6xl font-bold text-white tracking-tight">
+            Ma <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">stack</span> de prédilection
           </h2>
         </div>
 

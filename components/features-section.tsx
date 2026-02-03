@@ -321,7 +321,7 @@ export function FeaturesSection() {
 
   return (
     <section id="features" ref={sectionRef} className="relative z-10">
-      <div className="bg-white rounded-t-[3rem] pt-16 pb-16 px-4 relative overflow-hidden">
+      <div className="bg-white rounded-t-[3rem] rounded-b-[3rem] pt-16 pb-16 px-4 relative overflow-hidden">
         {/* Ton fond avec les points (conservé) */}
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
           <div className="absolute inset-0" style={{ backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0,0,0) 1px, transparent 0)`, backgroundSize: "24px 24px" }}></div>

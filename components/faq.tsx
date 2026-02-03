@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { motion } from "framer-motion"
 
 const QA = [
   {
@@ -25,11 +26,26 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <section className="relative py-16 sm:py-24">
+    <section className="relative py-24 bg-black">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">Questions fréquentes</h2>
-          <p className="mt-3 text-sm sm:text-base text-white/60">L’essentiel pour décider rapidement.</p>
+        <div className="text-center mb-12">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-bold tracking-tight text-white"
+          >
+            Questions <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">fréquentes</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="mt-4 text-lg text-white/70 max-w-2xl mx-auto"
+          >
+            L'essentiel pour décider rapidement.
+          </motion.p>
         </div>
         <div className="mx-auto max-w-3xl divide-y divide-white/10 rounded-2xl border border-white/10 bg-white/5">
           {QA.map((item, i) => {

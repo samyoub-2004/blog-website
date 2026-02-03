@@ -1,19 +1,31 @@
+"use client"
+
 import Image from 'next/image';
+import { motion } from "framer-motion"
 
 export function ResponsiveDevices() {
   return (
-    <section className="relative py-16 sm:py-24 overflow-hidden">
-      {/* Background Gradient */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(255,255,255,0.06),_transparent_60%)]" />
+    <section className="relative py-24 overflow-hidden bg-black">
       
-      <div className="container mx-auto px-4">
-        <div className="mb-8 sm:mb-12 text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-            Des sites magnifiques, sur tous les écrans
-          </h2>
-          <p className="mt-3 text-sm sm:text-base text-white/60">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="mb-12 text-center">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-bold tracking-tight text-white"
+          >
+            Des sites magnifiques, sur <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">tous les écrans</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="mt-4 text-lg text-white/70 max-w-2xl mx-auto"
+          >
             Desktop, tablette ou mobile — une expérience soignée et performante.
-          </p>
+          </motion.p>
         </div>
 
         <div className="relative mx-auto max-w-5xl">

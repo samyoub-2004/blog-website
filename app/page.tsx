@@ -32,11 +32,12 @@ export default function HomePage() {
           {/* <ProblemSolutionSection /> */}
           <ProcessSteps />
           <ShowcaseSection />
-          <TechStackSection />
+          
           {/* <FeaturesSection /> */}
           {/* <InteractiveExpertise /> */}
           {/* <ROICalculatorSection /> */}
           <BusinessTypesSectionCreation />
+          <TechStackSection />
           <PricingSection />
           <FAQ />
           <CTASection />

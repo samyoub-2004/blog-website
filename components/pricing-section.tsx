@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
 
 type Billing = "monthly" | "yearly"
 
@@ -252,38 +253,55 @@ export function PricingSection() {
   const plans = currency === "DZD" ? PLANS_DZD : PLANS_EUR
 
   return (
-    <section className="relative py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+    <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white rounded-t-[60px] rounded-b-[60px]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-10 md:mb-14">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-6">
-            <span className="w-2 h-2 bg-white/60 rounded-full mr-2 animate-pulse"></span>
+        <div className="text-center mb-12">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="inline-flex items-center px-4 py-2 rounded-full bg-black/5 backdrop-blur-md border border-black/10 text-black/60 text-sm font-medium mb-6"
+          >
+            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
             Tarifs transparents
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-balance mb-4">
-            Des plans adaptés à vos objectifs
-          </h2>
-          <p className="text-white/70 max-w-2xl mx-auto">
+          </motion.div>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-6xl font-bold tracking-tight text-black mb-4"
+          >
+            Des plans adaptés à vos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">objectifs</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-lg text-black/70 max-w-2xl mx-auto"
+          >
             Prix de création unique + maintenance flexible. Passez à l'annuel et économisez jusqu'à 20%.
-          </p>
+          </motion.p>
         </div>
 
         {/* Billing Toggle */}
         <div className="flex items-center justify-center gap-3 mb-10">
-          <span className={`text-sm ${billing === "monthly" ? "text-white" : "text-white/60"}`}>Mensuel</span>
+          <span className={`text-sm ${billing === "monthly" ? "text-black" : "text-black/60"}`}>Mensuel</span>
           <button
             aria-label="Basculer facturation"
             onClick={() => setBilling((b) => (b === "monthly" ? "yearly" : "monthly"))}
-            className="relative w-16 h-8 bg-white/10 border border-white/20 rounded-full backdrop-blur-md transition-colors"
+            className="relative w-16 h-8 bg-black/10 border border-black/20 rounded-full backdrop-blur-md transition-colors"
           >
             <span
-              className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white transition-transform ${
+              className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-black transition-transform ${
                 billing === "yearly" ? "translate-x-8" : "translate-x-0"
               }`}
             />
           </button>
-          <span className={`text-sm ${billing === "yearly" ? "text-white" : "text-white/60"}`}>Annuel</span>
-          <span className="ml-2 text-xs text-emerald-300/90 bg-emerald-500/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">
+          <span className={`text-sm ${billing === "yearly" ? "text-black" : "text-black/60"}`}>Annuel</span>
+          <span className="ml-2 text-xs text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
             2 mois offerts
           </span>
         </div>
@@ -303,33 +321,33 @@ export function PricingSection() {
             return (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl p-6 md:p-8 bg-white/5 backdrop-blur-md border border-white/10 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-[0_10px_40px_rgba(255,255,255,0.07)] ${
-                  plan.popular ? "ring-1 ring-white/20" : ""
+                className={`relative rounded-2xl p-6 md:p-8 bg-black/[0.03] backdrop-blur-md border border-black/10 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl ${
+                  plan.popular ? "ring-2 ring-blue-500" : ""
                 }`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <div className="px-3 py-1 rounded-full text-xs font-semibold bg-white text-black shadow">
+                    <div className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500 text-white shadow-lg">
                       Le plus populaire
                     </div>
                   </div>
                 )}
 
-                <h3 className="text-2xl font-bold text-white mb-2">{plan.name}</h3>
-                <p className="text-white/70 text-sm mb-6">{plan.pitch}</p>
+                <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
+                <p className="text-black/70 text-sm mb-6">{plan.pitch}</p>
 
                 <div className="mb-4">
-                  <div className="text-xs text-white/60 mb-1">Création</div>
-                  <div className="text-3xl font-extrabold text-white">{creationPrice}</div>
+                  <div className="text-xs text-black/60 mb-1">Création</div>
+                  <div className="text-3xl font-extrabold text-black">{creationPrice}</div>
                 </div>
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
                     <div>
-                      <div className="text-xs text-white/60 mb-1">Maintenance</div>
-                      <div className="text-lg font-semibold text-white">{maintenancePrice}</div>
+                      <div className="text-xs text-black/60 mb-1">Maintenance</div>
+                      <div className="text-lg font-semibold text-black">{maintenancePrice}</div>
                     </div>
                     {!isCustom && billing === "yearly" && (
-                      <span className="text-xs text-emerald-300/90 bg-emerald-500/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">
+                      <span className="text-xs text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
                         -20%
                       </span>
                     )}
@@ -339,26 +357,26 @@ export function PricingSection() {
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-3">
-                      <svg className="w-4 h-4 mt-1 text-emerald-300 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                      <svg className="w-4 h-4 mt-1 text-emerald-600 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
                         <path
                           fillRule="evenodd"
                           d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-white/80 text-sm leading-relaxed">{f}</span>
+                      <span className="text-black/80 text-sm leading-relaxed">{f}</span>
                     </li>
                   ))}
                 </ul>
                 {isCustom ? (
                   <Button
                     onClick={() => setModalPlan(plan)}
-                    className="w-full bg-white text-black rounded-lg px-6 py-4 text-base font-medium transition-all duration-300 hover:bg-gray-50 hover:scale-[1.02]"
+                    className="w-full bg-black text-white rounded-lg px-6 py-4 text-base font-medium transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02]"
                   >
                     {plan.cta}
                   </Button>
                 ) : (
-                  <Link href="/contact" className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-white px-6 py-3 text-base font-semibold text-black transition-all duration-300 hover:bg-white/90 hover:scale-[1.02]">
+                  <Link href="/contact" className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02]">
                     Get Started
                     <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
@@ -370,31 +388,31 @@ export function PricingSection() {
 
         {/* Included in all plans */}
         <div className="mt-12 md:mt-16">
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 md:p-8">
-            <div className="text-white font-semibold mb-4">Inclus dans tous les plans</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-white/80">
+          <div className="bg-black/[0.03] backdrop-blur-md border border-black/10 rounded-2xl p-6 md:p-8">
+            <div className="text-black font-semibold mb-4">Inclus dans tous les plans</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-black/80">
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 Performance (Lighthouse 90+)
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 SEO technique de base
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 Responsive complet
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 Sécurité & SSL
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 Hébergement & déploiement
               </div>
               <div className="flex items-center gap-2">
-                <span className="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
                 Support (SLA de base)
               </div>
             </div>
