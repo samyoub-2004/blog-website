@@ -31,32 +31,22 @@ const Play = () => (
 export function HeroSection() {
   return (
     <section className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      {/* Background blurred light bubbles (performance-friendly, no heavy animations) */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-        {/* soft radial glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] max-w-[520px] max-h-[520px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-white/10 blur-3xl" />
-        <div className="absolute top-[20%] right-[20%] w-[28vw] h-[28vw] max-w-[380px] max-h-[380px] rounded-full bg-white/8 blur-3xl" />
-        <div className="absolute bottom-[25%] left-[15%] w-[24vw] h-[24vw] max-w-[320px] max-h-[320px] rounded-full bg-white/6 blur-2xl" />
-        {/* subtle gradient veil to blend on black bg */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.03] to-transparent" />
-      </div>
       <div className="max-w-4xl mx-auto text-center relative z-10 animate-fade-in-hero">
         {/* Badge */}
         <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-8 mt-12 animate-fade-in-badge">
-          <span className="w-2 h-2 bg-white/60 rounded-full mr-2 animate-pulse"></span>
-          Web Design & Development Agency
+          <span className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2 animate-pulse"></span>
+          Agence Web & Design Digital
         </div>
 
         {/* Main Heading */}
         <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-balance mb-6 animate-fade-in-heading">
-          <span className="text-foreground">Transform Your</span>
+          <span className="text-foreground">Créons ensemble</span>
           <br />
           <span className="inline-flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-6 md:mt-8">
-            <span className="text-foreground">Online</span>
+            <span className="text-foreground">votre</span>
             <RotatingText
-              texts={["Presence", "Store", "Business", "Vision", "Success"]}
-              mainClassName="px-2 sm:px-2 md:px-3 bg-white text-black overflow-hidden py-1 sm:py-1 md:py-2 justify-center rounded-lg shadow-lg"
+              texts={["site web", "boutique", "portfolio", "application", "succès"]}
+              mainClassName="px-2 sm:px-2 md:px-3 bg-gradient-to-r from-blue-400 to-purple-400 text-white overflow-hidden py-1 sm:py-1 md:py-2 justify-center rounded-lg shadow-lg shadow-blue-500/20"
               staggerFrom={"last"}
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
@@ -70,33 +60,33 @@ export function HeroSection() {
         </h1>
 
         {/* Subheading */}
-        <p className="text-base sm:text-xl md:text-2xl text-white text-balance max-w-sm sm:max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4 sm:px-0 animate-fade-in-subheading font-light">
-          We create stunning, high-converting websites for ecommerce, boutiques, portfolios, and businesses of all sizes. Your digital success is our mission.
+        <p className="text-base sm:text-xl md:text-2xl text-white/80 text-balance max-w-sm sm:max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4 sm:px-0 animate-fade-in-subheading font-light">
+          Des sites web modernes et performants qui transforment vos visiteurs en clients. Du design à la mise en ligne, je m'occupe de tout.
         </p>
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 sm:mb-16 animate-fade-in-buttons">
           <Button
             size="lg"
-            className="bg-white text-black rounded-full px-8 py-4 text-lg font-medium transition-all duration-300 hover:bg-gray-50 hover:scale-105 hover:shadow-lg group cursor-pointer relative overflow-hidden"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full px-8 py-4 text-lg font-medium transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/50 hover:scale-105 group cursor-pointer relative overflow-hidden border-0"
           >
-            Start Your Project
+            Démarrer mon projet
             <ArrowRight />
           </Button>
 
           <Button
             variant="outline"
             size="lg"
-            className="rounded-full px-8 py-4 text-lg font-medium border-border hover:bg-accent transition-all duration-200 hover:scale-105 group bg-transparent cursor-pointer"
+            className="rounded-full px-8 py-4 text-lg font-medium border-white/20 hover:bg-white/10 transition-all duration-200 hover:scale-105 group bg-transparent cursor-pointer text-white"
           >
             <Play />
-            See Our Work
+            Voir mes projets
           </Button>
         </div>
 
         {/* Trust Indicators */}
         <div className="text-center px-4 hidden sm:block overflow-hidden animate-fade-in-trust">
-          <p className="text-sm text-white mb-6">Trusted by businesses and entrepreneurs worldwide</p>
+          <p className="text-sm text-white/60 mb-6">Des clients satisfaits à travers le monde</p>
           <div className="relative overflow-hidden w-full max-w-4xl mx-auto">
             <div className="flex items-center gap-8 opacity-60 hover:opacity-80 transition-all duration-500 animate-slide-left">
               <div className="flex items-center gap-8 whitespace-nowrap">
@@ -122,7 +112,7 @@ export function HeroSection() {
 
         {/* Mobile Trust Indicators */}
         <div className="text-center px-4 mb-8 sm:hidden overflow-hidden animate-fade-in-trust">
-          <p className="text-sm text-white mb-6">Trusted by innovative companies worldwide</p>
+          <p className="text-sm text-white/60 mb-6">Des clients satisfaits à travers le monde</p>
           <div className="relative overflow-hidden w-full max-w-sm mx-auto">
             {/* Left blur fade */}
             <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>

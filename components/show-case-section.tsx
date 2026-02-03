@@ -5,8 +5,8 @@ import { motion } from "framer-motion"
 
 export function ShowcaseSection() {
   return (
-    <section className="py-24 bg-black overflow-hidden">
-      <div className="container mx-auto px-6">
+    <section className="relative py-24 overflow-hidden">
+      <div className="container mx-auto px-6 relative z-10">
         {/* En-tête simplifié et percutant */}
         <div className="text-center mb-12">
           <motion.h2 

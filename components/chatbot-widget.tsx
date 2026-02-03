@@ -19,7 +19,7 @@ export default function ChatbotWidget() {
       id: "welcome",
       role: "assistant",
       content:
-        "Bonjour ! Je suis l’assistant de l’équipe Cliste. Je peux vous guider sur nos solutions web, notre portfolio et la meilleure façon de démarrer. Posez votre question.",
+        "Bienvenue chez Ixo Link. Je suis là pour vous guider : solutions web, portfolio ou démarrage de projet. Posez votre question, je vous répondrai instantanément.",
     },
   ])
   const listRef = useRef<HTMLDivElement | null>(null)
@@ -176,7 +176,7 @@ export default function ChatbotWidget() {
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                 <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-40" />
               </div>
-              <span className="text-sm font-bold tracking-tight">Hani & Samy</span>
+              <span className="text-sm font-bold tracking-tight">IXO ASSISTANT</span>
             </div>
             <button
               onClick={handleClose}
@@ -232,11 +232,11 @@ export default function ChatbotWidget() {
             </div>
             {/* Footer */}
             <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.1em] text-white/30 font-bold">
-              <span>Assistant Officiel</span>
+              <span>AGENT VIRTUEL</span>
               <span className="flex gap-1.5">
-                <span className="text-white/50">Samy</span>
+                <span className="text-white/50">IXO LINK</span>
                 <span className="text-white/20">•</span>
-                <span className="text-white/50">Hani</span>
+                <span className="text-white/50">V1.0</span>
               </span>
             </div>
           </div>

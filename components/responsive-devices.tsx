@@ -5,8 +5,7 @@ import { motion } from "framer-motion"
 
 export function ResponsiveDevices() {
   return (
-    <section className="relative py-24 overflow-hidden bg-black">
-      
+    <section className="relative py-24 overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="mb-12 text-center">
           <motion.h2 
