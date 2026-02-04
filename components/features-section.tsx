@@ -49,9 +49,11 @@ const TypoBox = () => {
         </span>
       </div>
 
-      <p className="absolute bottom-3 left-1/2 -translate-x-1/2 text-[9px] font-bold text-slate-400 uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity">
-        Cliquer pour changer le style
-      </p>
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 text-slate-400 opacity-40 group-hover:opacity-100 transition-opacity">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122" />
+        </svg>
+      </div>
     </div>
   )
 }
@@ -87,7 +89,11 @@ const ColorBox = () => {
             <div key={color.hex} className={`h-3 rounded-full transition-all duration-500 ${i === index ? "w-12" : "w-3"}`} style={{ backgroundColor: color.hex }} />
           ))}
         </div>
-        <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-slate-400">Cliquer pour changer de thème</p>
+        <div className="text-slate-400">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122" />
+          </svg>
+        </div>
       </div>
     </div>
   );
@@ -138,9 +144,11 @@ const ButtonBox = () => {
          <div className={`h-1.5 w-1.5 rounded-full transition-all duration-500 ${status === "success" ? "bg-emerald-500 scale-150" : "bg-slate-200"}`} />
       </div>
 
-      <p className="mt-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-        Cliquer pour tester
-      </p>
+      <div className="mt-4 text-slate-400 flex justify-center">
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122" />
+        </svg>
+      </div>
     </div>
   )
 }
@@ -203,6 +211,13 @@ const ResponsiveBox = () => {
             <span className="text-white w-12">{device === 'mobile' ? '375px' : device === 'tablet' ? '768px' : '1440px'}</span>
           </div>
         </div>
+        
+        {/* Icône de curseur */}
+        <div className="mt-3 text-slate-400 opacity-40 group-hover:opacity-100 transition-opacity">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122" />
+          </svg>
+        </div>
       </div>
     </div>
   )
@@ -254,6 +269,13 @@ const ThemeBox = () => {
         <div className="space-y-2 max-w-[140px] mx-auto">
           <div className={`h-2 rounded-full transition-colors duration-700 ${isDark ? "bg-slate-800" : "bg-slate-200"}`} />
           <div className={`h-2 rounded-full w-2/3 mx-auto transition-colors duration-700 ${isDark ? "bg-slate-800" : "bg-slate-200"}`} />
+        </div>
+        
+        {/* Icône de curseur qui s'adapte au thème */}
+        <div className="mt-4">
+          <svg className={`w-4 h-4 transition-colors duration-700 ${isDark ? "text-slate-600" : "text-slate-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.121 2.122" />
+          </svg>
         </div>
       </div>
 
@@ -337,20 +359,38 @@ export function FeaturesSection() {
             </p>
           </div>
 
-          <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
+          {/* Nouvelle grille optimisée : 3 colonnes pour éviter les espaces vides */}
+          <div className={`grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000 delay-300 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"}`}>
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`group transition-all duration-1000 ${feature.size === "large" ? "md:col-span-2" : ""}`}
+                className={`group transition-all duration-1000 ${
+                  feature.size === "large" ? "md:col-span-2" : ""
+                }`}
                 onMouseEnter={() => setActiveDemo(index)}
                 onMouseLeave={() => setActiveDemo(null)}
               >
-                <div className="bg-white rounded-3xl p-6 h-full shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-slate-100">
-                  <div className="mb-6">
+                <div className="bg-white rounded-3xl p-6 h-full shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 relative overflow-hidden">
+
+                  
+                  {/* Effet de bordure animée au survol */}
+                  <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                    <div className="absolute inset-0 rounded-3xl border-2 border-blue-500/20 animate-pulse"></div>
+                  </div>
+                  
+                  <div className="mb-6 relative z-10 cursor-pointer">
                     <feature.demo/>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">{feature.description}</p>
+                  <div className="relative z-10">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 flex items-center gap-2">
+                      {feature.title}
+                      {/* Petite icône pour montrer l'interactivité */}
+                      <svg className="w-4 h-4 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </h3>
+                    <p className="text-slate-500 text-sm leading-relaxed">{feature.description}</p>
+                  </div>
                 </div>
               </div>
             ))}

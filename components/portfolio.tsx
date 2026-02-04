@@ -35,11 +35,19 @@ const projects = [
     color: "from-orange-500/20",
     link: "https://portfolio.example.com",
   },
+  {
+    title: "Mobile App",
+    category: "Application • iOS/Android",
+    image: "/mobile-app.png",
+    gridClass: "md:col-span-1 md:row-span-1",
+    color: "from-rose-500/20",
+    link: "https://app.example.com",
+  },
 ]
 
 export function PortfolioSection() {
   return (
-    <section className="py-24 px-4 sm:px-8 bg-black">
+    <section className="py-24 px-4 sm:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header de section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
