@@ -20,33 +20,33 @@ export function PortfolioCarousel() {
   const prev = () => setActiveIndex((activeIndex - 1 + projects.length) % projects.length)
 
   return (
-    <div className="relative group max-w-6xl mx-auto px-4">
+    <div className="relative group max-w-4xl sm:max-w-6xl mx-auto px-2 sm:px-4">
       
       {/* Desktop Version */}
-      <div className="hidden md:block relative aspect-[16/10] w-full bg-[#0a0a0a] rounded-[32px] border border-white/10 shadow-2xl overflow-hidden">
+      <div className="hidden sm:block relative aspect-[16/10] w-full bg-[#0a0a0a] rounded-[16px] sm:rounded-[32px] border border-white/10 shadow-2xl overflow-hidden">
         
         {/* Top Bar */}
-        <div className="flex h-9 bg-white/5 border-b border-white/10 items-center gap-2 px-5 z-50 relative backdrop-blur-md">
-          <div className="flex gap-2">
-            <span className="w-3 h-3 rounded-full bg-red-500/40" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/40" />
-            <span className="w-3 h-3 rounded-full bg-green-500/40" />
+        <div className="flex h-6 sm:h-9 bg-white/5 border-b border-white/10 items-center gap-1 sm:gap-2 px-3 sm:px-5 z-50 relative backdrop-blur-md">
+          <div className="flex gap-1 sm:gap-2">
+            <span className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-red-500/40" />
+            <span className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-yellow-500/40" />
+            <span className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-green-500/40" />
           </div>
         </div>
 
         {/* Navigation Buttons */}
-        <div className="absolute inset-0 z-50 flex items-center justify-between p-6 pointer-events-none">
+        <div className="absolute inset-0 z-50 flex items-center justify-between p-3 sm:p-6 pointer-events-none">
           <button 
             onClick={prev} 
-            className="p-4 rounded-full bg-black/40 backdrop-blur-xl text-white border border-white/10 hover:bg-blue-600 transition-all opacity-0 group-hover:opacity-100 pointer-events-auto"
+            className="p-2 sm:p-4 rounded-full bg-black/40 backdrop-blur-xl text-white border border-white/10 hover:bg-blue-600 transition-all opacity-0 group-hover:opacity-100 pointer-events-auto"
           >
-            <ChevronLeft size={28} />
+            <ChevronLeft size={20} className="sm:w-7 sm:h-7" />
           </button>
           <button 
             onClick={next} 
-            className="p-4 rounded-full bg-black/40 backdrop-blur-xl text-white border border-white/10 hover:bg-blue-600 transition-all opacity-0 group-hover:opacity-100 pointer-events-auto"
+            className="p-2 sm:p-4 rounded-full bg-black/40 backdrop-blur-xl text-white border border-white/10 hover:bg-blue-600 transition-all opacity-0 group-hover:opacity-100 pointer-events-auto"
           >
-            <ChevronRight size={28} />
+            <ChevronRight size={20} className="sm:w-7 sm:h-7" />
           </button>
         </div>
 
@@ -72,7 +72,6 @@ export function PortfolioCarousel() {
               src={projects[activeIndex].image} 
               alt={projects[activeIndex].title} 
               fill 
-              priority
               className="object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.6)]"
             />
           </div>
@@ -99,26 +98,26 @@ export function PortfolioCarousel() {
       </div>
 
       {/* Mobile Version - Simple Grid */}
-      <div className="md:hidden space-y-6">
-        {projects.map((project) => (
-          <div key={project.id} className="relative aspect-[4/5] w-full bg-[#0a0a0a] rounded-[20px] border border-white/10 shadow-xl overflow-hidden">
+      <div className="sm:hidden space-y-4">
+        {projects.slice(0, 3).map((project) => (
+          <div key={project.id} className="relative aspect-[4/5] w-full bg-[#0a0a0a] rounded-[16px] border border-white/10 shadow-xl overflow-hidden">
             <Image 
               src={project.image} 
               alt={project.title} 
               fill 
-              className="object-contain p-6"
+              className="object-contain p-4"
             />
             
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/60 to-transparent">
-              <p className="text-blue-400 font-mono text-[10px] mb-1 uppercase tracking-widest">
+            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/60 to-transparent">
+              <p className="text-blue-400 font-mono text-[9px] mb-1 uppercase tracking-widest">
                 {project.category}
               </p>
-              <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+              <h3 className="text-lg font-black text-white uppercase tracking-tighter">
                 {project.title}
               </h3>
               
-              <button className="mt-4 flex items-center gap-2 bg-white text-black px-5 py-3 rounded-full font-bold text-xs shadow-xl">
-                VOIR <ArrowUpRight size={16} />
+              <button className="mt-3 flex items-center gap-2 bg-white text-black px-4 py-2 rounded-full font-bold text-xs shadow-xl">
+                VOIR <ArrowUpRight size={14} />
               </button>
             </div>
           </div>
@@ -126,14 +125,14 @@ export function PortfolioCarousel() {
       </div>
 
       {/* Dots - Desktop Only */}
-      <div className="hidden md:flex justify-center gap-3 mt-10">
+      <div className="hidden sm:flex justify-center gap-3 mt-6 sm:mt-10">
         {projects.map((_, i) => (
           <button
             key={i}
             onClick={() => setActiveIndex(i)}
             className={`h-1.5 transition-all duration-300 rounded-full ${
               i === activeIndex 
-                ? "w-14 bg-blue-500" 
+                ? "w-10 sm:w-14 bg-blue-500" 
                 : "w-3 bg-white/10 hover:bg-white/30"
             }`}
           />

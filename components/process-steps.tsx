@@ -30,14 +30,14 @@ export function ProcessSteps() {
   ]
 
   return (
-    <section className="relative py-24 overflow-hidden bg-white rounded-t-[60px] rounded-b-[60px]">
+    <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden bg-white rounded-t-[40px] sm:rounded-t-[60px] rounded-b-[40px] sm:rounded-b-[60px]">
       {/* Background Effects */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-[100px]" />
       </div>
       
-      <div className="container mx-auto px-6 relative">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 relative">
         {/* Header */}
         <div className="text-center mb-12">
           <motion.div
@@ -55,7 +55,7 @@ export function ProcessSteps() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-black mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-4"
           >
             Du concept au <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">lancement</span>
           </motion.h2>
@@ -65,7 +65,7 @@ export function ProcessSteps() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-black/70 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-black/70 max-w-2xl mx-auto"
           >
             Une méthode éprouvée pour des résultats exceptionnels
           </motion.p>

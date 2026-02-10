@@ -10,7 +10,6 @@ type Props = {
   imageSrc?: string
   tags?: string[]
   href?: string
-  priority?: boolean
   gradientFrom?: string
   gradientTo?: string
   imageContainerClassName?: string
@@ -24,7 +23,6 @@ export default function ProjectCard({
   imageSrc = "/placeholder.svg?height=720&width=1280",
   tags = ["Design", "Web"],
   href = "#",
-  priority = false,
   gradientFrom = "#0f172a",
   gradientTo = "#6d28d9",
   imageContainerClassName,

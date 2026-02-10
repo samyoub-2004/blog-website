@@ -17,7 +17,6 @@ export default function Page() {
       imageSrc: "/lilygoLaptop.png",
       tags: ["E-commerce", "Web", "Design"],
       href: "#project-1",
-      priority: true,
       gradientFrom: "#064e3b",
       gradientTo: "#10b981",
     },
@@ -27,7 +26,6 @@ export default function Page() {
       imageSrc: "/leparkingvtcLaptop.png",
       tags: ["Vitrine", "Mobile", "Web"],
       href: "#project-2",
-      priority: false,
       gradientFrom: "#1e3a8a",
       gradientTo: "#3b82f6",
     },
@@ -37,7 +35,6 @@ export default function Page() {
       imageSrc: "/dzshop.png",
       tags: ["E-commerce", "Boutique", "Performance"],
       href: "#project-3",
-      priority: false,
       gradientFrom: "#581c87",
       gradientTo: "#a855f7",
     },
@@ -47,7 +44,6 @@ export default function Page() {
       imageSrc: "/portfolio.png",
       tags: ["Portfolio", "Design", "Créatif"],
       href: "#project-4",
-      priority: false,
       gradientFrom: "#7c2d12",
       gradientTo: "#f97316",
     },
@@ -116,7 +112,6 @@ export default function Page() {
                 imageSrc={p.imageSrc}
                 tags={p.tags}
                 href={p.href}
-                priority={p.priority}
                 gradientFrom={p.gradientFrom}
                 gradientTo={p.gradientTo}
                 imageContainerClassName="md:h-full"

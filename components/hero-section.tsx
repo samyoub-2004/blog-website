@@ -30,16 +30,16 @@ const Play = () => (
 
 export function HeroSection() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      <div className="max-w-4xl mx-auto text-center relative z-10 animate-fade-in-hero">
+    <section className="min-h-screen flex items-center justify-center px-3 sm:px-4 py-16 sm:py-20 relative overflow-hidden">
+      <div className="max-w-3xl sm:max-w-4xl mx-auto text-center relative z-10 animate-fade-in-hero">
         {/* Badge */}
-        <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-8 mt-12 animate-fade-in-badge">
-          <span className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2 animate-pulse"></span>
+        <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-medium mb-6 sm:mb-8 mt-8 sm:mt-12 animate-fade-in-badge">
+          <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2 animate-pulse"></span>
           Agence Web & Design Digital
         </div>
 
         {/* Main Heading */}
-        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-balance mb-6 animate-fade-in-heading">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-balance mb-4 sm:mb-6 animate-fade-in-heading">
           <span className="text-foreground">Créons ensemble</span>
           <br />
           <span className="inline-flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-6 md:mt-8">
@@ -60,15 +60,15 @@ export function HeroSection() {
         </h1>
 
         {/* Subheading */}
-        <p className="text-base sm:text-xl md:text-2xl text-white/80 text-balance max-w-sm sm:max-w-3xl mx-auto mb-8 sm:mb-12 leading-relaxed px-4 sm:px-0 animate-fade-in-subheading font-light">
+        <p className="text-base sm:text-lg md:text-xl text-white/80 text-balance max-w-xs sm:max-w-2xl mx-auto mb-6 sm:mb-8 leading-relaxed px-2 sm:px-0 animate-fade-in-subheading font-light">
           Des sites web modernes et performants qui transforment vos visiteurs en clients. Du design à la mise en ligne, je m'occupe de tout.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 sm:mb-16 animate-fade-in-buttons">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-12 animate-fade-in-buttons">
           <Button
             size="lg"
-            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full px-8 py-4 text-lg font-medium transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/50 hover:scale-105 group cursor-pointer relative overflow-hidden border-0"
+            className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/50 hover:scale-105 group cursor-pointer relative overflow-hidden border-0 w-full sm:w-auto"
           >
             Démarrer mon projet
             <ArrowRight />
@@ -77,7 +77,7 @@ export function HeroSection() {
           <Button
             variant="outline"
             size="lg"
-            className="rounded-full px-8 py-4 text-lg font-medium border-white/20 hover:bg-white/10 transition-all duration-200 hover:scale-105 group bg-transparent cursor-pointer text-white"
+            className="rounded-full px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-medium border-white/20 hover:bg-white/10 transition-all duration-200 hover:scale-105 group bg-transparent cursor-pointer text-white w-full sm:w-auto"
           >
             <Play />
             Voir mes projets

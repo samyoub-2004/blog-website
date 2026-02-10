@@ -26,14 +26,14 @@ export function FAQ() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="text-center mb-12">
+    <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 relative z-10">
+        <div className="text-center mb-8 sm:mb-12">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-white"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white"
           >
             Questions <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">fréquentes</span>
           </motion.h2>

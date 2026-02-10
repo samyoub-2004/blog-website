@@ -5,14 +5,14 @@ import { motion } from "framer-motion"
 
 export function ResponsiveDevices() {
   return (
-    <section className="relative py-24 overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="mb-12 text-center">
+    <section className="relative py-12 sm:py-16 md:py-24 overflow-hidden">
+      <div className="container mx-auto px-3 sm:px-4 relative z-10">
+        <div className="mb-8 sm:mb-12 text-center px-2">
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-white"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white"
           >
             Des sites magnifiques, sur <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">tous les écrans</span>
           </motion.h2>
@@ -21,7 +21,7 @@ export function ResponsiveDevices() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="mt-4 text-lg text-white/70 max-w-2xl mx-auto"
+            className="mt-3 sm:mt-4 text-base sm:text-lg md:text-xl text-white/70 max-w-xl sm:max-w-2xl mx-auto"
           >
             Desktop, tablette ou mobile — une expérience soignée et performante.
           </motion.p>
@@ -50,7 +50,6 @@ export function ResponsiveDevices() {
                 alt="Aperçu Desktop" 
                 fill 
                 className="object-cover object-left"
-                priority
               />
             </div>
           </div>

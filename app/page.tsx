@@ -1,20 +1,13 @@
 import { GlassmorphismNav } from "@/components/glassmorphism-nav"
 import { HeroSection } from "@/components/hero-section"
-import { ProblemSolutionSection } from "@/components/problem-solution-section"
 import { ShowcaseSection } from "@/components/show-case-section"
 import { TechStackSection } from "@/components/tech-stack-section"
-// import { ROICalculatorSection } from "@/components/roi-calculator-section"
-import { BusinessTypesSection } from "@/components/business-types-section"
 import { CTASection } from "@/components/cta-section"
 import { ContactCTASection } from "@/components/contact-cta-section"
 import { Footer } from "@/components/footer"
 import { PricingSection } from "@/components/pricing-section"
-import { InteractiveExpertise } from "@/components/intrctive-screen"
 import { BusinessTypesSectionCreation } from "@/components/business-types-section-creation"
-import { AdBillboard } from "@/components/ad-billboard"
 import { ResponsiveDevices } from "@/components/responsive-devices"
-import { LogosMarquee } from "@/components/logos-marquee"
-
 import { ProcessSteps } from "@/components/process-steps"
 import { FAQ } from "@/components/faq"
 
@@ -39,16 +32,9 @@ export default function HomePage() {
         <div className="relative z-10">
           <GlassmorphismNav />
           <HeroSection />
-          {/* <LogosMarquee /> */}
-          {/* <AdBillboard /> */}
           <ResponsiveDevices />
-          {/* <ProblemSolutionSection /> */}
           <ProcessSteps />
           <ShowcaseSection />
-          
-          {/* <FeaturesSection /> */}
-          {/* <InteractiveExpertise /> */}
-          {/* <ROICalculatorSection /> */}
           <BusinessTypesSectionCreation />
           <TechStackSection />
           <PricingSection />

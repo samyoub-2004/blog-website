@@ -61,7 +61,7 @@ export function BusinessTypesSectionCreation() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-black mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-4"
           >
             Un site web adapté à <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">vos ambitions</span>
           </motion.h2>

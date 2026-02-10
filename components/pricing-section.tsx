@@ -253,17 +253,17 @@ export function PricingSection() {
   const plans = currency === "DZD" ? PLANS_DZD : PLANS_EUR
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 bg-white rounded-t-[60px] rounded-b-[60px]">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative py-12 sm:py-16 md:py-24 px-3 sm:px-4 md:px-6 lg:px-8 bg-white rounded-t-[40px] sm:rounded-t-[60px] rounded-b-[40px] sm:rounded-b-[60px]">
+      <div className="max-w-5xl sm:max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 sm:mb-12">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center px-4 py-2 rounded-full bg-black/5 backdrop-blur-md border border-black/10 text-black/60 text-sm font-medium mb-6"
+            className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/5 backdrop-blur-md border border-black/10 text-black/60 text-xs sm:text-sm font-medium mb-4 sm:mb-6"
           >
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-blue-500 rounded-full mr-2 animate-pulse"></span>
             Tarifs transparents
           </motion.div>
           <motion.h2 
@@ -271,7 +271,7 @@ export function PricingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-bold tracking-tight text-black mb-4"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-3 sm:mb-4"
           >
             Des plans adaptés à vos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">objectifs</span>
           </motion.h2>
@@ -280,7 +280,7 @@ export function PricingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-black/70 max-w-2xl mx-auto"
+            className="text-base sm:text-lg md:text-xl text-black/70 max-w-lg sm:max-w-2xl mx-auto px-2"
           >
             Prix de création unique + maintenance flexible. Passez à l'annuel et économisez jusqu'à 20%.
           </motion.p>
