@@ -13,7 +13,7 @@ export function ShowcaseSection() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 tracking-tight"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight"
           >
             Nos dernières <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">réalisations</span>
           </motion.h2>

@@ -1060,7 +1060,7 @@
 }
 
 .cc-page-enter {
-  animation: cc-page-enter 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: none;
 }
 
 @keyframes cc-bubble-float {

@@ -271,7 +271,7 @@ export function PricingSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-black mb-3 sm:mb-4"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-black mb-3 sm:mb-4"
           >
             Des plans adaptés à vos <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">objectifs</span>
           </motion.h2>

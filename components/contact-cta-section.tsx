@@ -42,7 +42,7 @@ export function ContactCTASection() {
                 Contact
               </div>
 
-              <h3 className="text-2xl md:text-3xl lg:text-4xl font-light text-white mb-4 text-balance leading-tight">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 text-balance leading-tight">
                 Parlons de votre projet et obtenez une réponse rapide.
               </h3>
 

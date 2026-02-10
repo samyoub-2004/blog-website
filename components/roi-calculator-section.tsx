@@ -96,7 +96,7 @@ export function ROICalculatorSection() {
             <span className="text-sm font-medium text-white/80">ROI Calculator</span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 text-balance">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6 text-balance">
             See your potential{" "}
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               revenue growth

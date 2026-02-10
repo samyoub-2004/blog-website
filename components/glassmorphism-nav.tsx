@@ -102,11 +102,11 @@ export function GlassmorphismNav() {
   return (
     <>
       <nav
-        className={`fixed top-4 md:top-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ${
+        className={`fixed top-4 md:top-8 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ${
           isVisible ? "translate-y-0 opacity-100" : "-translate-y-20 md:-translate-y-24 opacity-0"
         } ${hasLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
         style={{
-          transition: hasLoaded ? "all 0.5s ease-out" : "opacity 0.8s ease-out, transform 0.8s ease-out",
+          transition: hasLoaded ? "all 0.3s ease-out" : "opacity 0.6s ease-out, transform 0.6s ease-out",
         }}
       >
         {/* Main Navigation */}
@@ -190,7 +190,7 @@ export function GlassmorphismNav() {
         <div className="md:hidden relative">
           {/* Backdrop overlay */}
           <div
-            className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-all duration-300 ${
+            className={`fixed inset-0 ${
               isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
             onClick={() => setIsOpen(false)}
@@ -199,7 +199,7 @@ export function GlassmorphismNav() {
 
           {/* Menu container */}
           <div
-            className={`mt-2 w-[90vw] max-w-xs mx-auto transition-all duration-500 ease-out transform-gpu ${
+            className={`mt-2 w-[90vw] max-w-xs mx-auto transition-all duration-300 ease-out transform-gpu ${
               isOpen ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-8 scale-95 pointer-events-none"
             }`}
           >

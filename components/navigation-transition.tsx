@@ -17,15 +17,9 @@ export function NavigationTransition() {
 
     setTargetPath(to)
 
-    if (reduceMotion) {
-      router.push(to)
-      return
-    }
-
-    setIsTransitioning(true)
-    window.setTimeout(() => {
-      router.push(to)
-    }, 520)
+    // Toujours navigation instantanée
+    router.push(to)
+    return
   }
 
   useEffect(() => {
@@ -96,7 +90,7 @@ export function NavigationTransition() {
   useEffect(() => {
     // Check if pathname actually changed
     if (pathname !== previousPathname.current) {
-      const closeDelay = reduceMotion ? 0 : 260
+      const closeDelay = reduceMotion ? 0 : 150
       window.setTimeout(() => {
         setIsTransitioning(false)
         setTargetPath(null)
@@ -107,31 +101,8 @@ export function NavigationTransition() {
   }, [pathname, reduceMotion])
 
   return (
-    <div
-      className={`fixed inset-0 z-[100] ${isTransitioning ? "pointer-events-auto" : "pointer-events-none"}`}
-      aria-hidden
-    >
-      <div
-        className={`absolute inset-0 transition-opacity duration-300 ease-out ${
-          isTransitioning ? "opacity-100" : "opacity-0"
-        } cc-overlay`}
-      />
-
-      <div className="absolute inset-0 overflow-hidden">
-        <div className={`cc-bubble cc-bubble-1 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
-        <div className={`cc-bubble cc-bubble-2 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
-        <div className={`cc-bubble cc-bubble-3 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
-        <div className={`cc-bubble cc-bubble-4 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
-        <div className={`cc-bubble cc-bubble-5 ${isTransitioning ? "opacity-100" : "opacity-0"}`} />
-      </div>
-
-      <div
-        className={`absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-          isTransitioning ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"
-        }`}
-      >
-        <div className="cc-sheet absolute inset-0" />
-      </div>
+    <div className="hidden">
+      {/* Transitions désactivées */}
     </div>
   )
 }

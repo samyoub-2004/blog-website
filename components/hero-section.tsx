@@ -83,63 +83,7 @@ export function HeroSection() {
             Voir mes projets
           </Button>
         </div>
-
-        {/* Trust Indicators */}
-        <div className="text-center px-4 hidden sm:block overflow-hidden animate-fade-in-trust">
-          <p className="text-sm text-white/60 mb-6">Des clients satisfaits à travers le monde</p>
-          <div className="relative overflow-hidden w-full max-w-4xl mx-auto">
-            <div className="flex items-center gap-8 opacity-60 hover:opacity-80 transition-all duration-500 animate-slide-left">
-              <div className="flex items-center gap-8 whitespace-nowrap">
-                <div className="text-base sm:text-lg font-semibold">TechCorp</div>
-                <div className="text-base sm:text-lg font-semibold">InnovateLab</div>
-                <div className="text-base sm:text-lg font-semibold">FutureScale</div>
-                <div className="text-base sm:text-lg font-semibold">AutoFlow</div>
-                <div className="text-base sm:text-lg font-semibold">eScale</div>
-                <div className="text-base sm:text-lg font-semibold">DataFlow</div>
-              </div>
-              {/* Duplicate for seamless loop */}
-              <div className="flex items-center gap-8 whitespace-nowrap">
-                <div className="text-base sm:text-lg font-semibold">TechCorp</div>
-                <div className="text-base sm:text-lg font-semibold">InnovateLab</div>
-                <div className="text-base sm:text-lg font-semibold">FutureScale</div>
-                <div className="text-base sm:text-lg font-semibold">AutoFlow</div>
-                <div className="text-base sm:text-lg font-semibold">eScale</div>
-                <div className="text-base sm:text-lg font-semibold">DataFlow</div>
-              </div>
-            </div>
-          </div>
         </div>
-
-        {/* Mobile Trust Indicators */}
-        <div className="text-center px-4 mb-8 sm:hidden overflow-hidden animate-fade-in-trust">
-          <p className="text-sm text-white/60 mb-6">Des clients satisfaits à travers le monde</p>
-          <div className="relative overflow-hidden w-full max-w-sm mx-auto">
-            {/* Left blur fade */}
-            <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-black to-transparent z-10 pointer-events-none"></div>
-            {/* Right blur fade */}
-            <div className="absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-black to-transparent z-10 pointer-events-none"></div>
-            <div className="flex items-center gap-6 opacity-60 animate-slide-left-mobile">
-              <div className="flex items-center gap-6 whitespace-nowrap">
-                <div className="text-sm font-semibold">TechCorp</div>
-                <div className="text-sm font-semibold">InnovateLab</div>
-                <div className="text-sm font-semibold">FutureScale</div>
-                <div className="text-sm font-semibold">AutoFlow</div>
-                <div className="text-sm font-semibold">eScale</div>
-                <div className="text-sm font-semibold">DataFlow</div>
-              </div>
-              {/* Duplicate for seamless loop */}
-              <div className="flex items-center gap-6 whitespace-nowrap">
-                <div className="text-sm font-semibold">TechCorp</div>
-                <div className="text-sm font-semibold">InnovateLab</div>
-                <div className="text-sm font-semibold">FutureScale</div>
-                <div className="text-sm font-semibold">AutoFlow</div>
-                <div className="text-sm font-semibold">eScale</div>
-                <div className="text-sm font-semibold">DataFlow</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </section>
   )
 }

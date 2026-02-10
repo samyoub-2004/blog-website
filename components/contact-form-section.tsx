@@ -64,7 +64,7 @@ export function ContactFormSection() {
             <span className="w-2 h-2 bg-white/60 rounded-full mr-2 animate-pulse"></span>
             Get in Touch
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-balance mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white text-balance mb-6">
             Let's Build Your Next<br />
             <span className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">Website</span>
           </h2>
