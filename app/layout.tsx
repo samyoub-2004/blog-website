@@ -25,7 +25,6 @@ export const metadata: Metadata = {
   description:
     "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
   generator: "v0.app",
-  viewport: "width=device-width, initial-scale=1",
   robots: "index, follow",
   other: {
     'theme-color': '#000000',
@@ -35,6 +34,8 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-status-bar-style': 'black-translucent'
   }
 }
+
+export const viewport = "width=device-width, initial-scale=1"
 
 export default function RootLayout({
   children,

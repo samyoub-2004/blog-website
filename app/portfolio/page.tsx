@@ -1,12 +1,7 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-
 import { Button } from "@/components/ui/button"
-import DotGridShader from "@/components/DotGridShader"
-
 import ProjectCard from "@/components/project-card"
-import AnimatedHeading from "@/components/animated-heading"
-import RevealOnView from "@/components/reveal-on-view"
 import { GlassmorphismNav } from "@/components/glassmorphism-nav"
 import { Background } from "@/components/background"
 
