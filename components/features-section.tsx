@@ -351,8 +351,8 @@ export function FeaturesSection() {
 
         <div className="max-w-7xl mx-auto relative">
           <div className={`text-center mb-12 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
-            <h2 className="text-3xl sm:text-5xl font-bold text-slate-900 mb-6">
-              Maîtrise <span className="bg-gradient-to-r from-slate-600 to-slate-400 bg-clip-text text-transparent">Technique</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 sm:mb-6 tracking-tight">
+              Maîtrise <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Technique</span>
             </h2>
             <p className="text-slate-600 max-w-2xl mx-auto font-light leading-relaxed">
               Plus qu'un design, je construis des systèmes robustes, performants et entièrement personnalisés.

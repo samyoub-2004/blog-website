@@ -37,14 +37,14 @@ export function ContactCTASection() {
         <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out rounded-3xl border border-white/20 bg-[radial-gradient(35%_128px_at_50%_0%,theme(backgroundColor.white/15%),theme(backgroundColor.white/5%))] p-8 md:p-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
             <div className="lg:col-span-3">
-              <div className="inline-flex items-center px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium mb-5">
-                <span className="w-2 h-2 bg-white/60 rounded-full mr-2 animate-pulse" />
+              <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-medium mb-6">
+                <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2 animate-pulse" />
                 Contact
               </div>
 
-              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-white mb-4 text-balance leading-tight">
-                Parlons de votre projet et obtenez une réponse rapide.
-              </h3>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 text-balance leading-tight tracking-tight">
+                Parlons de votre <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">projet</span> et obtenez une réponse rapide.
+              </h2>
 
               <p className="text-base md:text-lg text-white/70 max-w-2xl leading-relaxed">
                 Décris-nous ton besoin (site vitrine, e-commerce, sur-mesure, refonte, automatisations). On te répond sous 24h avec une proposition claire.

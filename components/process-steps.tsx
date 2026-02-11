@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { motion } from "framer-motion"
 import { Sparkles, Code, Rocket } from "lucide-react"
 
 export function ProcessSteps() {
@@ -40,35 +39,18 @@ export function ProcessSteps() {
       <div className="container mx-auto px-3 sm:px-4 md:px-6 relative">
         {/* Header */}
         <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/5 backdrop-blur-sm border border-black/10 text-black/60 text-xs font-mono uppercase tracking-widest mb-6"
-          >
-            <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+          <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/5 backdrop-blur-md border border-black/10 text-black/60 text-xs sm:text-sm font-medium mb-6">
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-blue-500 rounded-full mr-2 animate-pulse" />
             Notre Processus
-          </motion.div>
+          </div>
           
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-black mb-4"
-          >
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-black mb-4">
             Du concept au <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">lancement</span>
-          </motion.h2>
+          </h2>
           
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="text-base sm:text-lg md:text-xl text-black/70 max-w-2xl mx-auto"
-          >
+          <p className="text-base sm:text-lg md:text-xl text-black/70 max-w-2xl mx-auto">
             Une méthode éprouvée pour des résultats exceptionnels
-          </motion.p>
+          </p>
         </div>
 
         {/* Steps Grid */}
@@ -76,13 +58,9 @@ export function ProcessSteps() {
           {steps.map((step, i) => {
             const Icon = step.icon
             return (
-              <motion.div
+              <div
                 key={step.num}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.6, ease: "easeOut" }}
-                className="relative group bg-black/[0.03] border border-black/10 rounded-3xl p-8 transition-all duration-500 hover:bg-black/[0.06] hover:-translate-y-2"
+                className="relative group bg-black/[0.03] border border-black/10 rounded-3xl p-8 transition-all duration-300 hover:bg-black/[0.06] hover:-translate-y-1"
               >
                 {/* Icon Badge with Gradient */}
                 <div className={`mb-6 inline-flex p-4 rounded-2xl bg-gradient-to-br ${step.color} text-white shadow-lg`}>
@@ -107,7 +85,7 @@ export function ProcessSteps() {
                 {i < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-px bg-gradient-to-r from-black/20 to-transparent z-10" />
                 )}
-              </motion.div>
+              </div>
             )
           })}
         </div>

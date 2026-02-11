@@ -51,9 +51,9 @@ export function BusinessTypesSectionCreation() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-black/5 border border-black/10 text-black/60 px-4 py-2 rounded-full text-sm font-medium mb-6"
+            className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-black/5 backdrop-blur-md border border-black/10 text-black/60 text-xs sm:text-sm font-medium mb-6"
           >
-            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-blue-500 rounded-full mr-2 animate-pulse" />
             Expertises & Solutions
           </motion.div>
           <motion.h2 

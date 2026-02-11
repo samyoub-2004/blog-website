@@ -77,8 +77,8 @@ export function ProblemSolutionSection() {
             <span className="w-2 h-2 bg-red-400 rounded-full mr-2 animate-pulse"></span>
             The Problem With Weak Websites
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white text-balance mb-4 sm:mb-6">
-            Your Website Is Costing You <span className="text-red-400">Money</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
+            Your Website Is Costing You <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Money</span>
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-white/70 max-w-3xl mx-auto font-light leading-relaxed">
             Most websites don't convert. They're outdated, slow, or just plain ugly. We build websites that actually make sales.

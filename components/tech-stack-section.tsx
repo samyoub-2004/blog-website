@@ -94,10 +94,9 @@ const techItems = [
     <section id="tech-stack" ref={sectionRef} className="relative pt-16 pb-16 px-4 sm:px-6 lg:px-8">
       <div className="relative max-w-7xl mx-auto">
         <div className="text-center mb-8">
-          <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out inline-flex items-center gap-2 text-white/60 text-sm font-medium tracking-wider uppercase mb-6">
-            <div className="w-8 h-px bg-white/30"></div>
+          <div className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs sm:text-sm font-medium mb-6">
+            <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-2 animate-pulse" />
             Expertise Technique
-            <div className="w-8 h-px bg-white/30"></div>
           </div>
           <h2 className="fade-in-element opacity-0 translate-y-8 transition-all duration-1000 ease-out text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight">
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Stack</span> de prédilection

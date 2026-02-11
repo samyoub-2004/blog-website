@@ -52,8 +52,8 @@ export function PortfolioSection() {
         {/* Header de section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tighter">
-              Projets <span className="text-white/40 italic font-light">Sélectionnés</span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 tracking-tight">
+              Projets <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Sélectionnés</span>
             </h2>
             <p className="text-white/60 text-lg">
               Une immersion dans nos dernières réalisations numériques alliant design et performance.
