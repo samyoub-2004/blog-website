@@ -1,0 +1,114 @@
+{
+  "brand": {
+    "name": "xo-link",
+    "alsoKnownAs": ["xo-link"],
+    "role": "Web design & development agency"
+  },
+  "services": [
+    {
+      "name": "Création de sites web",
+      "summary": "Conception et développement de sites modernes, performants et sur-mesure (site vitrine, e-commerce, portfolio, business)."
+    },
+    {
+      "name": "Design & animations",
+      "summary": "Possibilité d'ajouter un style glassmorphism, des micro-interactions, un carrousel, une galerie."
+    },
+    {
+      "name": "Fonctionnalités",
+      "summary": "Options possibles: blog, formulaire avancé, SEO avancé, multi-langue."
+    },
+    {
+      "name": "Maintenance",
+      "summary": "Maintenance possible en mensuel ou annuel."
+    },
+    {
+      "name": "Hébergement",
+      "summary": "Hébergement géré par l'agence ou hébergement par le client (code source + instructions)."
+    }
+  ],
+  "getStarted": {
+    "page": "/get-started",
+    "whatUserDoes": "Le client sélectionne le type de site et les options (pages, langues, fonctionnalités, maintenance, hébergement) puis demande un devis."
+  },
+  "pricing": {
+    "section": "Pricing",
+    "notes": "Tarifs transparents: prix de création unique + maintenance (mensuelle ou annuelle).",
+    "plans": {
+      "EUR": [
+        {
+          "name": "Vitrine",
+          "creation": 999,
+          "maintenanceMonthly": 99,
+          "maintenanceYearly": 999
+        },
+        {
+          "name": "Business",
+          "creation": 1999,
+          "maintenanceMonthly": 159,
+          "maintenanceYearly": 1590,
+          "popular": true
+        },
+        {
+          "name": "E-commerce",
+          "creation": 3499,
+          "maintenanceMonthly": 299,
+          "maintenanceYearly": 2990
+        },
+        {
+          "name": "Sur-mesure",
+          "pricing": "Sur devis",
+          "custom": true
+        }
+      ],
+      "DZD": [
+        {
+          "name": "Vitrine",
+          "creation": 149850,
+          "maintenanceMonthly": 14850,
+          "maintenanceYearly": 149850
+        },
+        {
+          "name": "Business",
+          "creation": 299850,
+          "maintenanceMonthly": 23850,
+          "maintenanceYearly": 238500,
+          "popular": true
+        },
+        {
+          "name": "E-commerce",
+          "creation": 524850,
+          "maintenanceMonthly": 44850,
+          "maintenanceYearly": 448500
+        },
+        {
+          "name": "Sur-mesure",
+          "pricing": "Sur devis",
+          "custom": true
+        }
+      ]
+    }
+  },
+  "portfolio": {
+    "page": "/portfolio",
+    "projects": [
+      { "title": "Lily Go", "category": "E-commerce • 2024" },
+      { "title": "Le Parking VTC", "category": "Site Vitrine • Mobile" },
+      { "title": "DZ Shop", "category": "E-commerce • 2024" },
+      { "title": "Hanane's Signature Patisserie", "category": "Site Vitrine • 2025" },
+      { "title": "AAFD Val de Saône", "category": "Application Web • 2026" }
+    ]
+  },
+  "navigation": {
+    "solutions": "/solutions",
+    "portfolio": "/portfolio",
+    "contact": "/contact"
+  },
+  "support": {
+    "contactPage": "/contact",
+    "fallbackMessage": "Je ne sais pas. Veuillez nous contacter via /contact."
+  },
+  "policies": {
+    "language": "fr",
+    "grounding": "Répondre uniquement avec les informations présentes dans cette base de connaissance."
+  }
+}

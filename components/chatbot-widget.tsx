@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react"
 import { MessageCircle, X, Send } from "lucide-react"
+import { useChat } from "@ai-sdk/react"
+import { DefaultChatTransport } from "ai"
 
 type ChatMessage = {
   id: string
@@ -12,19 +14,33 @@ type ChatMessage = {
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false) // Présence dans le DOM
   const [isAnimating, setIsAnimating] = useState(false) // Déclencheur CSS
-  const [input, setInput] = useState("")
   const [showNudge, setShowNudge] = useState(false)
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: "welcome",
-      role: "assistant",
-      content:
-        "Bienvenue chez Ixo Link. Je suis là pour vous guider : solutions web, portfolio ou démarrage de projet. Posez votre question, je vous répondrai instantanément.",
-    },
-  ])
+  const [input, setInput] = useState("")
+  const {
+    messages,
+    sendMessage,
+    status,
+  } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/api/chat",
+    }),
+  })
   const listRef = useRef<HTMLDivElement | null>(null)
-  const [isTyping, setIsTyping] = useState(false)
-  const [streaming, setStreaming] = useState(false)
+
+  const WELCOME_MESSAGE =
+    "Bienvenue chez xo-link. Je suis là pour vous guider : solutions web, portfolio ou démarrage de projet. Posez votre question, je vous répondrai instantanément."
+
+  const isLoading = status !== "ready"
+
+  const messageToText = (m: any) => {
+    if (Array.isArray(m?.parts)) {
+      return m.parts
+        .map((p: any) => (p?.type === "text" ? p.text : ""))
+        .filter(Boolean)
+        .join("")
+    }
+    return m?.content || ""
+  }
 
   // Gestion fluide de l'ouverture
   const handleOpen = () => {
@@ -48,7 +64,7 @@ export default function ChatbotWidget() {
         behavior: "smooth",
       })
     }
-  }, [messages, isOpen, isTyping])
+  }, [messages, isOpen, isLoading])
 
   useEffect(() => {
     const seen = typeof window !== "undefined" && localStorage.getItem("chatbot_seen_nudge") === "1"
@@ -56,69 +72,18 @@ export default function ChatbotWidget() {
       setShowNudge(true)
       const t = setTimeout(() => {
         setShowNudge(false)
-        try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {}
+        try { localStorage.setItem("chatbot_seen_nudge", "1") } catch { }
       }, 12000)
       return () => clearTimeout(t)
     }
   }, [])
 
-  const sendMessage = async () => {
-    const text = input.trim()
-    if (!text) return
-
-    const userMsg: ChatMessage = { id: crypto.randomUUID(), role: "user", content: text }
-    setMessages((prev) => [...prev, userMsg])
-    setInput("")
-    setIsTyping(true)
-
-    try {
-      const history = [...messages.filter(m => m.id !== "welcome"), userMsg].map(m => ({ role: m.role, content: m.content }))
-      const respStream = await fetch("/api/chat/stream", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: history }),
-      })
-
-      if (!respStream.ok || !respStream.body) throw new Error("stream failed")
-      const assistantId = crypto.randomUUID()
-      const reader = respStream.body.getReader()
-      const decoder = new TextDecoder()
-      let firstChunkReceived = false
-
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        if (chunk) {
-          if (!firstChunkReceived) {
-            setIsTyping(false)
-            setStreaming(true)
-            setMessages((prev) => [...prev, { id: assistantId, role: "assistant", content: chunk }])
-            firstChunkReceived = true
-          } else {
-            setMessages((prev) => prev.map(m => m.id === assistantId ? { ...m, content: m.content + chunk } : m))
-          }
-        }
-      }
-      setStreaming(false)
-    } catch (e) {
-      console.error(e)
-      setIsTyping(false)
-      setMessages((prev) => [...prev, {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: "Désolé, un incident technique empêche l'envoi de la réponse. Merci de réessayer ou de nous contacter via /contact.",
-      }])
-    } finally {
-      setIsTyping(false)
-      setStreaming(false)
-    }
-  }
-
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
-      sendMessage()
+      if (!input.trim() || isLoading) return
+      sendMessage({ text: input })
+      setInput("")
     }
   }
 
@@ -139,7 +104,7 @@ export default function ChatbotWidget() {
                     <div className="text-gray-600">Si vous avez besoin d’aide, vous pouvez interroger notre chatbot.</div>
                   </div>
                   <button
-                    onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch {} }}
+                    onClick={() => { setShowNudge(false); try { localStorage.setItem("chatbot_seen_nudge", "1") } catch { } }}
                     className="ml-1 p-1 rounded hover:bg-black/5 transition-colors"
                   >
                     <X className="w-4 h-4 text-black/40" />
@@ -161,7 +126,7 @@ export default function ChatbotWidget() {
 
       {/* Fenêtre de Chat avec Transition Fluide */}
       {isOpen && (
-        <div 
+        <div
           className={`
             w-[92vw] sm:w-[400px] h-[60vh] sm:h-[550px] rounded-3xl overflow-hidden 
             border border-white/15 bg-black/80 backdrop-blur-2xl text-white shadow-2xl 
@@ -176,7 +141,7 @@ export default function ChatbotWidget() {
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                 <div className="absolute inset-0 w-2.5 h-2.5 rounded-full bg-green-500 animate-ping opacity-40" />
               </div>
-              <span className="text-sm font-bold tracking-tight">IXO ASSISTANT</span>
+              <span className="text-sm font-bold tracking-tight">XO-LINK ASSISTANT</span>
             </div>
             <button
               onClick={handleClose}
@@ -188,19 +153,24 @@ export default function ChatbotWidget() {
 
           {/* Messages */}
           <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-6 space-y-5 scrollbar-thin scrollbar-thumb-white/10">
-            {messages.map((m) => (
+            <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm bg-white/10 border border-white/10 text-white/90">
+                {WELCOME_MESSAGE}
+              </div>
+            </div>
+
+            {messages.map((m: any) => (
               <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
-                  m.role === "user"
+                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${m.role === "user"
                     ? "bg-white text-black font-medium"
                     : "bg-white/10 border border-white/10 text-white/90"
-                }`}>
-                  {m.content}
+                  }`}>
+                  {messageToText(m)}
                 </div>
               </div>
             ))}
 
-            {isTyping && (
+            {isLoading && (
               <div className="flex justify-start animate-in fade-in duration-300">
                 <div className="bg-white/10 border border-white/10 rounded-2xl px-4 py-3 flex items-center gap-1.5 shadow-inner">
                   <span className="w-1.5 h-1.5 rounded-full bg-white/60 animate-bounce [animation-delay:-0.3s]" />
@@ -213,28 +183,36 @@ export default function ChatbotWidget() {
 
           {/* Input Box */}
           <div className="p-4 bg-white/5 border-t border-white/10 backdrop-blur-md">
-            <div className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-3.5 py-1.5 focus-within:border-white/40 transition-all duration-200">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                if (!input.trim() || isLoading) return
+                sendMessage({ text: input })
+                setInput("")
+              }}
+              className="flex items-center gap-2 bg-black/40 border border-white/10 rounded-2xl px-3.5 py-1.5 focus-within:border-white/40 transition-all duration-200"
+            >
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder="Posez votre question..."
                 className="flex-1 bg-transparent text-sm py-2 outline-none placeholder:text-white/30 disabled:opacity-50"
-                disabled={isTyping || streaming}
+                disabled={isLoading}
               />
               <button
-                onClick={sendMessage}
+                type="submit"
                 className="p-2 rounded-xl bg-white text-black hover:bg-gray-200 disabled:opacity-20 disabled:grayscale transition-all active:scale-90"
-                disabled={!input.trim() || isTyping || streaming}
+                disabled={!input.trim() || isLoading}
               >
                 <Send className="w-4 h-4" />
               </button>
-            </div>
+            </form>
             {/* Footer */}
             <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-[0.1em] text-white/30 font-bold">
               <span>AGENT VIRTUEL</span>
               <span className="flex gap-1.5">
-                <span className="text-white/50">IXO LINK</span>
+                <span className="text-white/50">XO-LINK</span>
                 <span className="text-white/20">•</span>
                 <span className="text-white/50">V1.0</span>
               </span>
