@@ -9,7 +9,7 @@ const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || "https://openrout
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY!
 const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL || "tngtech/deepseek-r1t2-chimera:free"
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
-const SITE_NAME = process.env.SITE_NAME || "Cliste"
+const SITE_NAME = process.env.SITE_NAME || "xo-link"
 
 async function readTextSafe(p: string) {
   try {

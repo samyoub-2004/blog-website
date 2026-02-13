@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
+import { getPlans, type Currency, type Plan } from "@/lib/plans"
 
 type Billing = "monthly" | "yearly"
-
-type Currency = "EUR" | "DZD"
 
 const AFRICA_COUNTRIES = new Set([
   "DZ",
@@ -80,151 +78,6 @@ function formatMoney(amount: number, currency: Currency) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount)
 }
 
-type Plan = {
-  name: string
-  pitch: string
-  buildPrice?: number
-  maintenanceMonthly?: number
-  maintenanceYearly?: number
-  popular?: boolean
-  features: string[]
-  cta: string
-  custom?: boolean
-}
-
-const PLANS_EUR: Plan[] = [
-  {
-    name: "Vitrine",
-    pitch: "Site élégant pour présenter votre activité.",
-    buildPrice: 999,
-    maintenanceMonthly: 99,
-    maintenanceYearly: 999,
-    features: [
-      "Jusqu'à 5 pages",
-      "Design responsive",
-      "SEO technique de base",
-      "Formulaire de contact",
-      "Intégration Analytics",
-      "Déploiement & SSL",
-    ],
-    cta: "Démarrer",
-  },
-  {
-    name: "Business",
-    pitch: "Plus de pages, plus d'impact, mieux optimisé.",
-    buildPrice: 1999,
-    maintenanceMonthly: 159,
-    maintenanceYearly: 1590,
-    popular: true,
-    features: [
-      "Jusqu'à 12 pages",
-      "Design system léger",
-      "Animations subtiles",
-      "Blog / Actualités",
-      "Perf & SEO avancés",
-      "Support prioritaire",
-    ],
-    cta: "Choisir ce plan",
-  },
-  {
-    name: "E‑commerce",
-    pitch: "Boutique en ligne performante et rassurante.",
-    buildPrice: 3499,
-    maintenanceMonthly: 299,
-    maintenanceYearly: 2990,
-    features: [
-      "Catalogue & variantes",
-      "Paiements sécurisés",
-      "Fiches produits optimisées",
-      "Panier & emails",
-      "Optimisation conversion",
-      "Suivi + formation",
-    ],
-    cta: "Lancer ma boutique",
-  },
-  {
-    name: "Sur‑mesure",
-    pitch: "Projet ambitieux, intégrations, animations premium.",
-    custom: true,
-    features: [
-      "Architecture headless",
-      "Intégrations avancées",
-      "Design system complet",
-      "Multi‑langue",
-      "Animations premium",
-      "Accompagnement dédié",
-    ],
-    cta: "Demander un devis",
-  },
-]
-
-// Editable DZD plan pricing (edit values here for Algeria/Africa pricing)
-const PLANS_DZD: Plan[] = [
-  {
-    name: "Vitrine",
-    pitch: "Site élégant pour présenter votre activité.",
-    buildPrice: 149850,
-    maintenanceMonthly: 14850,
-    maintenanceYearly: 149850,
-    features: [
-      "Jusqu'à 5 pages",
-      "Design responsive",
-      "SEO technique de base",
-      "Formulaire de contact",
-      "Intégration Analytics",
-      "Déploiement & SSL",
-    ],
-    cta: "Démarrer",
-  },
-  {
-    name: "Business",
-    pitch: "Plus de pages, plus d'impact, mieux optimisé.",
-    buildPrice: 299850,
-    maintenanceMonthly: 23850,
-    maintenanceYearly: 238500,
-    popular: true,
-    features: [
-      "Jusqu'à 12 pages",
-      "Design system léger",
-      "Animations subtiles",
-      "Blog / Actualités",
-      "Perf & SEO avancés",
-      "Support prioritaire",
-    ],
-    cta: "Choisir ce plan",
-  },
-  {
-    name: "E‑commerce",
-    pitch: "Boutique en ligne performante et rassurante.",
-    buildPrice: 524850,
-    maintenanceMonthly: 44850,
-    maintenanceYearly: 448500,
-    features: [
-      "Catalogue & variantes",
-      "Paiements sécurisés",
-      "Fiches produits optimisées",
-      "Panier & emails",
-      "Optimisation conversion",
-      "Suivi + formation",
-    ],
-    cta: "Lancer ma boutique",
-  },
-  {
-    name: "Sur‑mesure",
-    pitch: "Projet ambitieux, intégrations, animations premium.",
-    custom: true,
-    features: [
-      "Architecture headless",
-      "Intégrations avancées",
-      "Design system complet",
-      "Multi‑langue",
-      "Animations premium",
-      "Accompagnement dédié",
-    ],
-    cta: "Demander un devis",
-  },
-]
-
 export function PricingSection() {
   const [billing, setBilling] = useState<Billing>("monthly")
   const [modalPlan, setModalPlan] = useState<Plan | null>(null)
@@ -250,7 +103,7 @@ export function PricingSection() {
     }
   }, [])
 
-  const plans = currency === "DZD" ? PLANS_DZD : PLANS_EUR
+  const plans = getPlans(currency)
 
   return (
     <section className="relative py-12 sm:py-16 md:py-24 px-3 sm:px-4 md:px-6 lg:px-8 bg-white rounded-t-[40px] sm:rounded-t-[60px] rounded-b-[40px] sm:rounded-b-[60px]">
@@ -316,7 +169,7 @@ export function PricingSection() {
               : billing === "monthly"
               ? `${formatMoney(plan.maintenanceMonthly || 0, currency)} / mois`
               : `${formatMoney(plan.maintenanceYearly || 0, currency)} / an`
-            const slug = plan.name.toLowerCase().replace(/[^a-z0-9]+/g, "").replace("é", "e").replace("‑", "-")
+            const slug = plan.key
 
             return (
               <div
@@ -376,7 +229,7 @@ export function PricingSection() {
                     {plan.cta}
                   </Button>
                 ) : (
-                  <Link href="/contact" className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02]">
+                  <Link href={`/get-started?plan=${slug}`} className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-black px-6 py-3 text-base font-semibold text-white transition-all duration-300 hover:bg-gray-900 hover:scale-[1.02]">
                     Get Started
                     <ArrowRight className="h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
@@ -443,8 +296,8 @@ export function PricingSection() {
                   <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setModalPlan(null)}>
                     Fermer
                   </Button>
-                  <Link href="/contact">
-                    <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
+                  <Link href={`/get-started?plan=${modalPlan.key}`}>
+                    <Button className="bg-white text-black hover:bg-gray-100">Continuer</Button>
                   </Link>
                 </div>
               </>
@@ -483,8 +336,8 @@ export function PricingSection() {
                   <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setModalPlan(null)}>
                     Annuler
                   </Button>
-                  <Link href="/contact">
-                    <Button className="bg-white text-black hover:bg-gray-100">Valider la demande</Button>
+                  <Link href={`/get-started?plan=${modalPlan.key}`}>
+                    <Button className="bg-white text-black hover:bg-gray-100">Continuer</Button>
                   </Link>
                 </div>
               </>

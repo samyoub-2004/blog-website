@@ -3,7 +3,6 @@ import React from "react"
 const LOGOS = [
   "/placeholder-logo.svg",
   "/placeholder-logo.png",
-  "/images/cliste-logo.png",
   "/icon.svg",
   "/icon-dark-32x32.png",
   "/icon-light-32x32.png",

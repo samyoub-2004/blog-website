@@ -121,7 +121,7 @@ export function GlassmorphismNav() {
                 <div className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center">
                   <Image
                     src="/images/cliste-logo.png"
-                    alt="Cliste"
+                    alt="xo-link"
                     width={40}
                     height={40}
                     className="w-full h-full object-contain"

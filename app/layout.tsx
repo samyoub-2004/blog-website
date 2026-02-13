@@ -5,6 +5,7 @@ import "./globals.css"
 import { PageTransition } from "@/components/page-transition"
 import { NavigationTransition } from "@/components/navigation-transition"
 import ChatbotWidget from "@/components/chatbot-widget"
+import { Toaster } from "@/components/ui/sonner"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Dancing_Script, Caveat } from "next/font/google"
 
@@ -21,11 +22,32 @@ const caveat = Caveat({
 })
 
 export const metadata: Metadata = {
-  title: "Cliste - AI Automation for Enterprise",
+  title: "xo-link - AI Automation for Enterprise",
   description:
     "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+  metadataBase: new URL("https://xo-link.com"),
+  alternates: {
+    canonical: "/",
+  },
   generator: "v0.app",
   robots: "index, follow",
+  openGraph: {
+    type: "website",
+    url: "https://xo-link.com/",
+    siteName: "xo-link",
+    title: "xo-link - AI Automation for Enterprise",
+    description:
+      "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "xo-link - AI Automation for Enterprise",
+    description:
+      "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+  },
+  icons: {
+    icon: "/icon.svg",
+  },
   other: {
     'theme-color': '#000000',
     'color-scheme': 'dark',
@@ -50,6 +72,7 @@ export default function RootLayout({
           <PageTransition>{children}</PageTransition>
         </Suspense>
         <ChatbotWidget />
+        <Toaster />
         <SpeedInsights />
       </body>
     </html>
