@@ -1,284 +1,116 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
-// Hidden pricing config (not rendered as per-option prices)
-const PRICING_EUR = {
-  base: {
-    vitrine: 999,
-    business: 1999,
-    ecommerce: 3499,
-    surmesure: 0,
-  },
-  pageUnit: 80, // hidden unit per additional page
-  options: {
-    glass: 250,
-    micro: 200,
-    carousel: 180,
-    gallery: 150,
-    blog: 220,
-    formAdv: 120,
-    seoAdv: 200,
-    multilingual: 250, // per language beyond first
-  },
-  maintenance: {
-    vitrine: { monthly: 99, yearly: 999 },
-    business: { monthly: 159, yearly: 1590 },
-    ecommerce: { monthly: 299, yearly: 2990 },
-    surmesure: { monthly: 0, yearly: 0 },
-  },
-} as const
-
-// DZD pricing (you can replace these with your exact dinar prices)
-// By default, it's derived from EUR using a simple FX multiplier.
-const EUR_TO_DZD = 150
-
-const PRICING_DZD = {
-  base: {
-    vitrine: PRICING_EUR.base.vitrine * EUR_TO_DZD,
-    business: PRICING_EUR.base.business * EUR_TO_DZD,
-    ecommerce: PRICING_EUR.base.ecommerce * EUR_TO_DZD,
-    surmesure: 0,
-  },
-  pageUnit: PRICING_EUR.pageUnit * EUR_TO_DZD,
-  options: {
-    glass: PRICING_EUR.options.glass * EUR_TO_DZD,
-    micro: PRICING_EUR.options.micro * EUR_TO_DZD,
-    carousel: PRICING_EUR.options.carousel * EUR_TO_DZD,
-    gallery: PRICING_EUR.options.gallery * EUR_TO_DZD,
-    blog: PRICING_EUR.options.blog * EUR_TO_DZD,
-    formAdv: PRICING_EUR.options.formAdv * EUR_TO_DZD,
-    seoAdv: PRICING_EUR.options.seoAdv * EUR_TO_DZD,
-    multilingual: PRICING_EUR.options.multilingual * EUR_TO_DZD,
-  },
-  maintenance: {
-    vitrine: {
-      monthly: PRICING_EUR.maintenance.vitrine.monthly * EUR_TO_DZD,
-      yearly: PRICING_EUR.maintenance.vitrine.yearly * EUR_TO_DZD,
-    },
-    business: {
-      monthly: PRICING_EUR.maintenance.business.monthly * EUR_TO_DZD,
-      yearly: PRICING_EUR.maintenance.business.yearly * EUR_TO_DZD,
-    },
-    ecommerce: {
-      monthly: PRICING_EUR.maintenance.ecommerce.monthly * EUR_TO_DZD,
-      yearly: PRICING_EUR.maintenance.ecommerce.yearly * EUR_TO_DZD,
-    },
-    surmesure: { monthly: 0, yearly: 0 },
-  },
-} as const
-
-type SiteType = "vitrine" | "business" | "ecommerce" | "surmesure"
-type Billing = "monthly" | "yearly"
+import { getPlans, type PlanKey } from "@/lib/plans"
 
 type WizardState = {
-  siteType: SiteType
+  planKey: PlanKey
   pages: number
   languages: number
-  options: {
-    glass: boolean
-    micro: boolean
-    carousel: boolean
-    gallery: boolean
-    blog: boolean
-    formAdv: boolean
-    seoAdv: boolean
+  selectedOptions: Record<string, boolean>
+  contact: {
+    fullName: string
+    email: string
+    phone: string
+    company: string
+    message: string
   }
-  billing: Billing
-  hosting: "agency" | "client"
 }
 
 const DEFAULT_STATE: WizardState = {
-  siteType: "vitrine",
+  planKey: "vitrine",
   pages: 5,
   languages: 1,
-  options: {
-    glass: true,
-    micro: true,
-    carousel: false,
-    gallery: false,
-    blog: false,
-    formAdv: false,
-    seoAdv: false,
+  selectedOptions: {},
+  contact: {
+    fullName: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
   },
-  billing: "monthly",
-  hosting: "agency",
-}
-
-type Currency = "EUR" | "DZD"
-
-const AFRICA_COUNTRIES = new Set([
-  "DZ",
-  "MA",
-  "TN",
-  "LY",
-  "EG",
-  "SD",
-  "SS",
-  "EH",
-  "MR",
-  "ML",
-  "NE",
-  "TD",
-  "SN",
-  "GM",
-  "GW",
-  "GN",
-  "SL",
-  "LR",
-  "CI",
-  "GH",
-  "TG",
-  "BJ",
-  "BF",
-  "NG",
-  "CM",
-  "CF",
-  "GQ",
-  "GA",
-  "CG",
-  "CD",
-  "AO",
-  "NA",
-  "BW",
-  "ZA",
-  "LS",
-  "SZ",
-  "ZM",
-  "ZW",
-  "MW",
-  "MZ",
-  "MG",
-  "MU",
-  "SC",
-  "KM",
-  "RE",
-  "YT",
-  "KE",
-  "UG",
-  "TZ",
-  "RW",
-  "BI",
-  "ET",
-  "ER",
-  "DJ",
-  "SO",
-  "AO",
-  "ST",
-  "CV",
-])
-
-function formatMoney(amount: number, currency: Currency) {
-  if (currency === "DZD") {
-    const grouped = new Intl.NumberFormat("fr-DZ", { maximumFractionDigits: 0, useGrouping: true }).format(amount)
-    // Some locales use spaces (including NBSP / narrow NBSP) for grouping; user wants commas.
-    const withCommas = grouped.replace(/[\s\u00A0\u202F]/g, ",")
-    return withCommas + " DZD"
-  }
-  return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount)
 }
 
 export default function GetStartedPage() {
-  const router = useRouter()
   const params = useSearchParams()
   const planParam = params.get("plan")
 
   const [step, setStep] = useState(1)
   const [state, setState] = useState<WizardState>(DEFAULT_STATE)
-  const [showCustomModal, setShowCustomModal] = useState(false)
 
-  const [currency, setCurrency] = useState<Currency>("EUR")
-  const [geoLoading, setGeoLoading] = useState(true)
+  const restoredFromStorageRef = useRef(false)
 
-  // Initialize site type from query
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  const plans = useMemo(() => getPlans("EUR"), [])
+
+  const currentPlan = useMemo(() => plans.find((p) => p.key === state.planKey), [plans, state.planKey])
+
+  const availableOptions = useMemo(() => currentPlan?.availableOptions || [], [currentPlan])
+
+  // Restore wizard state if the page remounts (e.g. refresh / navigation)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("xo-link:get-started")
+      if (!raw) return
+
+      const parsed = JSON.parse(raw) as { step?: number; state?: WizardState } | null
+      if (!parsed?.state) return
+
+      if (typeof parsed.step === "number") setStep(parsed.step)
+      setState(parsed.state)
+      restoredFromStorageRef.current = true
+    } catch {
+      // ignore
+    }
+  }, [])
+
+  // Persist wizard progress to prevent unexpected resets
+  useEffect(() => {
+    try {
+      sessionStorage.setItem("xo-link:get-started", JSON.stringify({ step, state }))
+    } catch {
+      // ignore
+    }
+  }, [step, state])
+
+  // Initialize plan from query
   useEffect(() => {
     if (!planParam) return
-    const map: Record<string, SiteType> = {
+    if (restoredFromStorageRef.current) return
+    const normalized = planParam.toLowerCase().trim()
+    const map: Record<string, PlanKey> = {
       vitrine: "vitrine",
       business: "business",
       ecommerce: "ecommerce",
       "e-commerce": "ecommerce",
       surmesure: "surmesure",
+      "sur-mesure": "surmesure",
       sur: "surmesure",
     }
-    const site = map[planParam.toLowerCase()] || undefined
-    if (site) setState((s) => ({ ...s, siteType: site }))
+    const key = map[normalized]
+    if (key) setState((s) => ({ ...s, planKey: key }))
   }, [planParam])
 
-  // Geo detection (Africa => DZD, else EUR)
   useEffect(() => {
-    let cancelled = false
-    const run = async () => {
-      try {
-        setGeoLoading(true)
-        const res = await fetch("https://ipinfo.io/json")
-        const data = (await res.json()) as { country?: string }
-        const country = (data.country || "").toUpperCase()
-        const isAfrica = country ? AFRICA_COUNTRIES.has(country) : false
-        if (!cancelled) setCurrency(isAfrica ? "DZD" : "EUR")
-      } catch {
-        if (!cancelled) setCurrency("EUR")
-      } finally {
-        if (!cancelled) setGeoLoading(false)
+    setState((s) => {
+      const next: Record<string, boolean> = { ...s.selectedOptions }
+      for (const opt of availableOptions) {
+        if (typeof next[opt.key] === "undefined") next[opt.key] = false
       }
-    }
-    run()
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  // Open a contact explanation modal when Sur‑mesure is selected
-  useEffect(() => {
-    if (state.siteType === "surmesure") {
-      setShowCustomModal(true)
-    }
-  }, [state.siteType])
-
-  // Price computation (not exposing unit prices)
-  const totals = useMemo(() => {
-    const PRICING = currency === "DZD" ? PRICING_DZD : PRICING_EUR
-    if (state.siteType === "surmesure") {
-      return { buildTotal: 0, maintenance: 0 }
-    }
-    const base = PRICING.base[state.siteType]
-    const extraPages = Math.max(0, state.pages - 5) * PRICING.pageUnit
-    const opts = state.options
-    const optionsTotal =
-      (opts.glass ? PRICING.options.glass : 0) +
-      (opts.micro ? PRICING.options.micro : 0) +
-      (opts.carousel ? PRICING.options.carousel : 0) +
-      (opts.gallery ? PRICING.options.gallery : 0) +
-      (opts.blog ? PRICING.options.blog : 0) +
-      (opts.formAdv ? PRICING.options.formAdv : 0) +
-      (opts.seoAdv ? PRICING.options.seoAdv : 0) +
-      Math.max(0, state.languages - 1) * PRICING.options.multilingual
-
-    const buildTotal = base + extraPages + optionsTotal
-    const maint = PRICING.maintenance[state.siteType]
-    const maintenance = state.billing === "monthly" ? maint.monthly : maint.yearly
-    return { buildTotal, maintenance }
-  }, [state, currency])
-
-  const siteTypeLabel: Record<SiteType, string> = {
-    vitrine: "Vitrine",
-    business: "Business",
-    ecommerce: "E‑commerce",
-    surmesure: "Sur‑mesure",
-  }
-
-  const optionLabels: Record<keyof WizardState["options"], string> = {
-    glass: "Glassmorphism",
-    micro: "Micro‑interactions",
-    carousel: "Carrousel",
-    gallery: "Galerie",
-    blog: "Blog",
-    formAdv: "Formulaire avancé",
-    seoAdv: "SEO avancé",
-  }
+      for (const k of Object.keys(next)) {
+        if (!availableOptions.some((o) => o.key === k)) delete next[k]
+      }
+      return { ...s, selectedOptions: next }
+    })
+  }, [availableOptions])
 
   const StepHeader = (
     <div className="text-center mb-8">
@@ -287,13 +119,13 @@ export default function GetStartedPage() {
         Démarrage rapide
       </div>
       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3">Construisez votre devis</h1>
-      <p className="text-white/70 max-w-2xl mx-auto">Choisissez votre type de site et vos options. Le total se met à jour automatiquement.</p>
+      <p className="text-white/70 max-w-2xl mx-auto">Choisissez votre plan, les détails du projet et les options. On vous recontacte avec un devis personnalisé.</p>
     </div>
   )
 
   const Progress = (
     <div className="flex items-center justify-center gap-2 mb-8">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <div key={i} className={`h-1 rounded-full ${i <= step ? "bg-white" : "bg-white/20"}`} style={{ width: i === step ? 48 : 28 }} />
       ))}
     </div>
@@ -309,23 +141,19 @@ export default function GetStartedPage() {
           {step === 1 && (
             <div className="grid gap-6">
               <div>
-                <div className="text-white/80 text-sm mb-3">Type de site</div>
+                <div className="text-white/80 text-sm mb-3">Plan</div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  {([
-                    { key: "vitrine", label: "Vitrine" },
-                    { key: "business", label: "Business" },
-                    { key: "ecommerce", label: "E‑commerce" },
-                    { key: "surmesure", label: "Sur‑mesure" },
-                  ] as const).map((opt) => (
+                  {plans.map((p) => (
                     <button
-                      key={opt.key}
-                      onClick={() => setState((s) => ({ ...s, siteType: opt.key as SiteType }))}
+                      key={p.key}
+                      type="button"
+                      onClick={() => setState((s) => ({ ...s, planKey: p.key }))}
                       className={`px-4 py-3 rounded-xl border transition-all text-left ${
-                        state.siteType === opt.key ? "bg-white text-black border-transparent" : "bg-white/5 text-white border-white/15 hover:bg-white/10"
+                        state.planKey === p.key ? "bg-white text-black border-transparent" : "bg-white/5 text-white border-white/15 hover:bg-white/10"
                       }`}
                     >
-                      <div className="font-semibold">{opt.label}</div>
-                      <div className="text-xs opacity-70">{opt.key !== "surmesure" ? "Création + maintenance" : "Sur devis"}</div>
+                      <div className="font-semibold">{p.name}</div>
+                      <div className="text-xs opacity-70">{p.pitch}</div>
                     </button>
                   ))}
                 </div>
@@ -355,65 +183,7 @@ export default function GetStartedPage() {
                 />
               </div>
               <p className="text-xs text-white/60">Inclut 5 pages. Les pages supplémentaires sont ajoutées au total.</p>
-            </div>
-          )}
 
-          {step === 3 && (
-            <div className="grid gap-6">
-              <div className="text-white/80 text-sm">Design & Animations</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {([
-                  { key: "glass", label: "Glassmorphism" },
-                  { key: "micro", label: "Micro‑interactions" },
-                  { key: "carousel", label: "Carrousel" },
-                  { key: "gallery", label: "Galerie" },
-                ] as const).map((opt) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    role="switch"
-                    aria-checked={state.options[opt.key]}
-                    onClick={() => setState((s) => ({ ...s, options: { ...s.options, [opt.key]: !s.options[opt.key] } }))}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
-                      state.options[opt.key]
-                        ? "bg-white text-black border-transparent"
-                        : "bg-white/5 text-white border-white/15 hover:bg-white/10"
-                    }`}
-                  >
-                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-current opacity-80" />
-                    <span className="text-sm">{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="grid gap-6">
-              <div className="text-white/80 text-sm">Fonctionnalités</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {([
-                  { key: "blog", label: "Blog" },
-                  { key: "formAdv", label: "Formulaire avancé" },
-                  { key: "seoAdv", label: "SEO avancé" },
-                ] as const).map((opt) => (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    role="switch"
-                    aria-checked={state.options[opt.key]}
-                    onClick={() => setState((s) => ({ ...s, options: { ...s.options, [opt.key]: !s.options[opt.key] } }))}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
-                      state.options[opt.key]
-                        ? "bg-white text-black border-transparent"
-                        : "bg-white/5 text-white border-white/15 hover:bg-white/10"
-                    }`}
-                  >
-                    <span className="inline-block w-2.5 h-2.5 rounded-full bg-current opacity-80" />
-                    <span className="text-sm">{opt.label}</span>
-                  </button>
-                ))}
-              </div>
               <div className="flex items-center gap-4">
                 <div className="text-white/80 text-sm">Langues</div>
                 <input
@@ -424,83 +194,106 @@ export default function GetStartedPage() {
                   onChange={(e) => setState((s) => ({ ...s, languages: Number(e.target.value) }))}
                   className="w-24 px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
                 />
-                <span className="text-xs text-white/60">La première langue est incluse.</span>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="grid gap-6">
+              <div className="text-white/80 text-sm">Options ({currentPlan?.name || "—"})</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {availableOptions.map((opt) => {
+                  const checked = !!state.selectedOptions[opt.key]
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      role="switch"
+                      aria-checked={checked}
+                      onClick={() =>
+                        setState((s) => ({
+                          ...s,
+                          selectedOptions: { ...s.selectedOptions, [opt.key]: !checked },
+                        }))
+                      }
+                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+                        checked ? "bg-white text-black border-transparent" : "bg-white/5 text-white border-white/15 hover:bg-white/10"
+                      }`}
+                    >
+                      <span className="inline-block w-2.5 h-2.5 rounded-full bg-current opacity-80" />
+                      <span className="text-sm">{opt.label}</span>
+                    </button>
+                  )
+                })}
+                {availableOptions.length === 0 && <div className="text-sm text-white/60">Aucune option disponible pour ce plan.</div>}
+              </div>
+            </div>
+          )}
+
+          {step === 4 && (
+            <div className="grid gap-6">
+              <div className="text-white text-lg font-semibold">Vos coordonnées</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <div className="text-white/70 text-sm mb-2">Nom complet</div>
+                  <input
+                    value={state.contact.fullName}
+                    onChange={(e) => setState((s) => ({ ...s, contact: { ...s.contact, fullName: e.target.value } }))}
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+                    placeholder="Votre nom"
+                  />
+                </div>
+                <div>
+                  <div className="text-white/70 text-sm mb-2">Email</div>
+                  <input
+                    type="email"
+                    value={state.contact.email}
+                    onChange={(e) => setState((s) => ({ ...s, contact: { ...s.contact, email: e.target.value } }))}
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+                    placeholder="vous@exemple.com"
+                  />
+                </div>
+                <div>
+                  <div className="text-white/70 text-sm mb-2">Téléphone</div>
+                  <input
+                    value={state.contact.phone}
+                    onChange={(e) => setState((s) => ({ ...s, contact: { ...s.contact, phone: e.target.value } }))}
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+                    placeholder="+213..."
+                  />
+                </div>
+                <div>
+                  <div className="text-white/70 text-sm mb-2">Entreprise</div>
+                  <input
+                    value={state.contact.company}
+                    onChange={(e) => setState((s) => ({ ...s, contact: { ...s.contact, company: e.target.value } }))}
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+                    placeholder="(optionnel)"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="text-white/70 text-sm mb-2">Message</div>
+                <textarea
+                  value={state.contact.message}
+                  onChange={(e) => setState((s) => ({ ...s, contact: { ...s.contact, message: e.target.value } }))}
+                  className="w-full min-h-[120px] px-3 py-2 rounded-lg bg-white/10 border border-white/20 text-white"
+                  placeholder="Expliquez votre besoin (deadline, style, exemples, etc.)"
+                />
               </div>
             </div>
           )}
 
           {step === 5 && (
             <div className="grid gap-6">
-              <div className="text-white/80 text-sm">Maintenance</div>
-              <div className="flex items-center gap-3">
-                <span className={`text-sm ${state.billing === "monthly" ? "text-white" : "text-white/60"}`}>Mensuel</span>
-                <button
-                  aria-label="Basculer facturation"
-                  onClick={() => setState((s) => ({ ...s, billing: s.billing === "monthly" ? "yearly" : "monthly" }))}
-                  className="relative w-16 h-8 bg-white/10 border border-white/20 rounded-full backdrop-blur-md transition-colors"
-                >
-                  <span className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white transition-transform ${state.billing === "yearly" ? "translate-x-8" : "translate-x-0"}`} />
-                </button>
-                <span className={`text-sm ${state.billing === "yearly" ? "text-white" : "text-white/60"}`}>Annuel</span>
-                <span className="ml-2 text-xs text-emerald-300/90 bg-emerald-500/10 border border-emerald-400/20 px-2 py-0.5 rounded-full">2 mois offerts</span>
-              </div>
-
-              <div className="mt-4">
-                <div className="text-white/80 text-sm mb-2">Hébergement</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={state.hosting === "agency"}
-                    onClick={() => setState((s) => ({ ...s, hosting: "agency" }))}
-                    className={`text-left px-4 py-3 rounded-xl border transition-colors ${
-                      state.hosting === "agency"
-                        ? "bg-white text-black border-transparent"
-                        : "bg-white/5 text-white border-white/15 hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="font-semibold">Hébergement géré par l’agence</div>
-                    <div className="text-xs opacity-70">On s’occupe de tout (infra, sécurité, mises à jour).</div>
-                  </button>
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={state.hosting === "client"}
-                    onClick={() => setState((s) => ({ ...s, hosting: "client" }))}
-                    className={`text-left px-4 py-3 rounded-xl border transition-colors ${
-                      state.hosting === "client"
-                        ? "bg-white text-black border-transparent"
-                        : "bg-white/5 text-white border-white/15 hover:bg-white/10"
-                    }`}
-                  >
-                    <div className="font-semibold">Hébergement par le client</div>
-                    <div className="text-xs opacity-70">Nous fournissons le code source et les instructions de déploiement.</div>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 6 && (
-            <div className="grid gap-6">
               <div className="text-white text-lg font-semibold">Récapitulatif</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="text-white/70 text-sm mb-1">Création</div>
-                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatMoney(totals.buildTotal, currency)}</div>
-                </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <div className="text-white/70 text-sm mb-1">Maintenance ({state.billing === "monthly" ? "mensuelle" : "annuelle"})</div>
-                  <div className="text-2xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatMoney(totals.maintenance, currency) : "Sur devis"}</div>
-                </div>
-              </div>
-
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                   <div className="text-white/70 text-sm mb-2">Paramètres</div>
                   <ul className="text-white/90 text-sm space-y-2">
                     <li>
-                      <span className="text-white/60">Type de site:</span> {siteTypeLabel[state.siteType]}
+                      <span className="text-white/60">Plan:</span> {currentPlan?.name || state.planKey}
                     </li>
                     <li>
                       <span className="text-white/60">Pages:</span> {state.pages}
@@ -508,31 +301,38 @@ export default function GetStartedPage() {
                     <li>
                       <span className="text-white/60">Langues:</span> {state.languages}
                     </li>
-                    <li>
-                      <span className="text-white/60">Maintenance:</span> {state.billing === "monthly" ? "Mensuelle" : "Annuelle"}
-                    </li>
-                    <li>
-                      <span className="text-white/60">Hébergement:</span> {state.hosting === "agency" ? "Géré par l’agence" : "Géré par le client (code source fourni)"}
-                    </li>
                   </ul>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                   <div className="text-white/70 text-sm mb-2">Options sélectionnées</div>
                   <ul className="text-white/90 text-sm space-y-2">
-                    {Object.entries(state.options)
-                      .filter(([_, v]) => v)
-                      .map(([k]) => (
-                        <li key={k} className="flex items-center gap-2">
+                    {availableOptions
+                      .filter((o) => !!state.selectedOptions[o.key])
+                      .map((o) => (
+                        <li key={o.key} className="flex items-center gap-2">
                           <span className="inline-block w-1.5 h-1.5 rounded-full bg-white/70"></span>
-                          <span>{optionLabels[k as keyof WizardState["options"]]}</span>
+                          <span>{o.label}</span>
                         </li>
                       ))}
-                    {Object.values(state.options).every((v) => !v) && (
+                    {availableOptions.every((o) => !state.selectedOptions[o.key]) && (
                       <li className="text-white/60">Aucune option ajoutée</li>
                     )}
                   </ul>
                 </div>
               </div>
+
+              <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                <div className="text-white/70 text-sm mb-2">Contact</div>
+                <div className="text-white/90 text-sm">
+                  <div>{state.contact.fullName || "—"}</div>
+                  <div>{state.contact.email || "—"}</div>
+                  {state.contact.phone && <div>{state.contact.phone}</div>}
+                  {state.contact.company && <div>{state.contact.company}</div>}
+                </div>
+              </div>
+
+              {submitError && <div className="text-sm text-red-200">{submitError}</div>}
+              {submitted && <div className="text-sm text-emerald-200">Demande envoyée. On vous répond très vite.</div>}
             </div>
           )}
         </div>
@@ -543,49 +343,72 @@ export default function GetStartedPage() {
             <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setStep((s) => Math.max(1, s - 1))} disabled={step === 1}>
               Précédent
             </Button>
-            {step < 6 ? (
+            {step < 5 ? (
               <Button
                 className="bg-white text-black hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={() => {
-                  if (state.siteType !== "surmesure") setStep((s) => Math.min(6, s + 1))
+                  setSubmitError(null)
+                  setStep((s) => Math.min(5, s + 1))
                 }}
-                disabled={state.siteType === "surmesure"}
+                disabled={false}
               >
                 Suivant
               </Button>
             ) : (
               <Button
                 className="bg-white text-black hover:bg-gray-100"
-                onClick={() => {
+                disabled={submitting || submitted}
+                onClick={async () => {
+                  setSubmitting(true)
+                  setSubmitError(null)
                   try {
-                    window.dispatchEvent(new CustomEvent("cc:navigate", { detail: { to: "/contact" } }))
-                  } catch {
-                    router.push("/contact")
+                    const selected = availableOptions.filter((o) => !!state.selectedOptions[o.key]).map((o) => ({ key: o.key, label: o.label }))
+                    const payload = {
+                      planKey: state.planKey,
+                      planName: currentPlan?.name || state.planKey,
+                      pages: state.pages,
+                      languages: state.languages,
+                      options: selected,
+                      contact: state.contact,
+                    }
+
+                    const res = await fetch("/api/quote", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify(payload),
+                    })
+
+                    if (!res.ok) {
+                      const data = (await res.json().catch(() => null)) as any
+                      throw new Error(data?.error || "Impossible d'envoyer la demande")
+                    }
+
+                    setSubmitted(true)
+                    toast.success("Demande envoyée", {
+                      description: "Merci ! On vous répond très vite.",
+                    })
+                    try {
+                      sessionStorage.removeItem("xo-link:get-started")
+                    } catch {
+                      // ignore
+                    }
+                  } catch (e: any) {
+                    setSubmitError(e?.message || "Erreur lors de l'envoi")
+                    toast.error("Erreur", {
+                      description: e?.message || "Impossible d'envoyer la demande",
+                    })
+                  } finally {
+                    setSubmitting(false)
                   }
                 }}
               >
-                Demander un devis
+                {submitting ? "Envoi..." : submitted ? "Envoyé" : "Demander un devis"}
               </Button>
             )}
           </div>
-          {state.siteType === "surmesure" && (
-            <div className="text-xs text-white/70 mt-2">
-              Projet sur‑mesure: merci de nous contacter pour définir votre besoin.
-            </div>
-          )}
-
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl p-4 w-full md:w-auto">
-            <div className="flex items-center gap-6">
-              <div>
-                <div className="text-xs text-white/60">Total création</div>
-                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : formatMoney(totals.buildTotal, currency)}</div>
-              </div>
-              <div className="hidden md:block w-px h-10 bg-white/10" />
-              <div>
-                <div className="text-xs text-white/60">Maintenance ({state.billing === "monthly" ? "mois" : "an"})</div>
-                <div className="text-xl font-bold text-white">{state.siteType === "surmesure" ? "Sur devis" : totals.maintenance ? formatMoney(totals.maintenance, currency) : "—"}</div>
-              </div>
-            </div>
+            <div className="text-xs text-white/60">Plan sélectionné</div>
+            <div className="text-lg font-bold text-white">{currentPlan?.name || state.planKey}</div>
           </div>
         </div>
 
@@ -593,9 +416,7 @@ export default function GetStartedPage() {
         <div className="mt-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-6 text-white/90">
           <div className="font-semibold mb-2">Vous hésitez ?</div>
           <p className="text-sm mb-4">
-            {state.siteType === "surmesure"
-              ? "Pour un projet sur‑mesure, contactez‑nous pour détailler vos besoins et construire un devis adapté."
-              : "Si vous n'êtes pas sûr des options à choisir, contactez‑nous et nous préparerons un devis personnalisé."}
+            Si vous n'êtes pas sûr des options à choisir, contactez‑nous et nous préparerons un devis personnalisé.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Link href="/contact">
@@ -606,33 +427,6 @@ export default function GetStartedPage() {
           </div>
         </div>
       </div>
-
-      {showCustomModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setShowCustomModal(false)} />
-          <div role="dialog" aria-modal="true" className="relative w-full max-w-lg bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 md:p-8 text-white">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <div className="text-xs text-white/70">Projet sur‑mesure</div>
-                <h4 className="text-2xl font-bold">Parlons de votre besoin</h4>
-              </div>
-              <button onClick={() => setShowCustomModal(false)} className="text-white/70 hover:text-white">✕</button>
-            </div>
-            <p className="text-white/80 text-sm mb-6">
-              Les projets sur‑mesure nécessitent un échange pour définir précisément vos objectifs (fonctionnalités, intégrations,
-              animations, multi‑langue, contenus, délais). Cliquez ci‑dessous pour nous contacter et recevoir un devis adapté.
-            </p>
-            <div className="flex items-center justify-end gap-3">
-              <Button variant="outline" className="bg-white/5 border-white/20 text-white hover:bg-white/10" onClick={() => setShowCustomModal(false)}>
-                Fermer
-              </Button>
-              <Link href="/contact">
-                <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
   )
 }

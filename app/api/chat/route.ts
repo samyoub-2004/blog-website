@@ -130,7 +130,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: groq("llama-3.1-8b-instant"),
-    system: `You are the website assistant for Cliste (xo-link).
+    system: `You are the website assistant for xo-link.
 
 Rules:
 - Use the WEBSITE CONTEXT below as the source of truth.

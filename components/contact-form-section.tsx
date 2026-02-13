@@ -5,6 +5,7 @@ import React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Mail, Phone, MapPin } from "lucide-react"
+import { toast } from "sonner"
 
 export function ContactFormSection() {
   const [formData, setFormData] = useState({
@@ -32,11 +33,21 @@ export function ContactFormSection() {
     setSubmitMessage("")
 
     try {
-      // Simulate form submission - in production, connect to your backend
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      })
 
-      console.log("Form submitted:", formData)
+      if (!res.ok) {
+        const data = (await res.json().catch(() => null)) as any
+        throw new Error(data?.error || "Failed to send message")
+      }
+
       setSubmitMessage("Thank you! We'll be in touch soon.")
+      toast.success("Message envoyé", {
+        description: "Merci ! On vous répond très vite.",
+      })
 
       setFormData({
         name: "",
@@ -50,6 +61,9 @@ export function ContactFormSection() {
       setTimeout(() => setSubmitMessage(""), 5000)
     } catch (error) {
       setSubmitMessage("An error occurred. Please try again.")
+      toast.error("Erreur", {
+        description: "Impossible d'envoyer le message. Réessayez.",
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -87,8 +101,8 @@ export function ContactFormSection() {
                   </div>
                   <div>
                     <p className="text-white/70 text-sm font-medium mb-1">Email</p>
-                    <a href="mailto:hello@example.com" className="text-white hover:text-white/80 transition-colors">
-                      hello@example.com
+                    <a href="mailto:contact@xo-link.com" className="text-white hover:text-white/80 transition-colors">
+                      contact@xo-link.com
                     </a>
                   </div>
                 </div>
@@ -100,8 +114,8 @@ export function ContactFormSection() {
                   </div>
                   <div>
                     <p className="text-white/70 text-sm font-medium mb-1">Phone</p>
-                    <a href="tel:+1234567890" className="text-white hover:text-white/80 transition-colors">
-                      +1 (234) 567-890
+                    <a href="tel:+213000000000" className="text-white hover:text-white/80 transition-colors">
+                      +213 00 00 00 00
                     </a>
                   </div>
                 </div>
