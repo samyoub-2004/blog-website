@@ -1,9 +1,68 @@
+import { groq } from "@ai-sdk/groq";
+import { generateText } from "ai";
+import fs from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
+export const maxDuration = 30;
 
 const VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
 const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
+
+async function readTextSafe(p: string) {
+  try {
+    return await fs.readFile(p, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+function normalizeForPrompt(text: string) {
+  return text.replace(/\s+/g, " ").slice(0, 6000);
+}
+
+async function loadSiteContext(projectRoot: string) {
+  const knowledgePath = path.join(projectRoot, "data/koulachda.json");
+  const raw = await readTextSafe(knowledgePath);
+  if (!raw) return "";
+
+  try {
+    return JSON.stringify(JSON.parse(raw));
+  } catch {
+    return normalizeForPrompt(raw);
+  }
+}
+
+async function genererReponseIA(userText: string) {
+  const projectRoot = process.cwd();
+  const rawContext = await loadSiteContext(projectRoot);
+  const context = normalizeForPrompt(rawContext);
+
+  const result = await generateText({
+    model: groq("llama-3.1-8b-instant"),
+    system: `You are the website assistant for xo-link.
+
+Rules:
+- Use the WEBSITE CONTEXT below as the source of truth.
+- You may answer naturally (and briefly) in French.
+- If the user asks something not covered by the context, do NOT invent details.
+  Instead:
+  1) Ask 1 short clarification question if it could help, OR
+  2) Say you don't have that information and suggest contacting us via /contact.
+- Never invent prices, guarantees, timelines, services, or any details not present in the context.
+
+Channel:
+- The user is messaging via Facebook Messenger. Keep replies short and helpful.
+
+--- WEBSITE CONTEXT START ---
+${context}
+--- WEBSITE CONTEXT END ---`,
+    prompt: normalizeForPrompt(userText),
+  });
+
+  return (result.text || "").trim();
+}
 
 async function envoyerMessage(senderPsid: string, responseText: string) {
   if (!PAGE_ACCESS_TOKEN) {
@@ -64,18 +123,23 @@ export async function POST(req: Request) {
     const messaging = Array.isArray(entry.messaging) ? entry.messaging : [];
 
     for (const event of messaging) {
-      const senderPsid: string | undefined = event?.sender?.id;
-      const textRecu: string | undefined = event?.message?.text;
+      try {
+        const senderPsid: string | undefined = event?.sender?.id;
+        const textRecu: string | undefined = event?.message?.text;
+        const isEcho: boolean | undefined = event?.message?.is_echo;
 
-      if (!senderPsid || !textRecu) continue;
+        if (!senderPsid) continue;
+        if (isEcho) continue;
 
-      if (textRecu.toLowerCase() === "salut") {
-        await envoyerMessage(senderPsid, "Salut cher utilisateur ! Je suis ton bot de dev. 🚀");
-      } else {
-        await envoyerMessage(
-          senderPsid,
-          `Tu as dit : "${textRecu}". Je suis encore en train d'apprendre !`,
-        );
+        if (!textRecu) {
+          await envoyerMessage(senderPsid, "Je peux répondre aux messages texte pour le moment. �");
+          continue;
+        }
+
+        const reponseIA = await genererReponseIA(textRecu);
+        await envoyerMessage(senderPsid, reponseIA || "Je n'ai pas compris, tu peux reformuler ?");
+      } catch {
+        continue;
       }
     }
   }
