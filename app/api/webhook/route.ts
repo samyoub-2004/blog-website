@@ -128,13 +128,14 @@ export async function POST(req: Request) {
         const textRecu: string | undefined = event?.message?.text;
         const isEcho: boolean | undefined = event?.message?.is_echo;
 
+        const hasMessage = Boolean(event?.message);
+        const hasText = typeof textRecu === "string" && textRecu.trim().length > 0;
+
         if (!senderPsid) continue;
         if (isEcho) continue;
 
-        if (!textRecu) {
-          await envoyerMessage(senderPsid, "Je peux répondre aux messages texte pour le moment. �");
-          continue;
-        }
+        if (!hasMessage) continue;
+        if (!hasText) continue;
 
         const reponseIA = await genererReponseIA(textRecu);
         await envoyerMessage(senderPsid, reponseIA || "Je n'ai pas compris, tu peux reformuler ?");
