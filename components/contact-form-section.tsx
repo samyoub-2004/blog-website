@@ -114,9 +114,14 @@ export function ContactFormSection() {
                   </div>
                   <div>
                     <p className="text-white/70 text-sm font-medium mb-1">Phone</p>
-                    <a href="tel:+213000000000" className="text-white hover:text-white/80 transition-colors">
-                      +213 00 00 00 00
-                    </a>
+                    <div className="flex flex-col gap-1">
+                      <a href="tel:+33765898864" className="text-white hover:text-white/80 transition-colors">
+                        +33 7 65 89 88 64
+                      </a>
+                      <a href="tel:+213794214276" className="text-white hover:text-white/80 transition-colors">
+                        +213 7 94 21 42 76
+                      </a>
+                    </div>
                   </div>
                 </div>
 
@@ -190,7 +195,7 @@ export function ContactFormSection() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-white/15 transition-all duration-200"
-                    placeholder="+1 (234) 567-890"
+                    placeholder="+213794214276"
                   />
                 </div>
 

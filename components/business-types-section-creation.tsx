@@ -1,6 +1,6 @@
 "use client"
 
-import { ShoppingCart, Store, LayoutGrid, Rocket, RefreshCw, ShieldCheck } from "lucide-react"
+import { ShoppingCart, Store, LayoutGrid, Rocket, RefreshCw } from "lucide-react"
 import { motion } from "framer-motion"
 
 const businessTypes = [
@@ -33,12 +33,6 @@ const businessTypes = [
     title: "Refonte de site",
     description: "Modernisez votre image de marque et améliorez les performances de votre ancien site.",
     color: "from-yellow-400 to-orange-500",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Maintenance & SEO",
-    description: "Sécurité totale, mises à jour régulières et optimisation pour dominer les résultats Google.",
-    color: "from-teal-400 to-blue-500",
   },
 ]
 
@@ -74,7 +68,7 @@ export function BusinessTypesSectionCreation() {
             return (
               <div 
                 key={index} 
-                className="group relative bg-black/[0.03] border border-black/10 rounded-3xl p-8 transition-all duration-500 hover:bg-black/[0.06] hover:-translate-y-2 shadow-sm"
+                className="group relative bg-white border border-black/10 rounded-3xl p-6 transition-all duration-500 hover:-translate-y-2 shadow-sm hover:shadow-md"
               >
                 <div className={`mb-6 inline-flex p-4 rounded-2xl bg-gradient-to-br ${type.color} text-white shadow-lg`}>
                   <Icon className="w-7 h-7" />

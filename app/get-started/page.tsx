@@ -54,6 +54,7 @@ export default function GetStartedPage() {
   const currentPlan = useMemo(() => plans.find((p) => p.key === state.planKey), [plans, state.planKey])
 
   const availableOptions = useMemo(() => currentPlan?.availableOptions || [], [currentPlan])
+  const includedDetails = useMemo(() => currentPlan?.features || [], [currentPlan])
 
   // Restore wizard state if the page remounts (e.g. refresh / navigation)
   useEffect(() => {
@@ -200,32 +201,51 @@ export default function GetStartedPage() {
 
           {step === 3 && (
             <div className="grid gap-6">
-              <div className="text-white/80 text-sm">Options ({currentPlan?.name || "—"})</div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {availableOptions.map((opt) => {
-                  const checked = !!state.selectedOptions[opt.key]
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      role="switch"
-                      aria-checked={checked}
-                      onClick={() =>
-                        setState((s) => ({
-                          ...s,
-                          selectedOptions: { ...s.selectedOptions, [opt.key]: !checked },
-                        }))
-                      }
-                      className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
-                        checked ? "bg-white text-black border-transparent" : "bg-white/5 text-white border-white/15 hover:bg-white/10"
-                      }`}
-                    >
-                      <span className="inline-block w-2.5 h-2.5 rounded-full bg-current opacity-80" />
-                      <span className="text-sm">{opt.label}</span>
-                    </button>
-                  )
-                })}
-                {availableOptions.length === 0 && <div className="text-sm text-white/60">Aucune option disponible pour ce plan.</div>}
+              <div className="text-white text-lg font-semibold">Détails du plan : {currentPlan?.name || "—"}</div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="text-white/70 text-sm mb-3">Inclus</div>
+                  <ul className="text-white/90 text-sm space-y-2">
+                    {includedDetails.map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-white/70 mt-2 flex-shrink-0" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                    {includedDetails.length === 0 && <li className="text-white/60">—</li>}
+                  </ul>
+                </div>
+
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                  <div className="text-white/70 text-sm mb-3">Options (à cocher)</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {availableOptions.map((opt) => {
+                      const checked = !!state.selectedOptions[opt.key]
+                      return (
+                        <button
+                          key={opt.key}
+                          type="button"
+                          role="switch"
+                          aria-checked={checked}
+                          onClick={() =>
+                            setState((s) => ({
+                              ...s,
+                              selectedOptions: { ...s.selectedOptions, [opt.key]: !checked },
+                            }))
+                          }
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+                            checked ? "bg-white text-black border-transparent" : "bg-white/5 text-white border-white/15 hover:bg-white/10"
+                          }`}
+                        >
+                          <span className="inline-block w-2.5 h-2.5 rounded-full bg-current opacity-80" />
+                          <span className="text-sm">{opt.label}</span>
+                        </button>
+                      )
+                    })}
+                    {availableOptions.length === 0 && <div className="text-sm text-white/60">Aucune option disponible pour ce plan.</div>}
+                  </div>
+                </div>
               </div>
             </div>
           )}
@@ -422,8 +442,9 @@ export default function GetStartedPage() {
             <Link href="/contact">
               <Button className="bg-white text-black hover:bg-gray-100">Nous contacter</Button>
             </Link>
-            <Link href="mailto:hello@example.com" className="text-white/80 underline underline-offset-4">hello@example.com</Link>
-            <a href="tel:+1234567890" className="text-white/80 underline underline-offset-4">+1 (234) 567-890</a>
+            <Link href="mailto:contact@xo-link.com" className="text-white/80 underline underline-offset-4">contact@xo-link.com</Link>
+            <a href="tel:+33765898864" className="text-white/80 underline underline-offset-4">+33 7 65 89 88 64</a>
+            <a href="tel:+213794214276" className="text-white/80 underline underline-offset-4">+213 7 94 21 42 76</a>
           </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { getPlans, type Currency, type Plan } from "@/lib/plans"
 
-type Billing = "monthly" | "yearly"
-
 const AFRICA_COUNTRIES = new Set([
   "DZ",
   "MA",
@@ -73,13 +71,12 @@ function formatMoney(amount: number, currency: Currency) {
   if (currency === "DZD") {
     const grouped = new Intl.NumberFormat("fr-DZ", { maximumFractionDigits: 0, useGrouping: true }).format(amount)
     const withCommas = grouped.replace(/[\s\u00A0\u202F]/g, ",")
-    return withCommas + " DZD"
+    return withCommas + " DA"
   }
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(amount)
 }
 
 export function PricingSection() {
-  const [billing, setBilling] = useState<Billing>("monthly")
   const [modalPlan, setModalPlan] = useState<Plan | null>(null)
 
   const [currency, setCurrency] = useState<Currency>("EUR")
@@ -135,28 +132,8 @@ export function PricingSection() {
             transition={{ delay: 0.2 }}
             className="text-base sm:text-lg md:text-xl text-black/70 max-w-lg sm:max-w-2xl mx-auto px-2"
           >
-            Prix de création unique + maintenance flexible. Passez à l'annuel et économisez jusqu'à 20%.
+            Prix de création unique. Détails clairs, sans frais cachés.
           </motion.p>
-        </div>
-
-        {/* Billing Toggle */}
-        <div className="flex items-center justify-center gap-3 mb-10">
-          <span className={`text-sm ${billing === "monthly" ? "text-black" : "text-black/60"}`}>Mensuel</span>
-          <button
-            aria-label="Basculer facturation"
-            onClick={() => setBilling((b) => (b === "monthly" ? "yearly" : "monthly"))}
-            className="relative w-16 h-8 bg-black/10 border border-black/20 rounded-full backdrop-blur-md transition-colors"
-          >
-            <span
-              className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-black transition-transform ${
-                billing === "yearly" ? "translate-x-8" : "translate-x-0"
-              }`}
-            />
-          </button>
-          <span className={`text-sm ${billing === "yearly" ? "text-black" : "text-black/60"}`}>Annuel</span>
-          <span className="ml-2 text-xs text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-            2 mois offerts
-          </span>
         </div>
 
         {/* Cards */}
@@ -164,17 +141,12 @@ export function PricingSection() {
           {plans.map((plan) => {
             const isCustom = !!plan.custom
             const creationPrice = isCustom ? "Sur devis" : formatMoney(plan.buildPrice || 0, currency)
-            const maintenancePrice = isCustom
-              ? "Sur devis"
-              : billing === "monthly"
-              ? `${formatMoney(plan.maintenanceMonthly || 0, currency)} / mois`
-              : `${formatMoney(plan.maintenanceYearly || 0, currency)} / an`
             const slug = plan.key
 
             return (
               <div
                 key={plan.name}
-                className={`relative rounded-2xl p-6 md:p-8 bg-black/[0.03] backdrop-blur-md border border-black/10 transition-all duration-300 hover:translate-y-[-4px] hover:shadow-xl ${
+                className={`relative rounded-2xl p-5 md:p-6 bg-white border border-black/10 shadow-sm transition-all duration-300 hover:translate-y-[-3px] hover:shadow-lg ${
                   plan.popular ? "ring-2 ring-blue-500" : ""
                 }`}
               >
@@ -189,22 +161,9 @@ export function PricingSection() {
                 <h3 className="text-2xl font-bold text-black mb-2">{plan.name}</h3>
                 <p className="text-black/70 text-sm mb-6">{plan.pitch}</p>
 
-                <div className="mb-4">
-                  <div className="text-xs text-black/60 mb-1">Création</div>
-                  <div className="text-3xl font-extrabold text-black">{creationPrice}</div>
-                </div>
                 <div className="mb-6">
-                  <div className="flex items-baseline gap-2">
-                    <div>
-                      <div className="text-xs text-black/60 mb-1">Maintenance</div>
-                      <div className="text-lg font-semibold text-black">{maintenancePrice}</div>
-                    </div>
-                    {!isCustom && billing === "yearly" && (
-                      <span className="text-xs text-emerald-700 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-full">
-                        -20%
-                      </span>
-                    )}
-                  </div>
+                  <div className="text-xs text-black/60 mb-1">Prix</div>
+                  <div className="text-3xl font-extrabold text-black">{creationPrice}</div>
                 </div>
 
                 <ul className="space-y-3 mb-8">
@@ -241,7 +200,7 @@ export function PricingSection() {
 
         {/* Included in all plans */}
         <div className="mt-12 md:mt-16">
-          <div className="bg-black/[0.03] backdrop-blur-md border border-black/10 rounded-2xl p-6 md:p-8">
+          <div className="bg-white border border-black/10 rounded-2xl p-6 md:p-8 shadow-sm">
             <div className="text-black font-semibold mb-4">Inclus dans tous les plans</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-sm text-black/80">
               <div className="flex items-center gap-2">
@@ -303,21 +262,9 @@ export function PricingSection() {
               </>
             ) : (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  <div className="bg-white/5 border border-white/15 rounded-xl p-4">
-                    <div className="text-white/70 text-xs mb-1">Création</div>
-                    <div className="text-xl font-semibold">{formatMoney(modalPlan.buildPrice || 0, currency)}</div>
-                  </div>
-                  <div className="bg-white/5 border border-white/15 rounded-xl p-4">
-                    <div className="flex items-center gap-2">
-                      <div className="text-white/70 text-xs">Maintenance ({billing === "monthly" ? "mensuelle" : "annuelle"})</div>
-                    </div>
-                    <div className="text-xl font-semibold">
-                      {billing === "monthly"
-                        ? `${formatMoney(modalPlan.maintenanceMonthly || 0, currency)} / mois`
-                        : `${formatMoney(modalPlan.maintenanceYearly || 0, currency)} / an`}
-                    </div>
-                  </div>
+                <div className="bg-white/5 border border-white/15 rounded-xl p-4 mb-4">
+                  <div className="text-white/70 text-xs mb-1">Prix</div>
+                  <div className="text-xl font-semibold">{formatMoney(modalPlan.buildPrice || 0, currency)}</div>
                 </div>
 
                 <div className="mb-6">

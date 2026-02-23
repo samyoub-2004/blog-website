@@ -51,13 +51,17 @@ export function ContactCTASection() {
               </p>
 
               <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3 text-sm">
-                <a href="mailto:hello@example.com" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <a href="mailto:contact@xo-link.com" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                   <Mail className="w-4 h-4" />
-                  hello@example.com
+                  contact@xo-link.com
                 </a>
-                <a href="tel:+1234567890" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                <a href="tel:+33765898864" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors">
                   <Phone className="w-4 h-4" />
-                  +1 (234) 567-890
+                  +33 7 65 89 88 64
+                </a>
+                <a href="tel:+213794214276" className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors">
+                  <Phone className="w-4 h-4" />
+                  +213 7 94 21 42 76
                 </a>
               </div>
             </div>

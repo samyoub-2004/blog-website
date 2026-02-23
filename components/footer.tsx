@@ -2,7 +2,7 @@
 import type React from "react"
 import type { ComponentProps, ReactNode } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { FacebookIcon, InstagramIcon, LinkedinIcon, YoutubeIcon } from "lucide-react"
+import { FacebookIcon, InstagramIcon, LinkedinIcon, YoutubeIcon, Mail, Phone } from "lucide-react"
 import Image from "next/image"
 
 interface FooterLink {
@@ -94,11 +94,37 @@ export function Footer() {
 
       <div className="md:hidden mt-8 text-center space-y-2">
         <p className="text-muted-foreground text-sm">© {new Date().getFullYear()} xo-link. All rights reserved.</p>
-        <p className="text-muted-foreground text-xs">Web Development by Humexa</p>
+        <div className="mt-3 space-y-1 text-xs">
+          <a href="mailto:contact@xo-link.com" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Mail className="size-3.5" />
+            contact@xo-link.com
+          </a>
+          <a href="tel:+33765898864" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Phone className="size-3.5" />
+            +33 7 65 89 88 64
+          </a>
+          <a href="tel:+213794214276" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Phone className="size-3.5" />
+            +213 7 94 21 42 76
+          </a>
+        </div>
       </div>
 
       <div className="hidden md:block mt-8 pt-6 border-t border-foreground/10 w-full">
-        <p className="text-muted-foreground text-xs text-center">Web Development by Humexa</p>
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-xs">
+          <a href="mailto:contact@xo-link.com" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Mail className="size-4" />
+            contact@xo-link.com
+          </a>
+          <a href="tel:+33765898864" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Phone className="size-4" />
+            +33 7 65 89 88 64
+          </a>
+          <a href="tel:+213794214276" className="text-muted-foreground inline-flex items-center gap-2 hover:text-foreground transition-colors">
+            <Phone className="size-4" />
+            +213 7 94 21 42 76
+          </a>
+        </div>
       </div>
     </footer>
   )

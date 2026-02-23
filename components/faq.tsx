@@ -14,7 +14,7 @@ const QA = [
   },
   {
     q: "Puis‑je demander des évolutions après la mise en ligne ?",
-    a: "Bien sûr. Nous proposons une maintenance mensuelle/annuelle avec évolutions et support prioritaire.",
+    a: "Bien sûr. Vous pouvez demander des évolutions après la mise en ligne : on vous propose une estimation et un planning selon vos besoins.",
   },
   {
     q: "Est‑ce responsive sur mobile et tablette ?",
