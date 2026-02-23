@@ -8,7 +8,17 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
-const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
+const FB_PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
+const INSTAGRAM_PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_PAGE_ACCESS_TOKEN;
+
+type Platform = "facebook" | "instagram";
+
+type IncomingTextEvent = {
+  platform: Platform;
+  senderId: string;
+  text: string;
+  isEcho?: boolean;
+};
 
 async function readTextSafe(p: string) {
   try {
@@ -16,6 +26,51 @@ async function readTextSafe(p: string) {
   } catch {
     return "";
   }
+}
+
+function normalizeIncomingText(text: unknown) {
+  if (typeof text !== "string") return "";
+  return text.trim();
+}
+
+function extractIncomingTextEvents(body: any): IncomingTextEvent[] {
+  const platform: Platform = body?.object === "instagram" ? "instagram" : "facebook";
+  const entries = Array.isArray(body?.entry) ? body.entry : [];
+  const out: IncomingTextEvent[] = [];
+
+  for (const entry of entries) {
+    const messaging = Array.isArray(entry?.messaging) ? entry.messaging : [];
+    for (const event of messaging) {
+      const senderId = event?.sender?.id;
+      const isEcho = event?.message?.is_echo;
+      const text = normalizeIncomingText(event?.message?.text);
+
+      if (!senderId || !text) continue;
+
+      out.push({ platform, senderId, text, isEcho });
+    }
+
+    const changes = Array.isArray(entry?.changes) ? entry.changes : [];
+    for (const change of changes) {
+      const value = change?.value;
+
+      const messages = Array.isArray(value?.messages) ? value.messages : [];
+      for (const msg of messages) {
+        const senderId = msg?.from;
+        const text = normalizeIncomingText(msg?.text?.body ?? msg?.text);
+        if (!senderId || !text) continue;
+        out.push({ platform, senderId, text });
+      }
+
+      const fallbackSenderId = value?.from?.id ?? value?.sender?.id;
+      const fallbackText = normalizeIncomingText(value?.message?.text ?? value?.text);
+      if (fallbackSenderId && fallbackText) {
+        out.push({ platform, senderId: fallbackSenderId, text: fallbackText });
+      }
+    }
+  }
+
+  return out;
 }
 
 function normalizeForPrompt(text: string) {
@@ -34,7 +89,7 @@ async function loadSiteContext(projectRoot: string) {
   }
 }
 
-async function genererReponseIA(userText: string) {
+async function genererReponseIA(userText: string, platform: Platform) {
   const projectRoot = process.cwd();
   const rawContext = await loadSiteContext(projectRoot);
   const context = normalizeForPrompt(rawContext);
@@ -53,7 +108,7 @@ Rules:
 - Never invent prices, guarantees, timelines, services, or any details not present in the context.
 
 Channel:
-- The user is messaging via Facebook Messenger. Keep replies short and helpful.
+- The user is messaging via ${platform === "instagram" ? "Instagram Direct" : "Facebook Messenger"}. Keep replies short and helpful.
 
 --- WEBSITE CONTEXT START ---
 ${context}
@@ -64,15 +119,20 @@ ${context}
   return (result.text || "").trim();
 }
 
-async function envoyerMessage(senderPsid: string, responseText: string) {
-  if (!PAGE_ACCESS_TOKEN) {
-    throw new Error("Missing env FB_PAGE_ACCESS_TOKEN");
+function getAccessTokenForPlatform(platform: Platform) {
+  return platform === "instagram" ? INSTAGRAM_PAGE_ACCESS_TOKEN : FB_PAGE_ACCESS_TOKEN;
+}
+
+async function envoyerMessage(senderId: string, responseText: string, platform: Platform) {
+  const token = getAccessTokenForPlatform(platform);
+  if (!token) {
+    throw new Error(`Missing env ${platform === "instagram" ? "INSTAGRAM_PAGE_ACCESS_TOKEN" : "FB_PAGE_ACCESS_TOKEN"}`);
   }
 
-  const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+  const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${token}`;
 
   const payload = {
-    recipient: { id: senderPsid },
+    recipient: { id: senderId },
     message: { text: responseText },
   };
 
@@ -113,35 +173,25 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
 
-  if (!body || body.object !== "page") {
+  if (!body || (body.object !== "page" && body.object !== "instagram")) {
     return new NextResponse(null, { status: 404 });
   }
 
-  const entries = Array.isArray(body.entry) ? body.entry : [];
+  const events = extractIncomingTextEvents(body);
 
-  for (const entry of entries) {
-    const messaging = Array.isArray(entry.messaging) ? entry.messaging : [];
+  for (const event of events) {
+    try {
+      if (event.isEcho) continue;
 
-    for (const event of messaging) {
-      try {
-        const senderPsid: string | undefined = event?.sender?.id;
-        const textRecu: string | undefined = event?.message?.text;
-        const isEcho: boolean | undefined = event?.message?.is_echo;
-
-        const hasMessage = Boolean(event?.message);
-        const hasText = typeof textRecu === "string" && textRecu.trim().length > 0;
-
-        if (!senderPsid) continue;
-        if (isEcho) continue;
-
-        if (!hasMessage) continue;
-        if (!hasText) continue;
-
-        const reponseIA = await genererReponseIA(textRecu);
-        await envoyerMessage(senderPsid, reponseIA || "Je n'ai pas compris, tu peux reformuler ?");
-      } catch {
-        continue;
-      }
+      const reponseIA = await genererReponseIA(event.text, event.platform);
+      await envoyerMessage(
+        event.senderId,
+        reponseIA || "Je n'ai pas compris, peux-tu reformuler ?",
+        event.platform,
+      );
+    } catch (err) {
+      console.error("Webhook event error:", err);
+      continue;
     }
   }
 
