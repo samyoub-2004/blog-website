@@ -22,28 +22,42 @@ const caveat = Caveat({
 })
 
 export const metadata: Metadata = {
-  title: "xo-link - AI Automation for Enterprise",
+  title: "xo-link - Création de sites web (Algérie & France)",
   description:
-    "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+    "Agence web : création de sites vitrine, sites business et e-commerce. Design moderne, responsive, SEO optimisé. Disponible en Algérie et en France / Europe.",
   metadataBase: new URL("https://xo-link.com"),
   alternates: {
-    canonical: "/",
+    canonical: "https://xo-link.com/",
   },
   generator: "v0.app",
   robots: "index, follow",
+  keywords: [
+    "création site web",
+    "site vitrine",
+    "site e-commerce",
+    "site business",
+    "agence web",
+    "développement web",
+    "SEO",
+    "Algérie",
+    "France",
+    "Europe",
+  ],
+  authors: [{ name: "xo-link" }],
   openGraph: {
     type: "website",
     url: "https://xo-link.com/",
     siteName: "xo-link",
-    title: "xo-link - AI Automation for Enterprise",
+    title: "xo-link - Création de sites web (Algérie & France)",
     description:
-      "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+      "Création de sites vitrine, business et e-commerce. Design moderne, responsive, SEO optimisé (Algérie, France, Europe).",
+    locale: "fr_FR",
   },
   twitter: {
     card: "summary_large_image",
-    title: "xo-link - AI Automation for Enterprise",
+    title: "xo-link - Création de sites web (Algérie & France)",
     description:
-      "Transform your business with intelligent AI automation solutions. Empower your organization to operate at the speed of thought.",
+      "Création de sites vitrine, business et e-commerce. Design moderne, responsive, SEO optimisé.",
   },
   icons: {
     icon: "/icon.svg",
@@ -65,7 +79,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="fr" className="dark">
       <body className={`font-sans antialiased ${dancingScript.variable} ${caveat.variable}`}>
         <Suspense fallback={null}>
           <NavigationTransition />
