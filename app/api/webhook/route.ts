@@ -8,7 +8,6 @@ export const runtime = "nodejs";
 export const maxDuration = 30;
 
 const VERIFY_TOKEN = process.env.FB_VERIFY_TOKEN;
-const PAGE_ACCESS_TOKEN = process.env.FB_PAGE_ACCESS_TOKEN;
 
 async function readTextSafe(p: string) {
   try {
@@ -26,7 +25,6 @@ async function loadSiteContext(projectRoot: string) {
   const knowledgePath = path.join(projectRoot, "data/koulachda.json");
   const raw = await readTextSafe(knowledgePath);
   if (!raw) return "";
-
   try {
     return JSON.stringify(JSON.parse(raw));
   } catch {
@@ -34,7 +32,7 @@ async function loadSiteContext(projectRoot: string) {
   }
 }
 
-async function genererReponseIA(userText: string) {
+async function genererReponseIA(userText: string, platform: "facebook" | "instagram") {
   const projectRoot = process.cwd();
   const rawContext = await loadSiteContext(projectRoot);
   const context = normalizeForPrompt(rawContext);
@@ -42,34 +40,26 @@ async function genererReponseIA(userText: string) {
   const result = await generateText({
     model: groq("llama-3.1-8b-instant"),
     system: `You are the website assistant for xo-link.
-
-Rules:
-- Use the WEBSITE CONTEXT below as the source of truth.
-- You may answer naturally (and briefly) in French.
-- If the user asks something not covered by the context, do NOT invent details.
-  Instead:
-  1) Ask 1 short clarification question if it could help, OR
-  2) Say you don't have that information and suggest contacting us via /contact.
-- Never invent prices, guarantees, timelines, services, or any details not present in the context.
-
-Channel:
-- The user is messaging via Facebook Messenger. Keep replies short and helpful.
-
---- WEBSITE CONTEXT START ---
-${context}
---- WEBSITE CONTEXT END ---`,
+      Source of truth: ${context}
+      Rules:
+      - Answer briefly in French.
+      - Never invent details (prices, services) not in context.
+      - Channel: ${platform === "instagram" ? "Instagram Direct" : "Facebook Messenger"}.`,
     prompt: normalizeForPrompt(userText),
   });
 
   return (result.text || "").trim();
 }
 
-async function envoyerMessage(senderPsid: string, responseText: string) {
-  if (!PAGE_ACCESS_TOKEN) {
-    throw new Error("Missing env FB_PAGE_ACCESS_TOKEN");
-  }
+async function envoyerMessage(senderPsid: string, responseText: string, platform: "facebook" | "instagram") {
+  // Sélection du bon token selon la provenance du message
+  const token = platform === "instagram" 
+    ? process.env.INSTAGRAM_PAGE_ACCESS_TOKEN 
+    : process.env.FB_PAGE_ACCESS_TOKEN;
 
-  const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+  if (!token) throw new Error(`Missing token for ${platform}`);
+
+  const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${token}`;
 
   const payload = {
     recipient: { id: senderPsid },
@@ -78,26 +68,18 @@ async function envoyerMessage(senderPsid: string, responseText: string) {
 
   const res = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
   if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(`Graph API error: ${res.status} ${res.statusText} ${text}`);
+    const errorData = await res.text();
+    console.error(`Graph API Error (${platform}):`, errorData);
   }
 }
 
+// --- WEBHOOK VERIFICATION (GET) ---
 export async function GET(req: Request) {
-  if (!VERIFY_TOKEN) {
-    return NextResponse.json(
-      { error: "Missing env FB_VERIFY_TOKEN" },
-      { status: 500 },
-    );
-  }
-
   const { searchParams } = new URL(req.url);
   const mode = searchParams.get("hub.mode");
   const token = searchParams.get("hub.verify_token");
@@ -106,17 +88,19 @@ export async function GET(req: Request) {
   if (mode && token === VERIFY_TOKEN) {
     return new NextResponse(challenge ?? "", { status: 200 });
   }
-
   return new NextResponse(null, { status: 403 });
 }
 
+// --- WEBHOOK RECEIVER (POST) ---
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null);
 
-  if (!body || body.object !== "page") {
+  // Accepte "page" (Facebook) ou "instagram"
+  if (!body || (body.object !== "page" && body.object !== "instagram")) {
     return new NextResponse(null, { status: 404 });
   }
 
+  const platform = body.object === "instagram" ? "instagram" : "facebook";
   const entries = Array.isArray(body.entry) ? body.entry : [];
 
   for (const entry of entries) {
@@ -124,22 +108,20 @@ export async function POST(req: Request) {
 
     for (const event of messaging) {
       try {
-        const senderPsid: string | undefined = event?.sender?.id;
-        const textRecu: string | undefined = event?.message?.text;
-        const isEcho: boolean | undefined = event?.message?.is_echo;
+        const senderPsid = event?.sender?.id;
+        const textRecu = event?.message?.text;
+        const isEcho = event?.message?.is_echo;
 
-        const hasMessage = Boolean(event?.message);
-        const hasText = typeof textRecu === "string" && textRecu.trim().length > 0;
+        if (!senderPsid || isEcho || !textRecu) continue;
 
-        if (!senderPsid) continue;
-        if (isEcho) continue;
-
-        if (!hasMessage) continue;
-        if (!hasText) continue;
-
-        const reponseIA = await genererReponseIA(textRecu);
-        await envoyerMessage(senderPsid, reponseIA || "Je n'ai pas compris, tu peux reformuler ?");
-      } catch {
+        const reponseIA = await genererReponseIA(textRecu, platform);
+        await envoyerMessage(
+          senderPsid, 
+          reponseIA || "Je n'ai pas compris, peux-tu reformuler ?", 
+          platform
+        );
+      } catch (err) {
+        console.error("Error processing event:", err);
         continue;
       }
     }
